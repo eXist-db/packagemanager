@@ -1,4 +1,8 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-styles/color.html">
+
 
 <!--
 `existdb-package-descriptor`
@@ -8,52 +12,107 @@ element for displaying package metadata
 -->
 
 <dom-module id="existdb-package-descriptor">
-  <template>
-    <style>
-      :host {
-        display: block;
-        padding: 10px;
-      }
-      .wrapper{
-        display: flex;
-      }
-      .wrapper ::content > div{
-        padding: 10px;
-      }
+    <template>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+                position: relative;
 
-      ::content .packageIconArea{
-        min-width: 100px;
-      }
-      ::content .shortTitle h3{
-        margin: 0;
-        padding-top:0;
-      }
-      ::content .shortTitle p{
-        margin:0;
-      }
-      ::content .wrapper table{
-        display: none;
-      }
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+            }
 
+            .wrapper {
+                display: flex;
+                flex-wrap:wrap;
+            }
 
-    </style>
-    <div class="wrapper">
-      <content></content>
-    </div>
-  </template>
+            .wrapper ::content > div {
+                padding: 10px;
+            }
 
-  <script>
-    Polymer({
+            ::content .packageIconArea {
+                min-width: 100px;
+            }
 
-      is: 'existdb-package-descriptor',
+            ::content .shortTitle h3 {
+                margin: 0;
+                padding-top: 0;
+            }
 
-      properties: {
-        prop1: {
-          type: String,
-          value: 'existdb-package-descriptor',
-        },
-      },
+            ::content .shortTitle p {
+                margin: 0;
+            }
 
-    });
-  </script>
+            ::content .wrapper table.hidden {
+                display:none !important;
+            }
+            ::content .wrapper table {
+                display: table;
+                width: 100%;
+            }
+            ::content .wrapper table th {
+                width: 122px;
+                text-align: right;
+                font-weight:300;
+                padding-right: 5px;
+            }
+            ::content .wrapper table td ul{
+                padding-bottom:0;
+            }
+
+            paper-icon-button {
+                min-height: 24px;
+                min-width: 24px;
+            }
+
+            #info{
+                position: absolute;
+                top:10px;
+                right:40px;
+            }
+            #delete{
+                position: absolute;
+                top:10px;
+                right:10px;
+            }
+        </style>
+        <div class="wrapper">
+            <content></content>
+            <paper-icon-button id="info" icon="info"></paper-icon-button>
+            <paper-icon-button id="delete" icon="delete"></paper-icon-button>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-package-descriptor',
+
+            properties: {},
+
+            listeners: {
+                'info.tap': 'handleInfo',
+                'delete.tap': 'handleDelete'
+            },
+            
+            handleInfo: function (e) {
+               var detail = this.querySelector('table');
+               console.log(detail)
+                if(detail.hasAttribute("class")){
+                   detail.removeAttribute("class")
+                }else{
+                    detail.setAttribute("class","hidden")
+                }
+
+            },
+            
+            handleDelete: function (e) {
+                
+            }
+
+        });
+    </script>
 </dom-module>

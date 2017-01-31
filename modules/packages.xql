@@ -22,14 +22,22 @@ declare
     %rest:query-param("plugins", "{$plugins}")
     %rest:query-param("type", "{$type}")
 function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs:string?) {
+    packages:list-apps("local", $format, $plugins)
+};
+
+declare %private function packages:list-apps($type as xs:string?, $format as xs:string?, $plugins as xs:string?){
     let $apps := packages:default-apps($plugins) | packages:installed-apps($format)
+    let $log := util:log("debug", $apps)
     let $apps :=
         if ($type = "local") then $apps else packages:public-repo-contents($apps)
+
+
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
     order by upper-case($app/title/text())
     return
-       packages:display($config:REPO, $app, $format)
+        packages:display($config:REPO, $app, $format)
+
 };
 
 declare %private function packages:default-apps($plugins as xs:string?) {
@@ -231,25 +239,25 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                             else
                                 ()
                         }
-                        <table>
+                        <table class="hidden">
                             <tr class="title">
-                                <th>Title:</th>
+                                <th>Title</th>
                                 <td>{ $app/title/text() }</td>
                             </tr>
                             <tr>
-                                <th>Short:</th>
+                                <th>Short</th>
                                 <td>{ $app/abbrev/text() }</td>
                             </tr>
                             <tr>
-                                <th>Name (URI):</th>
+                                <th>Name (URI)</th>
                                 <td>{ $app/name/string() }</td>
                             </tr>
                             <tr>
-                                <th>Description:</th>
+                                <th>Description</th>
                                 <td>{ $app/description/text() }</td>
                             </tr>
                             <tr>
-                                <th>Author(s):</th>
+                                <th>Author(s)</th>
                                 <td>
                                     <ul>
                                     {
@@ -261,11 +269,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 </td>
                             </tr>
                             <tr>
-                                <th>Version:</th>
-                                <td>{ $app/version/text() }</td>
-                            </tr>
-                            <tr>
-                                <th>License:</th>
+                                <th>License</th>
                                 <td>{ $app/license/text() }</td>
                             </tr>
                             {

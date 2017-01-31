@@ -11,6 +11,9 @@
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="bower_components/bottom-nav/bottom-nav.html">
 
 <link rel="import" href="existdb-package-descriptor.html">
 
@@ -28,7 +31,7 @@ a web component implementing eXistdb packagemanager
                 display: block;
 
 
-                --paper-tabs-selection-bar-color: var(--paper-light-blue-700);
+                --paper-tabs-selection-bar-color: var(--paper-blue-700);
                 @apply(--paper-font-common-base);
                 position: relative;
                 background: whitesmoke;
@@ -36,6 +39,10 @@ a web component implementing eXistdb packagemanager
                 margin: 0;
                 width: 100%;
                 height: 100%;
+
+                --vaadin-upload-button-add:{
+                    background: var(--paper-blue-700);
+                }
             }
 
             app-header{
@@ -87,6 +94,10 @@ a web component implementing eXistdb packagemanager
                 margin-right:10px;
                 --iron-icon-fill-color:var(--paper-blue-700);
             }
+            bottom-nav{
+                background: var(--paper-blue-50);
+            }
+
         </style>
         <iron-ajax id="loadPackages"
                    verbose with-credentials
@@ -96,11 +107,11 @@ a web component implementing eXistdb packagemanager
                    auto></iron-ajax>
 
         <app-header-layout>
-            <app-header fixed>
+            <app-header condenses>
                 <app-toolbar>
                     <iron-icon icon="apps"></iron-icon><div>Package Manager</div>
                 </app-toolbar>
-                <paper-tabs selected="{{selected}}">
+                <paper-tabs selected="{{selected}}" fixed>
                     <paper-tab>All</paper-tab>
                     <paper-tab>Installed</paper-tab>
                     <paper-tab>Available</paper-tab>
@@ -108,17 +119,17 @@ a web component implementing eXistdb packagemanager
             </app-header>
 
             <div id="packageList"></div>
-            <paper-fab icon="file-upload"></paper-fab>
 
+            <bottom-nav id="bottom" fixed>
+                <vaadin-upload accept=".xar">
+                    <div class="drop-label">
+                        <iron-icon icon="description"></iron-icon>
+                        DROPZONE - put your package(s) here.
+                    </div>
+                </vaadin-upload>
+            </bottom-nav>
         </app-header-layout>
 
-<!--
-        <iron-list items="[[items]]">
-            <template>
-
-            </template>
-        </iron-list>
--->
     </template>
 
     <script>
@@ -134,10 +145,15 @@ a web component implementing eXistdb packagemanager
 
             attached: function () {
                 this.selected = 0;
+                this.$.bottom.threshold=200;
             },
 
             handleItems: function (data) {
                 this.$.packageList.innerHTML = this.$.loadPackages.lastResponse
+            },
+
+            showUpload: function (e) {
+                this.$.upload.open();
             }
 
         });

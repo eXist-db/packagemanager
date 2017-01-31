@@ -13,7 +13,10 @@
     "paper-styles": "PolymerElements/paper-styles#^1.1.5",
     "iron-image": "PolymerElements/iron-image#^1.2.5",
     "app-layout": "PolymerElements/app-layout#^0.10.6",
-    "paper-fab": "PolymerElements/paper-fab#^1.2.1"
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.1.0",
+    "vaadin-upload": "vaadin/vaadin-upload#^1.1.1",
+    "bottom-nav": "greenyouse/bottom-nav#^0.2.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
