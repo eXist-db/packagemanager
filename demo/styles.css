@@ -1,0 +1,15 @@
+html, body{
+    margin:0;
+    padding:0;
+}
+existdb-packagemanager{
+    display: block;
+    margin:0 auto;
+}
+
+vertical-section-container.centered{
+    max-width: 600px;
+}
+.iron-component-page.paper-toolbar-0{
+    display: none !important;
+}

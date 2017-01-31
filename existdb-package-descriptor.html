@@ -1,0 +1,59 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<!--
+`existdb-package-descriptor`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="existdb-package-descriptor">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+      .wrapper{
+        display: flex;
+      }
+      .wrapper ::content > div{
+        padding: 10px;
+      }
+
+      ::content .packageIconArea{
+        min-width: 100px;
+      }
+      ::content .shortTitle h3{
+        margin: 0;
+        padding-top:0;
+      }
+      ::content .shortTitle p{
+        margin:0;
+      }
+      ::content .wrapper table{
+        display: none;
+      }
+
+
+    </style>
+    <div class="wrapper">
+      <content></content>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'existdb-package-descriptor',
+
+      properties: {
+        prop1: {
+          type: String,
+          value: 'existdb-package-descriptor',
+        },
+      },
+
+    });
+  </script>
+</dom-module>

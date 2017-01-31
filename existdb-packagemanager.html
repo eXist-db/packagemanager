@@ -3,49 +3,143 @@
 <link rel="import" href="bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="bower_components/paper-styles/color.html">
+<link rel="import" href="bower_components/paper-styles/typography.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="existdb-package-descriptor.html">
 
 <!--
 `existdb-packagemanager`
 a web component implementing eXistdb packagemanager
 
-@demo demo/index.html 
+@demo demo/doc.html
 -->
 
 <dom-module id="existdb-packagemanager">
-  <template>
-    <style>
-      :host {
-        display: block;
+    <template>
+        <style>
+            :host {
+                display: block;
 
-        --paper-tabs-selection-bar-color:var(--paper-light-blue-700);
-      }
-    </style>
-    <paper-tabs selected="{{selected}}">
-      <paper-tab>All</paper-tab>
-      <paper-tab>Installed</paper-tab>
-      <paper-tab>Available</paper-tab>
-    </paper-tabs>
 
-    <iron-list items="[[items]]">
-      <template>
+                --paper-tabs-selection-bar-color: var(--paper-light-blue-700);
+                @apply(--paper-font-common-base);
+                position: relative;
+                background: whitesmoke;
+                padding:0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
 
-      </template>
-    </iron-list>
-  </template>
+            app-header{
+             background: white;
+                border-bottom:1px solid #dedede;
+            }
 
-  <script>
-    Polymer({
+            #packageList{
+            }
+            ::content ul{
+                list-style: none;
+                padding:0;
+            }
 
-      is: 'existdb-packagemanager',
+            ::content existdb-package-descriptor{
+                background: white;
+                margin:10px 0;
+                border:thin solid #dedede;
 
-      properties: {
-          selected: Number
-      },
+            }
 
-      attached: function () {
-          this.selected = 0;
-      }
+            ::content ul li table{
+                display: none;
+            }
 
-    });
-  </script>
+            ::content .packageIconArea{
+                /*display: inline-flex;*/
+            }
+            ::content .shortTitle {
+                display: flex;
+                flex-direction:column;
+
+                flex-grow: 3;
+            }
+
+            ::content.appIcon{
+                max-width:100px;
+                height:40px;
+            }
+
+            paper-fab{
+                position: fixed;
+                z-index: 10;
+                bottom: 20px;
+                right: 20px;
+                --paper-fab-background:var(--paper-blue-700);
+            }
+            iron-icon{
+                margin-right:10px;
+                --iron-icon-fill-color:var(--paper-blue-700);
+            }
+        </style>
+        <iron-ajax id="loadPackages"
+                   verbose with-credentials
+                   method="get" handle-as="text"
+                   on-response="handleItems"
+                   url="/exist/apps/packagemanager/packages/?format=manager&type=local"
+                   auto></iron-ajax>
+
+        <app-header-layout>
+            <app-header fixed>
+                <app-toolbar>
+                    <iron-icon icon="apps"></iron-icon><div>Package Manager</div>
+                </app-toolbar>
+                <paper-tabs selected="{{selected}}">
+                    <paper-tab>All</paper-tab>
+                    <paper-tab>Installed</paper-tab>
+                    <paper-tab>Available</paper-tab>
+                </paper-tabs>
+            </app-header>
+
+            <div id="packageList"></div>
+            <paper-fab icon="file-upload"></paper-fab>
+
+        </app-header-layout>
+
+<!--
+        <iron-list items="[[items]]">
+            <template>
+
+            </template>
+        </iron-list>
+-->
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-packagemanager',
+
+            properties: {
+                url: String,
+                notify: true,
+                reflectToAttribute: true
+            },
+
+            attached: function () {
+                this.selected = 0;
+            },
+
+            handleItems: function (data) {
+                this.$.packageList.innerHTML = this.$.loadPackages.lastResponse
+            }
+
+        });
+    </script>
 </dom-module>
