@@ -1,0 +1,51 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="bower_components/paper-styles/color.html">
+
+<!--
+`existdb-packagemanager`
+a web component implementing eXistdb packagemanager
+
+@demo demo/index.html 
+-->
+
+<dom-module id="existdb-packagemanager">
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        --paper-tabs-selection-bar-color:var(--paper-light-blue-700);
+      }
+    </style>
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>All</paper-tab>
+      <paper-tab>Installed</paper-tab>
+      <paper-tab>Available</paper-tab>
+    </paper-tabs>
+
+    <iron-list items="[[items]]">
+      <template>
+
+      </template>
+    </iron-list>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'existdb-packagemanager',
+
+      properties: {
+          selected: Number
+      },
+
+      attached: function () {
+          this.selected = 0;
+      }
+
+    });
+  </script>
+</dom-module>
