@@ -88,6 +88,7 @@ implements an interaction with the package repository
 
             handleError:function (e) {
                 console.log("error: ", e)
+                this.fire("package-remove-error",{"error": e.detail});
             }
 
 
