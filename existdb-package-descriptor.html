@@ -2,6 +2,8 @@
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="bower_components/paper-styles/color.html">
+<link rel="import" href="existdb-package-remove-action.html">
+<link rel="import" href="existdb-package-install-action.html">
 
 
 <!--
@@ -38,7 +40,7 @@ element for displaying package metadata
             }
 
             ::content .shortTitle h3 {
-                margin: 0;
+                margin: 12px 0 0 0;
                 padding-top: 0;
             }
 
@@ -71,18 +73,33 @@ element for displaying package metadata
             #info{
                 position: absolute;
                 top:10px;
-                right:40px;
+                right:50px;
             }
-            #delete{
+
+            ::content .appFunctions{
                 position: absolute;
-                top:10px;
+                top:0px;
                 right:10px;
+            }
+            .type{
+                position: absolute;
+                font-size:11px;
+                padding: 3px;
+                color:var(--paper-blue-700);
+                left:150px;
+                top:6px;
+            }
+            .application{
+                color:var(--paper-blue-700);
+            }
+            .library{
+                color:var(--paper-light-green-700);
             }
         </style>
         <div class="wrapper">
+            <div class$="[[type]] type">[[type]]</div>
             <content></content>
             <paper-icon-button id="info" icon="info"></paper-icon-button>
-            <paper-icon-button id="delete" icon="delete"></paper-icon-button>
         </div>
     </template>
 
@@ -91,11 +108,21 @@ element for displaying package metadata
 
             is: 'existdb-package-descriptor',
 
-            properties: {},
+            properties: {
+
+                type: {
+                    type: String,
+                },
+                foo: {
+                    type: String,
+                    value:"foo"
+                }
+//                reflectToAttribute: true
+            },
 
             listeners: {
                 'info.tap': 'handleInfo',
-                'delete.tap': 'handleDelete'
+//                'delete.tap': 'handleDelete'
             },
             
             handleInfo: function (e) {
@@ -111,6 +138,10 @@ element for displaying package metadata
             
             handleDelete: function (e) {
                 
+            },
+
+            _isInstalled: function () {
+                return this.status=='installed'
             }
 
         });

@@ -16,7 +16,9 @@
     "paper-fab": "PolymerElements/paper-fab#^1.2.1",
     "paper-dialog": "PolymerElements/paper-dialog#^1.1.0",
     "vaadin-upload": "vaadin/vaadin-upload#^1.1.1",
-    "bottom-nav": "greenyouse/bottom-nav#^0.2.0"
+    "bottom-nav": "greenyouse/bottom-nav#^0.2.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.2.4",
+    "iron-form": "PolymerElements/iron-form#^1.1.4"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

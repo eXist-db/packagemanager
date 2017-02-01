@@ -1,0 +1,51 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+
+
+<!--
+`existdb-package-action`
+implements an interaction with the package repository
+
+@demo demo/index.html 
+-->
+
+<dom-module id="existdb-package-install-action">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
+        <paper-icon-button id="install" icon="file-download"></paper-icon-button>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-package-install-action',
+
+            properties: {
+                path: {
+                    type: String,
+                },
+                abbrev: {
+                    type: String
+                },
+                action: {
+                    type: String
+                },
+                type: {
+                    type: String
+                }
+            },
+
+
+
+
+
+        });
+    </script>
+</dom-module>

@@ -22,22 +22,14 @@ declare
     %rest:query-param("plugins", "{$plugins}")
     %rest:query-param("type", "{$type}")
 function packages:get($type as xs:string?, $format as xs:string?, $plugins as xs:string?) {
-    packages:list-apps("local", $format, $plugins)
-};
-
-declare %private function packages:list-apps($type as xs:string?, $format as xs:string?, $plugins as xs:string?){
     let $apps := packages:default-apps($plugins) | packages:installed-apps($format)
-    let $log := util:log("debug", $apps)
-    let $apps :=
+    let $apps := 
         if ($type = "local") then $apps else packages:public-repo-contents($apps)
-
-
     let $apps := if ($format = "manager") then $apps except $apps[@removable="no"] else $apps
     for $app in $apps
     order by upper-case($app/title/text())
     return
-        packages:display($config:REPO, $app, $format)
-
+       packages:display($config:REPO, $app, $format)
 };
 
 declare %private function packages:default-apps($plugins as xs:string?) {
@@ -99,7 +91,6 @@ declare %private function packages:installed-apps($format as xs:string?) as elem
     )
 };
 
-
 declare %private function packages:scan-repo($callback as function(xs:string, element(), element()?) as item()*) {
     for $app in repo:list()
     let $expathMeta := packages:get-package-meta($app, "expath-pkg.xml")
@@ -115,7 +106,13 @@ declare %private function packages:get-package-meta($app as xs:string, $name as 
             if (exists($meta)) then util:binary-to-string($meta) else ()
     return
         if (exists($data)) then
-            util:parse($data)
+            try {
+                util:parse($data)
+            } catch * {
+                <meta xmlns="http://exist-db.org/xquery/repo">
+                    <description>Invalid repo descriptor for app {$app}</description>
+                </meta>
+            }
         else
             ()
 };
@@ -197,7 +194,6 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         }
                         </div>
 
-
                         <div class="shortTitle">
                             <h3>{$app/title/text()}</h3>
                             {
@@ -230,6 +226,14 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                     <p class="requires">Requires eXist-db {packages:required-version($app/requires)}</p>
                                 else
                                     ()
+                            }
+                        </div>
+                        <div class="appFunctions">
+                            {
+                            if ($app/@status = "installed") then
+                            <existdb-package-remove-action url="{$app/@path}" abbrev="{$app/abbrev}" type="application"></existdb-package-remove-action>
+                            else
+                            <existdb-package-install-action url="{$app/@path}" abbrev="{$app/abbrev}" type="application" version="{$app/version}"></existdb-package-install-action>
                             }
                         </div>
                         {

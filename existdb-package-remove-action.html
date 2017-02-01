@@ -1,0 +1,100 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-form/iron-form.html">
+
+
+<!--
+`existdb-package-action`
+implements an interaction with the package repository
+
+@demo demo/index.html 
+-->
+
+<dom-module id="existdb-package-remove-action">
+    <template>
+        <style>
+            :host {
+                display: block;
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+
+            }
+        </style>
+<!--
+        <iron-ajax id="removePackage"
+                   verbose with-credentials
+                   body='{"package-url": url, "abbrev": abbrev, "action":"remove","type":type}'
+                   method="post" handle-as="json"
+                   on-response="handleResponse"
+                   on-error="handleError"
+                   url="/exist/apps/packagemanager/modules/install.xql"
+                   ></iron-ajax>
+-->
+
+        <paper-icon-button id="removeBtn" icon="delete"></paper-icon-button>
+        <form id="removeForm" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
+            <input type="hidden" name="package-url" value="{{url}}"/>
+            <input type="hidden" name="abbrev" value="{{abbrev}}"/>
+            <input type="hidden" name="action" value="remove"/>
+            <input type="hidden" name="type" value="{{type}}"/>
+        </form>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-package-remove-action',
+
+            properties: {
+                url: {
+                    type: String,
+                },
+                abbrev: {
+                    type: String
+                },
+                type: {
+                    type: String
+                }
+            },
+
+            listeners: {
+                'removeBtn.tap': 'handleRemove',
+                'iron-form-response': 'handleResponse',
+                'iron-form-error': 'handleERror'
+            },
+
+            handleRemove: function (e) {
+                //do it
+                console.log("success: ", e);
+
+                var r = confirm("Really remove this package?");
+                if(r == true){
+/*
+                    var url = "/exist/apps/packagemanager/modules/install.xql?package-url=" + this.url + "&abbrev=" + this.abbrev + '&action=' + this.action + '&type=' + this.type;
+                    this.$.removePackage.url = url;
+*/
+//                    this.$.removePackage.generateRequest();
+                    this.$.removeForm.submit();
+                }
+            },
+
+            handleResponse: function (data) {
+              console.log("response: ", data)
+                this.fire("package-removed",{});
+            },
+
+            handleError:function (e) {
+                console.log("error: ", e)
+            }
+
+
+
+
+
+
+        });
+    </script>
+</dom-module>
