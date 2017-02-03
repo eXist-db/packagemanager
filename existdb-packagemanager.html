@@ -87,7 +87,6 @@ a web component implementing eXistdb packagemanager
             ::content .shortTitle {
                 display: flex;
                 flex-direction: column;
-
                 flex-grow: 3;
             }
 
@@ -118,6 +117,7 @@ a web component implementing eXistdb packagemanager
                 background: var(--paper-blue-50);
             }
 
+
             app-toolbar {
                 z-index: 10;
                 background: white;
@@ -145,17 +145,16 @@ a web component implementing eXistdb packagemanager
                    verbose with-credentials
                    method="get" handle-as="text"
                    on-response="handleLocalItems"
-                   url="/exist/apps/packagemanager/packages/?format=manager&type=local"
+                   url="/exist/apps/packagemanager/packages/?&format=manager&type=local"
                    auto></iron-ajax>
 
-<!--
         <iron-ajax id="loadAvailable"
                    verbose with-credentials
-                   method="get" handle-as="document"
+                   method="get" handle-as="text"
                    on-response="handleAvailableItems"
+                   headers='{"host": location.host}'
                    url="/exist/apps/packagemanager/packages/?format=manager&type=remote"
-                   auto></iron-ajax>
--->
+                   ></iron-ajax>
 
         <app-header-layout fullbleed>
             <app-header class="app-header" condenses reveals effects="waterfall" fixed>
@@ -164,10 +163,10 @@ a web component implementing eXistdb packagemanager
                     <div>Package Manager</div>
                 </app-toolbar>
                 <paper-tabs selected="{{selected}}">
-                    <!--<paper-tab>All</paper-tab>-->
                     <paper-tab id="installedTab">Installed</paper-tab>
                     <paper-tab id="availableTab">Available</paper-tab>
                 </paper-tabs>
+
             </app-header>
 
             <neon-animated-pages id="pages" selected="[[selected]]" entry-animation="[[entryAnimation]]"
@@ -176,13 +175,13 @@ a web component implementing eXistdb packagemanager
                     <div id="localItemList"></div>
                 </neon-animatable>
                 <neon-animatable>
-                    <div id="availableItemList">hello</div>
+                    <div id="availableItemList"></div>
                 </neon-animatable>
             </neon-animated-pages>
 
 
-            <bottom-nav id="bottom" fixed>
-                <vaadin-upload accept=".xar" method="post" target="/exist/apps/packagemanager/modules/install.xql">
+            <bottom-nav id="bottom">
+                <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
                     <div class="drop-label">
                         <iron-icon icon="description"></iron-icon>
                         DROPZONE - put your package(s) here.
@@ -199,9 +198,14 @@ a web component implementing eXistdb packagemanager
             is: 'existdb-packagemanager',
 
             properties: {
-                url: String,
-                notify: true,
-                reflectToAttribute: true
+                url: {
+                    type:String,
+                    notify: true,
+                    reflectToAttribute: true
+                },
+                targetUrl: {
+                    type: String,
+                }
             },
             listeners: {
                 'installedTab.tap': 'switchToInstalled',
@@ -210,10 +214,23 @@ a web component implementing eXistdb packagemanager
 
             attached: function () {
                 this.selected = 0;
-//                this.$.bottom.threshold = 200;
-
                 this.listen(document, 'package-removed', '_handlePackageRemoved')
                 this.listen(document, 'package-remove-error', '_handlePackageRemoveError')
+                this.listen(document, 'package-installed', '_handlePackageInstalled')
+                this.listen(document, 'package-install-error', '_handlePackageInstallError')
+                this.targetUrl = "/exist/apps/packagemanager/modules/install.xql"
+                this.$.uploader.formDataName = "uploadedfiles[]"
+
+                this.$.uploader.addEventListener('upload-before', function(event) {
+                    console.log('upload xhr before open: ', event.detail.xhr);
+                    var file = event.detail.file;
+//                    this.$.uploader.target = this.targetUrl
+                    console.log('.....', this.$.uploader.formdata)
+                    file.uploadTarget = '/exist/apps/packagemanager/modules/install.xql?name=' + file.name;
+
+//                    file.formDataName = 'server-url';
+                });
+
             },
 
             detached: function () {
@@ -233,6 +250,7 @@ a web component implementing eXistdb packagemanager
                 this.$.upload.open();
             },
 
+
             switchToInstalled: function (e) {
                 this.entryAnimation = 'slide-from-left-animation';
                 this.exitAnimation = 'slide-right-animation';
@@ -243,16 +261,35 @@ a web component implementing eXistdb packagemanager
                 this.entryAnimation = 'slide-from-right-animation';
                 this.exitAnimation = 'slide-left-animation';
                 this.$.pages.selected=1;
+                console.log("location: ", location.host)
+                this.$.loadAvailable.generateRequest();
             },
 
             _handlePackageRemoved: function (e) {
                 this.$.loadInstalled.generateRequest()
-                this.$.toast.text='Package has been removed.'
-                this.$.toast.open()
+                this._toast('Package has been removed: ' + e.detail.package)
             },
+
             _handlePackageRemoveError: function (e) {
-                this.$.toast.text=e.detail.error
-                this.$.toast.duration=-1
+                this._toast(e.detail.error.error.message,-1)
+            },
+
+            _handlePackageInstalled: function (e) {
+                this._toast('Package has been installed: ' + e.detail.package)
+//                this.selected=0;
+                this.$.loadInstalled.generateRequest()
+                this.selected=0
+
+            },
+            _handlePackageInstallError: function (e) {
+                this._toast(e.detail.error.error.message,-1)
+            },
+
+            _toast: function (msg, duration) {
+                this.$.toast.text=msg
+                if(duration != undefined ){
+                    this.$.toast.duration=duration
+                }
                 this.$.toast.open()
             }
 

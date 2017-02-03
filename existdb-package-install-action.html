@@ -1,6 +1,8 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+
 
 
 <!--
@@ -15,11 +17,20 @@ implements an interaction with the package repository
         <style>
             :host {
                 display: block;
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
             }
         </style>
 
         <paper-icon-button id="install" icon="file-download"></paper-icon-button>
-
+        <form id="installform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
+            <input type="hidden" name="package-url" value="{{url}}"/>
+            <input type="hidden" name="abbrev" value="{{abbrev}}"/>
+            <input type="hidden" name="version" value="{{version}}"/>
+            <input type="hidden" name="action" value="install"/>
+            <input type="hidden" name="type" value="application"/>
+        </form>
     </template>
 
     <script>
@@ -28,22 +39,44 @@ implements an interaction with the package repository
             is: 'existdb-package-install-action',
 
             properties: {
-                path: {
+                url: {
                     type: String,
                 },
                 abbrev: {
                     type: String
                 },
                 action: {
+                    type: String,
+                    value:'install'
+                },
+                version:{
                     type: String
                 },
                 type: {
-                    type: String
+                    type: String,
+                    value:'application'
                 }
             },
 
+            listeners: {
+                'install.tap': 'submit',
+                'iron-form-response': 'handleResponse',
+                'iron-form-error': 'handleError'
+            },
 
+            submit: function (e) {
+                this.$.installform.submit();
+            },
 
+            handleResponse: function (data) {
+                console.log("response: ", data)
+                this.fire("package-installed",{package:this.url});
+            },
+
+            handleError:function (e) {
+                console.log("error: ", e)
+                this.fire("package-install-error",{"error": e.detail});
+            }
 
 
         });

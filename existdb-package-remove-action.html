@@ -35,7 +35,7 @@ implements an interaction with the package repository
 -->
 
         <paper-icon-button id="removeBtn" icon="delete"></paper-icon-button>
-        <form id="removeForm" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
+        <form id="removeform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>
             <input type="hidden" name="action" value="remove"/>
@@ -61,12 +61,12 @@ implements an interaction with the package repository
             },
 
             listeners: {
-                'removeBtn.tap': 'handleRemove',
+                'removeBtn.tap': 'submit',
                 'iron-form-response': 'handleResponse',
-                'iron-form-error': 'handleERror'
+                'iron-form-error': 'handleError'
             },
 
-            handleRemove: function (e) {
+            submit: function (e) {
                 //do it
                 console.log("success: ", e);
 
@@ -77,25 +77,19 @@ implements an interaction with the package repository
                     this.$.removePackage.url = url;
 */
 //                    this.$.removePackage.generateRequest();
-                    this.$.removeForm.submit();
+                    this.$.removeform.submit();
                 }
             },
 
             handleResponse: function (data) {
               console.log("response: ", data)
-                this.fire("package-removed",{});
+                this.fire("package-removed",{package: this.url});
             },
 
             handleError:function (e) {
                 console.log("error: ", e)
                 this.fire("package-remove-error",{"error": e.detail});
             }
-
-
-
-
-
-
         });
     </script>
 </dom-module>

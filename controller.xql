@@ -21,7 +21,12 @@ declare variable $login := login-helper:get-login-method();
 request:set-attribute("betterform.filter.ignoreResponseBody", "true"),
 if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-        <redirect url="{request:get-uri()}/index.html"/>
+        <redirect url="{request:get-uri()}/"/>
+    </dispatch>
+else if ($exist:path = "/") then
+(: forward root path to index.xql :)
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="index.html"/>
     </dispatch>
 
 else if (ends-with($exist:path, ".html")) then
@@ -32,6 +37,7 @@ else if (ends-with($exist:path, ".html")) then
       return
           if ($user and sm:is-dba($user)) then (
               <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                  {$login("org.exist.login", (), true())}
                   <cache-control cache="yes"/>
               </dispatch>
 
@@ -63,7 +69,15 @@ else if (ends-with($exist:path, ".html")) then
       <fail>{$err:description}</fail>
     </response>
 }
+
+else if (matches($exist:path, ".xql/?$")) then
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        { $login("org.exist.login", (), true()) }
+        <set-attribute name="$exist:path" value="{$exist:path}"/>
+    </dispatch>
+
 else if (starts-with($exist:path, "/packages/")) then
+    let $log := util:log("info", $exist:path)
     let $funcs := util:list-functions("http://exist-db.org/apps/dashboard/packages/rest")
     return (
       response:set-header("Cache-Control", "no-cache"),

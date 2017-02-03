@@ -73,13 +73,13 @@ element for displaying package metadata
             #info{
                 position: absolute;
                 top:10px;
-                right:50px;
+                right:10px;
             }
 
             ::content .appFunctions{
                 position: absolute;
                 top:0px;
-                right:10px;
+                right:32px;
             }
             .type{
                 position: absolute;
@@ -89,6 +89,7 @@ element for displaying package metadata
                 left:130px;
                 top:6px;
             }
+
             .application{
                 color:var(--paper-blue-700);
             }
@@ -113,9 +114,14 @@ element for displaying package metadata
                 type: {
                     type: String,
                 },
-                foo: {
+                status: {
                     type: String,
-                    value:"foo"
+                },
+                installed: {
+                    type: String
+                },
+                available: {
+                    type: String
                 }
 //                reflectToAttribute: true
             },

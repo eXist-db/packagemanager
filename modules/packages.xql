@@ -183,7 +183,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         false()
                 let $status := if ($app/@status = 'installed') then 'installed' else 'notInstalled'
                 return
-                    <existdb-package-descriptor tabindex="0" data-name="{$app/name/string()}" status="{$status}" type="{$app/type}">
+                    <existdb-package-descriptor tabindex="0" data-name="{$app/name/string()}" status="{$status}" type="{$app/type}" installed="{$installed}" available="{$available}">
                         { if ($hasNewer) then attribute data-update { "true" } else () }
                         <div class="packageIconArea">
                         {
@@ -196,6 +196,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
 
                         <div class="shortTitle">
                             <h3>{$app/title/text()}</h3>
+<!--
                             {
                                 if ($app/@available) then
                                     if ($hasNewer) then (
@@ -215,6 +216,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                 else
                                     <p>Version: {$app/version/text()}</p>
                             }
+-->
                             {
                                 if ($app/@size) then
                                     <p>Size: { $app/@size idiv 1024 }k</p>
@@ -231,9 +233,9 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         <div class="appFunctions">
                             {
                             if ($app/@status = "installed") then
-                            <existdb-package-remove-action url="{$app/@path}" abbrev="{$app/abbrev}" type="application"></existdb-package-remove-action>
+                                <existdb-package-remove-action url="{$app/@path}" abbrev="{$app/abbrev}" type="application"></existdb-package-remove-action>
                             else
-                            <existdb-package-install-action url="{$app/@path}" abbrev="{$app/abbrev}" type="application" version="{$app/version}"></existdb-package-install-action>
+                                <existdb-package-install-action url="{$app/name}" abbrev="{$app/abbrev}" type="application" version="{$app/version}"></existdb-package-install-action>
                             }
                         </div>
                         {
