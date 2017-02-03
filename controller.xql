@@ -37,7 +37,7 @@ else if (ends-with($exist:path, ".html")) then
       return
           if ($user and sm:is-dba($user)) then (
               <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                  {$login("org.exist.login", (), true())}
+                  {$user}
                   <cache-control cache="yes"/>
               </dispatch>
 
