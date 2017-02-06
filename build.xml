@@ -30,6 +30,7 @@
         <copy file="expath-pkg.xml" todir="${build.dir}/bundled"/>
         <copy file="configuration.xml" todir="${build.dir}/bundled"/>
         <copy file="repo.xml" todir="${build.dir}/bundled"/>
+        <copy file="icon.png" todir="${build.dir}/bundled"/>
         <copydir src="${basedir}/modules" dest="${build.dir}/bundled/modules" />
         <copydir src="${basedir}/resources" dest="${build.dir}/bundled/resources" />
 
