@@ -53,12 +53,6 @@ a web component implementing eXistdb packagemanager
                 --vaadin-upload-button-add: {
                     background: var(--paper-blue-700);
                 };
-                /*
-                                --paper-progress-container:{
-                                    width: 100%;
-                                    display: block;
-                                };
-                */
             }
 
             app-header-layout app-header.app-header {
@@ -112,15 +106,6 @@ a web component implementing eXistdb packagemanager
                 height: 40px;
             }
 
-            /*
-                        paper-fab {
-                            position: fixed;
-                            z-index: 10;
-                            bottom: 20px;
-                            right: 20px;
-                            --paper-fab-background: var(--paper-blue-700);
-                        }
-            */
             #packageList {
                 margin-bottom: 100px;
             }
@@ -140,29 +125,17 @@ a web component implementing eXistdb packagemanager
 
             }
 
-            /*
-                        ::content existdb-package-descriptor[type]:before{
-                            font-size:11px;
-                            padding: 3px;
-                            display: inline;
-                        }
-                        ::content existdb-package-descriptor[type="application"]:before{
-                            content: "Application";
-                            color:var(--paper-blue-700);
-                        }
-                        ::content existdb-package-descriptor[type="library"]:before{
-                            content: "Library";
-                            color:var(--paper-light-green-700);
-                        }
-            */
             .paper-progress {
                 width: 50%;
-                float: right;
+                /*float: right;*/
                 display: block;
                 margin-top: -2px;
 
                 --paper-progress-active-color: var(--paper-green-700);
                 --paper-progress-height: 2px;
+            }
+            #rightprogress{
+                float:right;
             }
 
             #toast {
@@ -195,7 +168,7 @@ a web component implementing eXistdb packagemanager
                    method="get" handle-as="text"
                    on-response="handleLocalItems"
                    url="/exist/apps/packagemanager/packages/?&format=manager&type=local"
-                   auto></iron-ajax>
+                   on-error="_handleLocalError"></iron-ajax>
 
         <iron-ajax id="loadAvailable"
                    verbose with-credentials
@@ -216,7 +189,8 @@ a web component implementing eXistdb packagemanager
                     <paper-tab id="installedTab">Installed</paper-tab>
                     <paper-tab id="availableTab">Available</paper-tab>
                 </paper-tabs>
-                <paper-progress id="progress" class="paper-progress" value="" hidden></paper-progress>
+                <paper-progress id="leftprogress" class="paper-progress" value="" hidden></paper-progress>
+                <paper-progress id="rightprogress" class="paper-progress" value="" hidden></paper-progress>
 
             </app-header>
             <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
@@ -274,11 +248,6 @@ a web component implementing eXistdb packagemanager
                         }
                     }
                 },
-                progress: {
-                    type: Number,
-                    value: 0,
-                    reflectToAttribute: true
-                }
             },
             listeners: {
                 'installedTab.tap': 'switchToInstalled',
@@ -316,6 +285,7 @@ a web component implementing eXistdb packagemanager
                     console.log("Upload error: ", e.detail)
                     this._toastError("Upload failed for: " + e.detail.file)
                 });
+                this.switchToInstalled()
             },
 
             detached: function () {
@@ -325,18 +295,26 @@ a web component implementing eXistdb packagemanager
 
             handleLocalItems: function (data) {
                 this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
+                this.$.leftprogress.value = 100
+                var self = this;
+                setTimeout(function () {
+                    self.$.leftprogress.value = 0
+                }, 600)
+
+                this.$.leftprogress.indeterminate = false
+                this.$.leftprogress.hidden=true
             },
 
             handleAvailableItems: function (data) {
                 this.$.availableItemList.innerHTML = this.$.loadAvailable.lastResponse
-                this.$.progress.value = 100
+                this.$.rightprogress.value = 100
                 var self = this;
                 setTimeout(function () {
-                    self.$.progress.value = 0
+                    self.$.rightprogress.value = 0
                 }, 600)
 
-                this.$.progress.indeterminate = false
-                this.$.progress.hidden=true
+                this.$.rightprogress.indeterminate = false
+                this.$.rightprogress.hidden=true
 
             },
 
@@ -349,6 +327,9 @@ a web component implementing eXistdb packagemanager
                 this.entryAnimation = 'slide-from-left-animation';
                 this.exitAnimation = 'slide-right-animation';
                 this.$.pages.selected = 0;
+                this.$.leftprogress.indeterminate = true
+                this.$.leftprogress.hidden=false
+                this.$.loadInstalled.generateRequest();
             },
 
             switchToAvailable: function (e) {
@@ -356,8 +337,8 @@ a web component implementing eXistdb packagemanager
                 this.exitAnimation = 'slide-left-animation';
                 this.$.pages.selected = 1;
                 console.log("location: ", location.host)
-                this.$.progress.indeterminate = true
-                this.$.progress.hidden=false
+                this.$.rightprogress.indeterminate = true
+                this.$.rightprogress.hidden=false
                 this.$.loadAvailable.generateRequest();
 
             },
@@ -395,12 +376,20 @@ a web component implementing eXistdb packagemanager
                 console.log('animation done!');
             },
 
+            _handleLocalError:function (e) {
+                console.log("loading of available packages failed", e.detail.error)
+                this.$.leftprogress.indeterminate = false;
+                this.$.leftprogress.value = 0;
+                this._toastError('loading of available packages failed')
+                this.$.leftprogress.hidden=true
+            },
+
             _handleLoadAvailableError: function (e) {
                 console.log("loading of available packages failed", e.detail.error)
-                this.$.progress.indeterminate = false;
-                this.$.progress.value = 0;
+                this.$.rightprogress.indeterminate = false;
+                this.$.rightprogress.value = 0;
                 this._toastError('loading of available packages failed')
-                this.$.progress.hidden=true
+                this.$.rightprogress.hidden=true
             },
 
             _hideToast: function (e) {
