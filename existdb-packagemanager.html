@@ -185,6 +185,9 @@ a web component implementing eXistdb packagemanager
             [nolibs='false'] ::content existdb-package-descriptor[type='library']{
                 display: block;
             }
+            ::content .upgrade{
+                color:var(--paper-red-700);
+            }
 
         </style>
         <iron-ajax id="loadInstalled"
@@ -311,7 +314,7 @@ a web component implementing eXistdb packagemanager
                 });
                 this.$.uploader.addEventListener('upload-error', function (e) {
                     console.log("Upload error: ", e.detail)
-                    this.$.uploadError("Upload failed for: " + e.detail.file)
+                    this._toastError("Upload failed for: " + e.detail.file)
                 });
             },
 

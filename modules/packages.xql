@@ -196,7 +196,6 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
 
                         <div class="shortTitle">
                             <h3>{$app/title/text()}</h3>
-                            <!-- <p>Version: {$app/version/text()}</p>-->
                             {
                                 if ($app/@available) then
                                     if ($hasNewer) then (
@@ -208,15 +207,14 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                                                 ()
                                         }
                                         </p>,
-                                        <div class="changes" style="display: none;">
+                                        <p class="changes" style="display: none;">
                                         { $app/changelog/change[@version = $available]/node() }
-                                        </div>
+                                        </p>
                                     ) else
                                         ()
                                 else
                                     <p>Version: {$app/version/text()}</p>
                             }
-
                             {
                                 if ($app/@size) then
                                     <p>Size: { $app/@size idiv 1024 }k</p>
