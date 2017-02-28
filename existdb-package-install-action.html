@@ -65,6 +65,9 @@ implements an interaction with the package repository
             },
 
             submit: function (e) {
+                e.stopPropagation();
+                e.preventDefault()
+
                 this.$.installform.submit();
             },
 

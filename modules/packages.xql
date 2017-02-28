@@ -183,7 +183,7 @@ declare %private function packages:display($repoURL as xs:anyURI?, $app as eleme
                         false()
                 let $status := if ($app/@status = 'installed') then 'installed' else 'notInstalled'
                 return
-                    <existdb-package-descriptor tabindex="0" data-name="{$app/name/string()}" status="{$status}" type="{$app/type}" installed="{$installed}" available="{$available}">
+                    <existdb-package-descriptor tabindex="0" data-name="{$app/name/string()}" status="{$status}" type="{$app/type}" installed="{$installed}" available="{$available}" abbrev="{$app/abbrev}" short-title="{$app/title/text()}">
                         { if ($hasNewer) then attribute data-update { "true" } else () }
                         <div class="packageIconArea">
                         {

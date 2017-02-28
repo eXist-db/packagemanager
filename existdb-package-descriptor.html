@@ -130,8 +130,10 @@ element for displaying package metadata
                 'info.tap': 'handleInfo',
 //                'delete.tap': 'handleDelete'
             },
-            
+
             handleInfo: function (e) {
+                e.stopPropagation()
+                e.preventDefault()
                var detail = this.querySelector('table');
                console.log(detail)
                 if(detail.hasAttribute("class")){
@@ -141,9 +143,32 @@ element for displaying package metadata
                 }
 
             },
-            
+
+            attached: function () {
+                this.listen(this, 'tap', '_handleTap')
+                this.listen(this, 'keyup', '_handleEnter')
+            },
+
+
             handleDelete: function (e) {
                 
+            },
+
+            _handleTap: function (e) {
+                this._openApp()
+            },
+
+            _handleEnter: function (e) {
+                console.log("key ", e)
+                if (e.keyCode == 13) {
+                    this._openApp()
+                }
+            },
+
+            _openApp: function () {
+                if(this.status == 'installed' && this.type== 'application'){
+                    this.querySelector("a[target='_blank']").click();
+                }
             },
 
             _isInstalled: function () {

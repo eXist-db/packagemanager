@@ -24,7 +24,7 @@
 <link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
-
+<link rel="import" href="bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="existdb-package-descriptor.html">
 
@@ -53,6 +53,8 @@ a web component implementing eXistdb packagemanager
                 --vaadin-upload-button-add: {
                     background: var(--paper-blue-700);
                 };
+
+                --paper-toggle-button-checked-button-color:var(--paper-blue-700);
             }
 
             app-header-layout app-header.app-header {
@@ -62,6 +64,7 @@ a web component implementing eXistdb packagemanager
 
             paper-tabs {
                 background: white;
+                max-width: 50%;
             }
 
             #packageList {
@@ -126,16 +129,12 @@ a web component implementing eXistdb packagemanager
             }
 
             .paper-progress {
-                width: 50%;
-                /*float: right;*/
+                width: 100%;
                 display: block;
                 margin-top: -2px;
 
-                --paper-progress-active-color: var(--paper-green-700);
+                --paper-progress-active-color: var(--paper-blue-500);
                 --paper-progress-height: 2px;
-            }
-            #rightprogress{
-                float:right;
             }
 
             #toast {
@@ -150,7 +149,9 @@ a web component implementing eXistdb packagemanager
 
             paper-toggle-button{
                 font-size:12px;
-                float:right;
+                position: absolute;
+                top:76px;
+                right:20px;
             }
             [nolibs='true'] ::content existdb-package-descriptor[type='library']{
                 display: none;
@@ -162,6 +163,9 @@ a web component implementing eXistdb packagemanager
                 color:var(--paper-red-700);
             }
 
+            paper-input[type='search']{
+                width:140px;
+            }
         </style>
         <iron-ajax id="loadInstalled"
                    verbose with-credentials
@@ -183,14 +187,17 @@ a web component implementing eXistdb packagemanager
                 <app-toolbar sticky>
                     <iron-icon icon="apps"></iron-icon>
                     <div main-title>Package Manager</div>
+                    <paper-input id="search" type="search" no-label-float tabindex="0" on-keyup="_handleSearchInput">
+                        <iron-icon icon="search" prefix></iron-icon>
+                        <!--<iron-icon icon="clear" suffix></iron-icon>-->
+                    </paper-input>
                     <paper-toggle-button id="libToggle">show libraries</paper-toggle-button>
                 </app-toolbar>
                 <paper-tabs selected="{{selected}}">
                     <paper-tab id="installedTab">Installed</paper-tab>
                     <paper-tab id="availableTab">Available</paper-tab>
                 </paper-tabs>
-                <paper-progress id="leftprogress" class="paper-progress" value="" hidden></paper-progress>
-                <paper-progress id="rightprogress" class="paper-progress" value="" hidden></paper-progress>
+                <paper-progress id="progress" class="paper-progress" value="" hidden></paper-progress>
 
             </app-header>
             <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
@@ -271,6 +278,11 @@ a web component implementing eXistdb packagemanager
                     var file = event.detail.file;
                     file.uploadTarget = '/exist/apps/packagemanager/modules/install.xql?name=' + file.name;
                 });
+                this.$.uploader.addEventListener('upload-progress', function (event) {
+                    console.log('upload progress: ', event.detail.file);
+                    var file = event.detail.file;
+                });
+
                 var that = this
                 this.$.uploader.addEventListener('upload-success', function (e) {
                     console.log("onuploadsuccess", e)
@@ -286,7 +298,18 @@ a web component implementing eXistdb packagemanager
                     console.log("Upload error: ", e.detail)
                     this._toastError("Upload failed for: " + e.detail.file)
                 });
+
+                this.addEventListener('keyup',function(e){
+                    if(e.keyCode == 27){
+                        console.log("ESC")
+                        this.$.search.value=""
+                        this._handleSearchInput(e)
+                        this.$.search.focus()
+                    }
+                })
+
                 this.switchToInstalled()
+                this.$.search.focus()
             },
 
             detached: function () {
@@ -297,29 +320,50 @@ a web component implementing eXistdb packagemanager
                 this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt')
             },
 
+            _handleSearchInput: function (e) {
+                console.log("search input: ", e.detail, this.$.search.value)
+                var s = this.$.search.value.toLowerCase()
+                var descriptors = this.querySelectorAll('existdb-package-descriptor')
+                console.log(descriptors)
+
+                for (i = 0; i < descriptors.length; ++i) {
+                    var descriptor = descriptors[i]
+
+                    if(!descriptor.getAttribute('abbrev').toLowerCase().startsWith(s) && !descriptor.getAttribute('short-title').toLowerCase().startsWith(s)){
+                        descriptor.setAttribute('hidden','')
+                    }else if(descriptor.hasAttribute('hidden')){
+                        descriptor.removeAttribute('hidden')
+                    }
+                }
+                var hiddenItems = this.querySelectorAll("existdb-package-descriptor[hidden]")
+                if(hiddenItems.length ==  descriptors.length -1){
+                    var found = this.querySelector("existdb-package-descriptor:not([hidden])")
+                    console.log("only one left", found)
+                    found.focus()
+                }
+            },
+
             handleLocalItems: function (data) {
                 this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
-                this.$.leftprogress.value = 100
-                var self = this;
-                setTimeout(function () {
-                    self.$.leftprogress.value = 0
-                }, 600)
-
-                this.$.leftprogress.indeterminate = false
-                this.$.leftprogress.hidden=true
+                this.$.pages.selected = 0;
+                this._resetProgress()
             },
 
             handleAvailableItems: function (data) {
                 this.$.availableItemList.innerHTML = this.$.loadAvailable.lastResponse
-                this.$.rightprogress.value = 100
+                this.$.pages.selected = 1;
+                this._resetProgress()
+            },
+
+            _resetProgress:function () {
+                this.$.progress.value = 100
                 var self = this;
                 setTimeout(function () {
-                    self.$.rightprogress.value = 0
-                }, 600)
+                    self.$.progress.value = 0
+                    self.$.progress.indeterminate = false
+                }, 1000)
 
-                this.$.rightprogress.indeterminate = false
-                this.$.rightprogress.hidden=true
-
+                this.$.progress.hidden=true
             },
 
             showUpload: function (e) {
@@ -330,19 +374,19 @@ a web component implementing eXistdb packagemanager
             switchToInstalled: function (e) {
                 this.entryAnimation = 'slide-from-left-animation';
                 this.exitAnimation = 'slide-right-animation';
-                this.$.pages.selected = 0;
-                this.$.leftprogress.indeterminate = true
-                this.$.leftprogress.hidden=false
+//                this.$.pages.selected = 0;
+                this.$.progress.indeterminate = true
+                this.$.progress.hidden=false
                 this.$.loadInstalled.generateRequest();
             },
 
             switchToAvailable: function (e) {
                 this.entryAnimation = 'slide-from-right-animation';
                 this.exitAnimation = 'slide-left-animation';
-                this.$.pages.selected = 1;
+//                this.$.pages.selected = 1;
                 console.log("location: ", location.host)
-                this.$.rightprogress.indeterminate = true
-                this.$.rightprogress.hidden=false
+                this.$.progress.indeterminate = true
+                this.$.progress.hidden=false
                 this.$.loadAvailable.generateRequest();
 
             },
@@ -358,7 +402,6 @@ a web component implementing eXistdb packagemanager
 
             _handlePackageInstalled: function (e) {
                 this._toast('Package has been installed: ' + e.detail.package)
-//                this.selected=0;
                 this.$.loadInstalled.generateRequest()
                 this.selected = 0
 
@@ -382,18 +425,20 @@ a web component implementing eXistdb packagemanager
 
             _handleLocalError:function (e) {
                 console.log("loading of available packages failed", e.detail.error)
-                this.$.leftprogress.indeterminate = false;
-                this.$.leftprogress.value = 0;
+                this._resetAndHideProgress()
                 this._toastError('loading of available packages failed')
-                this.$.leftprogress.hidden=true
             },
 
             _handleLoadAvailableError: function (e) {
                 console.log("loading of available packages failed", e.detail.error)
-                this.$.rightprogress.indeterminate = false;
-                this.$.rightprogress.value = 0;
+                this._resetAndHideProgress()
                 this._toastError('loading of available packages failed')
-                this.$.rightprogress.hidden=true
+            },
+
+            _resetAndHideProgress: function () {
+                this.$.progress.indeterminate = false;
+                this.$.progress.value = 0;
+                this.$.progress.hidden=true
             },
 
             _hideToast: function (e) {

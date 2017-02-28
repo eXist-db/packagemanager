@@ -67,6 +67,8 @@ implements an interaction with the package repository
             },
 
             submit: function (e) {
+                e.stopPropagation()
+                e.preventDefault()
                 if (this.$.removeform.abbrev.value == "packagemanager") {
                     this.fire("packagemanager-remove-attempt")
                     return
