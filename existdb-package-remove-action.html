@@ -23,18 +23,18 @@ implements an interaction with the package repository
 
             }
         </style>
-<!--
-        <iron-ajax id="removePackage"
-                   verbose with-credentials
-                   body='{"package-url": url, "abbrev": abbrev, "action":"remove","type":type}'
-                   method="post" handle-as="json"
-                   on-response="handleResponse"
-                   on-error="handleError"
-                   url="/exist/apps/packagemanager/modules/install.xql"
-                   ></iron-ajax>
--->
+        <!--
+                <iron-ajax id="removePackage"
+                           verbose with-credentials
+                           body='{"package-url": url, "abbrev": abbrev, "action":"remove","type":type}'
+                           method="post" handle-as="json"
+                           on-response="handleResponse"
+                           on-error="handleError"
+                           url="/exist/apps/packagemanager/modules/install.xql"
+                           ></iron-ajax>
+        -->
 
-        <paper-icon-button id="removeBtn" icon="delete"></paper-icon-button>
+        <paper-icon-button id="removeBtn" icon="delete" title="remove this package"></paper-icon-button>
         <form id="removeform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>
@@ -67,28 +67,32 @@ implements an interaction with the package repository
             },
 
             submit: function (e) {
+                if (this.$.removeform.abbrev.value == "packagemanager") {
+                    this.fire("packagemanager-remove-attempt")
+                    return
+                }
                 //do it
                 console.log("success: ", e);
 
                 var r = confirm("Really remove this package?");
-                if(r == true){
-/*
-                    var url = "/exist/apps/packagemanager/modules/install.xql?package-url=" + this.url + "&abbrev=" + this.abbrev + '&action=' + this.action + '&type=' + this.type;
-                    this.$.removePackage.url = url;
-*/
+                if (r == true) {
+                    /*
+                     var url = "/exist/apps/packagemanager/modules/install.xql?package-url=" + this.url + "&abbrev=" + this.abbrev + '&action=' + this.action + '&type=' + this.type;
+                     this.$.removePackage.url = url;
+                     */
 //                    this.$.removePackage.generateRequest();
                     this.$.removeform.submit();
                 }
             },
 
             handleResponse: function (data) {
-              console.log("response: ", data)
-                this.fire("package-removed",{package: this.url});
+                console.log("response: ", data)
+                this.fire("package-removed", {package: this.url});
             },
 
-            handleError:function (e) {
+            handleError: function (e) {
                 console.log("error: ", e)
-                this.fire("package-remove-error",{"error": e.detail});
+                this.fire("package-remove-error", {"error": e.detail});
             }
         });
     </script>

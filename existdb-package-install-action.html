@@ -23,7 +23,7 @@ implements an interaction with the package repository
             }
         </style>
 
-        <paper-icon-button id="install" icon="file-download"></paper-icon-button>
+        <paper-icon-button id="install" icon="file-download" title="install this package"></paper-icon-button>
         <form id="installform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>
