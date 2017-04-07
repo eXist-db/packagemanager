@@ -29,46 +29,34 @@ else if ($exist:path = "/") then
         <redirect url="index.html"/>
     </dispatch>
 
-else if (ends-with($exist:path, ".html")) then
+else if (ends-with($exist:resource, "login.html")) then (
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <cache-control cache="yes"/>
+    </dispatch>
+)
+else if (ends-with($exist:resource, ".html")) then
     (: the html page is run through view.xql to expand templates :)
     try {
-      let $loggedIn := $login("org.exist.login", (), true())
-      let $user := request:get-attribute("org.exist.login.user")
-      return
-          if ($user and sm:is-dba($user)) then (
-              <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                  {$user}
-                  <cache-control cache="yes"/>
-              </dispatch>
-
-(:
-              <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <view>
-                    <forward url="../../modules/view.xql">
-                        {$user}
-                        <set-header name="Cache-Control" value="no-cache"/>
-                    </forward>
-                </view>
-                <error-handler>
-              			<forward url="../../error-page.html" method="get"/>
-              			<forward url="../../modules/view.xql"/>
-            		</error-handler>
-            </dispatch>
-:)
-          )
-          else (
-              response:set-status-code(401),
-              <response>
-                <user>{$user}</user>
-                  <fail>Wrong user or password</fail>
-              </response>
-          )
-} catch * {
-    response:set-status-code(500),
-    <response>
-      <fail>{$err:description}</fail>
-    </response>
-}
+        let $loggedIn := $login("org.exist.login", (), true())
+        let $user := request:get-attribute("org.exist.login.user")
+        return
+            if ($user and sm:is-dba($user)) then (
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    {$user}
+                    <cache-control cache="yes"/>
+                </dispatch>
+            )
+            else (
+                <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+                    <redirect url="login.html" />
+                </dispatch>
+            )
+    } catch * {
+        response:set-status-code(500),
+        <response>
+          <fail>{$err:description}</fail>
+        </response>
+    }
 
 else if (matches($exist:path, ".xql/?$")) then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
