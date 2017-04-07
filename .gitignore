@@ -1,1 +1,9 @@
-bower_components
+# IDEs
+\.idea/
+
+# packages
+node_modules/
+bower_components/
+
+# artifacts
+build/
