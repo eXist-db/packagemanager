@@ -147,6 +147,9 @@ element for displaying package metadata
             attached: function () {
                 this.listen(this, 'tap', '_handleTap')
                 this.listen(this, 'keyup', '_handleEnter')
+                this.querySelector("a[target='_blank']").addEventListener("click", function (e) {
+                    e.preventDefault()
+                })
             },
 
 
@@ -167,7 +170,8 @@ element for displaying package metadata
 
             _openApp: function () {
                 if(this.status == 'installed' && this.type== 'application'){
-                    this.querySelector("a[target='_blank']").click();
+                    var targetUrl = this.querySelector("a[target='_blank']").href
+                    window.open(targetUrl)
                 }
             },
 
