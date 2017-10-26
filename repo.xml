@@ -10,5 +10,5 @@
     <target>packagemanager</target>
     <prepare></prepare>
     <finish/>
-    <permissions xmlns:repo="http://exist-db.org/xquery/repo" user="admin" group="dba" mode="rwxrwx---"/>
+    <permissions xmlns:repo="http://exist-db.org/xquery/repo" user="admin" group="dba" mode="rwxrwxr-x"/>
 </meta>

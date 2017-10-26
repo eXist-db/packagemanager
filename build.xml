@@ -4,11 +4,12 @@
     <property name="project.version" value="${package(version)}"/>
     <property name="project.app" value="${package(abbrev)}"/>
     <property name="build.dir" value="build"/>
-    <target name="xar">
-        <mkdir dir="${build.dir}"/>
-        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="bower.json build.xml ${build.dir}/**, node_modules/**, doc/**, gulpfile.js, package.json"/>
-    </target>
 
+    <target name="clean">
+        <echo message="Deleting xar files..."/>
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    </target>
 
     <target name="clean-polymer-build">
         <delete dir="${build.dir}/unbundled"/>
@@ -23,9 +24,18 @@
         </exec>
     </target>
 
-    <target name="production-xar" depends="polymer-build-production">
+    <target name="xar" depends="clean,polymer-build-production">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/${project.app}-${project.version}" />
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar"
+             excludes="bower.json,build.xml,${build.dir}/*,node_modules/*,doc/*,gulpfile.js,package.json"/>
+    </target>
+
+    <target name="production-xar" depends="clean,polymer-build-production">
         <mkdir dir="${build.dir}"/>
 
+        <copy file="login.html" todir="${build.dir}/bundled"/>
+        <copy file="index.html" todir="${build.dir}/bundled"/>
         <copy file="controller.xql" todir="${build.dir}/bundled"/>
         <copy file="expath-pkg.xml" todir="${build.dir}/bundled"/>
         <copy file="configuration.xml" todir="${build.dir}/bundled"/>
@@ -34,6 +44,6 @@
         <copydir src="${basedir}/modules" dest="${build.dir}/bundled/modules" />
         <copydir src="${basedir}/resources" dest="${build.dir}/bundled/resources" />
 
-        <zip basedir="${build.dir}/bundled" destfile="${build.dir}/${project.app}-${project.version}-prod.xar" excludes="demo"/>
+        <zip basedir="${build.dir}/bundled" destfile="${build.dir}/${project.app}-${project.version}.xar" excludes="demo"/>
     </target>
 </project>
