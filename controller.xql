@@ -29,14 +29,19 @@ let $login := login:set-user($local:login-domain, (), false())
 let $user := request:get-attribute($local:login-domain || ".user")
 
 return
-if (not(local:user-allowed($user)))
+if ($exist:path eq '/login') then (
+      <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+          <forward url="{$exist:controller}/login.html"/>
+          <cache-control cache="yes"/>
+      </dispatch>
+
+)
+else if (not(local:user-allowed($user)))
 then (
-    response:set-status-code(401),
-    <response>
-        <user>{$user}</user>
-        <path>{$exist:path}</path>
-        <error>Wrong user or password</error>
-    </response>
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <redirect url="{$exist:controller}/login"/>
+    </dispatch>
+
 )
 else if ($exist:path eq '') then
     <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
@@ -46,7 +51,7 @@ else if ($exist:path = "/")
 then (
 (: forward root path to index.xql :)
       <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-          <forward url="index.html"/>
+          <forward url="{$exist:controller}/index.html"/>
           <cache-control cache="yes"/>
       </dispatch>
 )
