@@ -14,6 +14,20 @@ $ polymer serve
 
 ## Building Your Application
 
+For production (*creates build/packagemanager-x.x.x.xar*)
+
+```sh
+ant
+```
+
+For development (*creates build/packagemanager-dev-x.x.x.xar*)
+
+```sh
+ant dev-xar
+```
+
+### only polymer
+
 ```
 $ polymer build
 ```
@@ -49,12 +63,10 @@ you can synchronize the local workspace with the app deployed in eXistdb.
 
 Every changed file will automatically deployed into the `target' collection
  
- `/db/apps/[target]`
+`/db/apps/[target]`
  
- To make this and other goodies work you'll need to have Nodejs installed
- and call
- 
- `npm install`
-  
-  once. 
+To make this and other goodies work you'll need to have Nodejs installed
+and call `npm install` once.
+
+
   

@@ -8,7 +8,7 @@
     <copyright>true</copyright>
     <type>application</type>
     <target>packagemanager</target>
-    <prepare></prepare>
+    <prepare/>
     <finish/>
-    <permissions xmlns:repo="http://exist-db.org/xquery/repo" user="admin" group="dba" mode="rwxrwx---"/>
+    <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
 </meta>

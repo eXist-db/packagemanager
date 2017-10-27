@@ -1,3 +1,17 @@
 {
-  "shell": "index.html"
+  "shell": "index.html",
+  "builds": [
+    {
+      "name": "production",
+      "bundle": true,
+      "js": {"compile": true, "minify": true},
+      "css": {"minify": true},
+      "html": {"minify": true}
+    },
+    {
+      "name": "development",
+      "bundle": false,
+      "js": {"compile": true}
+    }
+  ]
 }
