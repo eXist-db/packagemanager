@@ -6,8 +6,6 @@ xquery version "3.0";
  :)
 module namespace config="http://exist-db.org/xquery/apps/config";
 
-import module namespace templates="http://exist-db.org/xquery/templates" at "templates.xql";
-
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace expath="http://expath.org/ns/pkg";
 
@@ -60,10 +58,6 @@ declare function config:repo-descriptor() as element(repo:meta) {
  :)
 declare function config:expath-descriptor() as element(expath:package) {
     $config:expath-descriptor
-};
-
-declare %templates:wrap function config:app-title($node as node(), $model as map(*)) as text() {
-    $config:expath-descriptor/expath:title/text()
 };
 
 declare function config:app-meta($node as node(), $model as map(*)) as element()* {
