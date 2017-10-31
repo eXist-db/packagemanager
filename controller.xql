@@ -54,8 +54,7 @@ return (
     then (
         (: forward root path to index.xql :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <forward url="index.html"/>
-            <cache-control cache="yes"/>
+            <redirect url="/exist/apps/{$exist:controller}/index.html"/>
         </dispatch>
     )
     else if (matches($exist:path, ".xql/?$"))

@@ -9,7 +9,11 @@
     <property name="bundle.dir" value="build/production"/>
     <property name="dev-bundle.dir" value="build/development"/>
 
-    <target name="polymer-build">
+    <target name="clean" description="clean up everything">
+        <delete dir="${basedir}/build/"/>
+    </target>
+
+    <target name="polymer-build" depends="clean">
         <exec executable="polymer">
             <arg value="build"/>
         </exec>
@@ -31,23 +35,10 @@
         <zip basedir="${bundle.dir}" destfile="${build.dir}/${project.app}-${project.version}.xar" />
     </target>
 
-    <target name="dev-xar" depends="polymer-build">
-        <copy todir="${dev-bundle.dir}">
-            <fileset dir="${basedir}">
-                <include name="modules/**" />
-                <include name="resources/**" />
 
-                <include name="*.xml" />
-                <include name="*.xql" />
-
-                <include name="login.html" />
-                <include name="icon.png" />
-
-                <!-- only for development -->
-                <include name="doc.html" />
-                <include name="demo/**" />
-            </fileset>
-        </copy>
-        <zip basedir="${dev-bundle.dir}" destfile="${build.dir}/${project.app}-dev-${project.version}.xar" />
+    <target name="dev-xar" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <zip basedir="." destfile="${build.dir}/${project.app}-${project.version}.xar"
+             excludes="build.xml bower.json ${build.dir}/**, node_modules/**, doc/**, gulpfile.js, package.json polymer.json"/>
     </target>
 </project>

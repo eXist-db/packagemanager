@@ -1,0 +1,47 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<!--
+`repo-icon`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="repo-icon">
+    <template>
+        <style>
+            :host {
+                display:inline-block;
+                width: 100%;
+
+            }
+            img{
+                display: block;
+
+            }
+        </style>
+        <img src="[[src]]">
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'repo-icon',
+
+            properties: {
+                src:{
+                    type:String,
+                    reflectToAttribute:true,
+                    notify:true
+                }
+            },
+
+
+            attached: function () {
+            }
+
+
+
+        });
+    </script>
+</dom-module>
