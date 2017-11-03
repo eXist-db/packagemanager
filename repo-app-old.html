@@ -1,0 +1,186 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+
+
+<!--
+`repo-app`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="repo-app">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                flex-direction: row;
+                padding: 30px;
+                position: relative;
+                background: white;
+                margin:10px 0;
+                border-top:1px solid var(--paper-grey-300);
+                border-bottom:1px solid var(--paper-grey-300);
+                min-height:70px;
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+            }
+
+/*
+            .wrapper {
+                display: flex;
+                flex-wrap:wrap;
+            }
+
+            .wrapper ::content > * {
+                padding: 10px;
+            }
+*/
+
+            paper-icon-button {
+                min-height: 24px;
+                min-width: 24px;
+            }
+
+            #info{
+                position: absolute;
+                top:10px;
+                right:10px;
+            }
+            existdb-package-remove-action{
+                position: absolute;
+                top:10px;
+                right:40px;
+            }
+
+            ::content repo-icon{
+                max-width:100px;
+                display: inline-block;
+            }
+            ::content repo-icon img{
+                max-width: 100px;
+            }
+            .wrapper{
+                display: inline-block;
+                padding-left:20px;
+            }
+
+
+        </style>
+        <content select="repo-icon"></content>
+        <div class="wrapper" url="[[url]]">
+            <!--<div class$="[[type]] type">[[type]]</div>-->
+            <content></content>
+            <paper-icon-button id="info" icon="info"></paper-icon-button>
+
+            <!--<paper-icon-button id="removeBtn" icon="delete" title="remove this package"></paper-icon-button>-->
+            <existdb-package-remove-action url="{{url}}"></existdb-package-remove-action>
+
+            <!--todo: uninstall button for apps that are status=installed -->
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'repo-app',
+
+            properties: {
+
+                type: {
+                    type: String,
+                    reflectToAttribute:true
+                },
+                abbrev: {
+                    type: String,
+                    reflectToAttribute:true
+                },
+                status: {
+                    type: String,
+                },
+                installed: {
+                    type: String
+                },
+                available: {
+                    type: String
+                },
+                url: {
+                    type:String,
+                    reflectToAttribute:true
+                },
+                path:{
+                    type: String,
+                    reflectToAttribute:true
+                }
+//                reflectToAttribute: true
+            },
+
+            listeners: {
+//                'info.tap': 'handleInfo',
+//                'delete.tap': 'handleDelete'
+            },
+
+            handleInfo: function (e) {
+                e.stopPropagation()
+                e.preventDefault()
+               var detail = this.querySelector('table');
+               console.log(detail)
+                if(detail.hasAttribute("class")){
+                   detail.removeAttribute("class")
+                }else{
+                    detail.setAttribute("class","hidden")
+                }
+
+            },
+
+            attached: function () {
+                this.listen(this, 'tap', '_handleTap')
+                this.listen(this, 'keyup', '_handleEnter')
+            },
+
+            ready: function(){
+//                this.url = this.querySelector("repo-url #text");
+//                console.log("repo-url element ", this.url);
+            },
+
+            handleDelete: function (e) {
+                
+            },
+
+            _handleTap: function (e) {
+                this._openApp()
+            },
+
+            _handleEnter: function (e) {
+                console.log("key ", e)
+                if (e.keyCode == 13) {
+                    this._openApp()
+                }
+            },
+
+            _openApp: function () {
+                var isApp = this.querySelector("repo-type").textContent == 'application';
+                console.log("######## is App: ", isApp);
+
+                if(isApp){
+                    var targetUrl = this.url
+                    window.open(targetUrl)
+                }
+/*
+                if(this.status == 'installed' && this.type== 'application'){
+                    var targetUrl = this.querySelector("repo-url").href
+                    window.open(targetUrl)
+                }
+*/
+            },
+
+            _isInstalled: function () {
+                return this.status=='installed'
+            }
+
+        });
+    </script>
+</dom-module>
