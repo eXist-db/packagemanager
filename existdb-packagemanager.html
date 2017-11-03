@@ -184,7 +184,7 @@ a web component implementing eXistdb packagemanager
 
             }
 
-            ::content repo-title{
+            ::slotted(repo-title){
                 font-size:20px;
                 font-weight:500;
             }
@@ -233,7 +233,7 @@ a web component implementing eXistdb packagemanager
                    on-error="_handleLoadAvailableError"></iron-ajax>
 
         <app-header-layout fullbleed>
-            <app-header class="app-header" condenses reveals effects="waterfall" fixed>
+            <app-header slot="header" class="app-header" condenses reveals effects="waterfall" fixed>
                 <app-toolbar sticky>
                     <iron-icon icon="apps"></iron-icon>
                     <div main-title>Package Manager</div>

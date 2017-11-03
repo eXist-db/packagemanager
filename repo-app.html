@@ -1,6 +1,9 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-styles/color.html">
+<link rel="import" href="bower_components/paper-styles/typography.html">
+<link rel="import" href="existdb-package-remove-action.html">
 
 
 <!--
@@ -14,19 +17,25 @@ element for displaying package metadata
     <template>
         <style>
             :host {
+
                 display: flex;
                 flex-direction: row;
                 padding: 30px;
                 position: relative;
                 background: white;
-                margin:10px 0;
+                margin-bottom:10px;
                 border-top:1px solid var(--paper-grey-300);
                 border-bottom:1px solid var(--paper-grey-300);
                 min-height:70px;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
-                }
+                };
+
+
+            }
+            :host ::slotted(*){
+                @apply(--paper-font-common-base);
             }
 
 /*
@@ -50,11 +59,11 @@ element for displaying package metadata
                 top:10px;
                 right:10px;
             }
-            ::content repo-icon{
+            ::slotted(repo-icon){
                 max-width:100px;
                 display: inline-block;
             }
-            ::content repo-icon img{
+            ::slotted(repo-icon) img{
                 max-width: 100px;
             }
             .wrapper{
@@ -62,14 +71,58 @@ element for displaying package metadata
                 padding-left:20px;
             }
 
+            .wrapper ::slotted(repo-type){
+                display:block;
+                color:var(--paper-blue-700);
+                font-size:12px;
+                position:absolute;
+                top:0px;
+                padding-top:15px;
+            }
+
+            .wrapper ::slotted(repo-version)::before{
+                content:"version ";
+            }
+            .wrapper ::slotted(repo-title){
+                font-size:24px;
+                font-weight:500;
+                margin:10px 0;
+                display: inline-block;
+                @apply(--paper-font-common-base);
+
+            }
+            .wrapper ::slotted(repo-version){
+                display:block;
+                width:100%;
+                font-size:16px;
+            }
+
+
+            existdb-package-remove-action{
+                position: absolute;
+                top:10px;
+                right:40px;
+            }
+
+            .wrapper ::slotted(repo-name),
+            .wrapper ::slotted(repo-description),
+            .wrapper ::slotted(repo-author),
+            .wrapper ::slotted(repo-abbrev),
+            .wrapper ::slotted(repo-license),
+            .wrapper ::slotted(repo-website),
+            .wrapper ::slotted(repo-url)
+            {
+                display:none;
+            }
 
         </style>
         <content select="repo-icon"></content>
         <div class="wrapper" url="[[url]]">
             <!--<div class$="[[type]] type">[[type]]</div>-->
-            <content></content>
+            <slot></slot>
             <paper-icon-button id="info" icon="info"></paper-icon-button>
             <!--todo: uninstall button for apps that are status=installed -->
+            <existdb-package-remove-action url="{{url}}"></existdb-package-remove-action>
         </div>
     </template>
 
@@ -118,6 +171,7 @@ element for displaying package metadata
             },
 
             attached: function () {
+                console.log("repo-app attached");
                 this.listen(this, 'tap', '_handleTap')
                 this.listen(this, 'keyup', '_handleEnter')
 /*

@@ -1,0 +1,153 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="bower_components/paper-styles/color.html">
+
+<link rel="import" href="repo-app.html">
+<link rel="import" href="repo-icon.html">
+
+
+
+
+<!--
+`existdb-local-packages`
+element for displaying package metadata
+
+@demo demo/doc.html
+-->
+
+<dom-module id="existdb-local-packages">
+    <template>
+        <style>
+            body{
+                margin:0;
+                padding:0;
+            }
+            :host {
+                display: block;
+                position: relative;
+                background: whitesmoke;
+                margin:0;
+                padding:0;
+                min-height:70px;
+                /*width: 100%;*/
+
+                --paper-icon-button: {
+                    color: var(--paper-blue-300);
+                }
+            }
+            #localItemList{
+                width:100%;
+                display: block;
+                padding: 0;
+                margin:0;
+            }
+
+            ::slotted(repo-packages){
+                display: block;
+                width: 100%;
+            }
+            #progress{
+                width: 100%;
+                display: block;
+                margin-top: -2px;
+                flex-grow:5;
+
+                --paper-progress-active-color: var(--paper-blue-500);
+                --paper-progress-height: 5px;
+
+            }
+            #toast {
+                --paper-toast-background-color: var(--paper-blue-700);
+                --paper-toast-color: white;
+            }
+
+
+        </style>
+
+        <iron-ajax id="loadInstalled"
+                   verbose with-credentials
+                   method="get" handle-as="text"
+                   on-response="_handleLocalItems"
+                   url="/exist/apps/existdb-packageservice/packages/local"
+                   on-error="_handleLocalError"
+                   ></iron-ajax>
+
+
+        <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
+
+        <div id="localItemList"></div>
+
+
+        <paper-toast id="toast" text="" duration="4000"></paper-toast>
+        <paper-toast id="toastError" text="" duration="-1">
+            <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
+        </paper-toast>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'existdb-local-packages',
+
+            properties: {
+
+                url: {
+                    type:String,
+                    reflectToAttribute:true
+                }
+            },
+
+            attached: function () {
+                console.log("existdb-local-packages attached");
+                this.$.progress.indeterminate = true
+                this.$.loadInstalled.generateRequest();
+                this.$.toast.open();
+            },
+
+            _handleLocalItems: function (data) {
+                this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
+                this._resetProgress()
+            },
+
+            _handleLocalError:function (e) {
+                console.log("loading of available packages failed", e.detail.error)
+                this._resetAndHideProgress()
+                this._toastError('loading of available packages failed')
+            },
+
+            _resetProgress:function () {
+                this.$.progress.value = 100
+                var self = this;
+                setTimeout(function () {
+                    self.$.progress.value = 0
+                    self.$.progress.indeterminate = false
+                }, 1000)
+
+            },
+
+            _resetAndHideProgress: function () {
+                this.$.progress.indeterminate = false;
+                this.$.progress.value = 0;
+                this.$.progress.hidden=true
+            },
+
+            _toast: function (msg) {
+                this.$.toast.text = msg
+                this.$.toast.open()
+            },
+            _toastError: function (msg) {
+                this.$.toastError.text = msg
+                this.$.toastError.open()
+            }
+
+
+
+
+        });
+    </script>
+</dom-module>

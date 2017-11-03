@@ -34,12 +34,18 @@ implements an interaction with the package repository
                            ></iron-ajax>
         -->
 
+        <iron-ajax id="removePackage"
+                   verbose with-credentials
+                   method="post" handle-as="text"
+                   on-response="_handleResponse"
+                   url="/exist/apps/existdb-packageservice/packages/action"
+                   on-error="_handleError"></iron-ajax>
+
+
         <paper-icon-button id="removeBtn" icon="delete" title="remove this package"></paper-icon-button>
-        <form id="removeform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
+        <form id="removeform" is="iron-form" method="post" action="/exist/apps/existdb-packageservice/packages/action">
             <input type="hidden" name="package-url" value="{{url}}"/>
-            <input type="hidden" name="abbrev" value="{{abbrev}}"/>
             <input type="hidden" name="action" value="remove"/>
-            <input type="hidden" name="type" value="{{type}}"/>
         </form>
     </template>
 
@@ -51,12 +57,6 @@ implements an interaction with the package repository
             properties: {
                 url: {
                     type: String,
-                },
-                abbrev: {
-                    type: String
-                },
-                type: {
-                    type: String
                 }
             },
 
@@ -66,33 +66,37 @@ implements an interaction with the package repository
                 'iron-form-error': 'handleError'
             },
 
+            attached: function(){
+                console.log("url: ", this.url);
+            },
+
+
             submit: function (e) {
-                e.stopPropagation()
-                e.preventDefault()
-                if (this.$.removeform.abbrev.value == "packagemanager") {
+                e.stopPropagation();
+                e.preventDefault();
+
+                console.log("the form: ", this.$.removeform.body);
+
+                if (this.url.endsWith("/packagemanager")) {
                     this.fire("packagemanager-remove-attempt")
                     return
                 }
                 //do it
-                console.log("success: ", e);
+                console.log("submitting remove form: ", e);
 
                 var r = confirm("Really remove this package?");
                 if (r == true) {
-                    /*
-                     var url = "/exist/apps/packagemanager/modules/install.xql?package-url=" + this.url + "&abbrev=" + this.abbrev + '&action=' + this.action + '&type=' + this.type;
-                     this.$.removePackage.url = url;
-                     */
-//                    this.$.removePackage.generateRequest();
-                    this.$.removeform.submit();
+                    this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
+                    this.$.removePackage.generateRequest();
                 }
             },
 
-            handleResponse: function (data) {
+            _handleResponse: function (data) {
                 console.log("response: ", data)
                 this.fire("package-removed", {package: this.url});
             },
 
-            handleError: function (e) {
+            _handleError: function (e) {
                 console.log("error: ", e)
                 this.fire("package-remove-error", {"error": e.detail});
             }
