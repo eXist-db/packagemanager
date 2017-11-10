@@ -91,7 +91,7 @@ implements an interaction with the package repository
                 //do it
                 console.log("submitting remove form: ", e);
 
-                var r = confirm("Really remove this package?");
+                var r = confirm('Really remove package "' + this.packageTitle + '"?');
                 if (r == true) {
                     this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
                     this.$.removePackage.generateRequest();

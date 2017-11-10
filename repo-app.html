@@ -123,11 +123,11 @@ element for displaying package metadata
             .wrapper[show-all] ::slotted(repo-website),
             .wrapper[show-all] ::slotted(repo-url)
             {
-                display:block;
+                display:table-row;
             }
 
             .wrapper[show-all] ::slotted(*)::before{
-                display: inline-block;
+                display: table-cell;
                 min-width: 120px;
             }
             .wrapper[show-all] ::slotted(repo-name)::before{
@@ -163,9 +163,9 @@ element for displaying package metadata
             <!--todo: conditional template dependent on installed state. -->
 
 
-            <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
             <!--todo: uninstall button for apps that are status=installed -->
             <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
+            <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
         </div>
     </template>
 
