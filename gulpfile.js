@@ -73,7 +73,8 @@ gulp.task('odd:watch', function () {
 // files in project root //
 
 var componentPaths = [
-    '*.html'
+    '*.html',
+    'demo/*.html'
 //  '!components/bower_components/**/*'
 ];
 

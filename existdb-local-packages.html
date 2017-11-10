@@ -72,7 +72,7 @@ element for displaying package metadata
                    verbose with-credentials
                    method="get" handle-as="text"
                    on-response="_handleLocalItems"
-                   url="/exist/apps/existdb-packageservice/packages/local"
+                   <!--url="/exist/apps/existdb-packageservice/packages/local"-->
                    on-error="_handleLocalError"
                    ></iron-ajax>
 
@@ -99,14 +99,31 @@ element for displaying package metadata
                 url: {
                     type:String,
                     reflectToAttribute:true
+                },
+                service:{
+                    type: String,
+                    reflectToAttribute:true
+                },
+                appsOnly: {
+                    type: Boolean,
+                    reflectToAttribute:true,
+                    notify:true
                 }
             },
 
             attached: function () {
-                console.log("existdb-local-packages attached");
-                this.$.progress.indeterminate = true
-                this.$.loadInstalled.generateRequest();
-                this.$.toast.open();
+//                console.log("existdb-local-packages attached");
+//                console.log("existdb-local-packages attached ", this.service);
+//                console.log("existdb-local-packages appsOnly ", this.appsOnly);
+
+                this._loadPackages();
+                var self= this;
+                window.addEventListener('package-removed', function(e){
+                    console.log("package was removed", e);
+                    self._loadPackages();
+                    self._toast('successfully removed "' + e.detail.package + '"');
+
+                });
             },
 
             _handleLocalItems: function (data) {
@@ -118,6 +135,16 @@ element for displaying package metadata
                 console.log("loading of available packages failed", e.detail.error)
                 this._resetAndHideProgress()
                 this._toastError('loading of available packages failed')
+            },
+
+            _loadPackages: function(){
+                this.$.progress.indeterminate = true
+                if(this.appsOnly){
+                    this.$.loadInstalled.url = this.service + '/packages/apps';
+                }else{
+                    this.$.loadInstalled.url = this.service + '/packages/local';
+                }
+                this.$.loadInstalled.generateRequest();
             },
 
             _resetProgress:function () {

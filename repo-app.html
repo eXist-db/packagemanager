@@ -81,7 +81,7 @@ element for displaying package metadata
             }
 
             .wrapper ::slotted(repo-version)::before{
-                content:"version ";
+                content:"Version ";
             }
             .wrapper ::slotted(repo-title){
                 font-size:24px;
@@ -115,14 +115,57 @@ element for displaying package metadata
                 display:none;
             }
 
+            .wrapper[show-all] ::slotted(repo-name),
+            .wrapper[show-all] ::slotted(repo-description),
+            .wrapper[show-all] ::slotted(repo-author),
+            .wrapper[show-all] ::slotted(repo-abbrev),
+            .wrapper[show-all] ::slotted(repo-license),
+            .wrapper[show-all] ::slotted(repo-website),
+            .wrapper[show-all] ::slotted(repo-url)
+            {
+                display:block;
+            }
+
+            .wrapper[show-all] ::slotted(*)::before{
+                display: inline-block;
+                min-width: 120px;
+            }
+            .wrapper[show-all] ::slotted(repo-name)::before{
+                content: "Name: ";
+            }
+            .wrapper[show-all] ::slotted(repo-description)::before{
+                content:"Description: ";
+            }
+            .wrapper[show-all] ::slotted(repo-author)::before{
+                content:"Author:";
+            }
+            .wrapper[show-all] ::slotted(repo-abbrev)::before{
+                content:"Abbreviation:";
+            }
+            .wrapper[show-all] ::slotted(repo-website)::before{
+                content:"Website:";
+            }
+            .wrapper[show-all] ::slotted(repo-url)::before{
+                content:"Url:";
+            }
+            .wrapper[show-all] ::slotted(repo-license)::before{
+                content:"License:";
+            }
+
+
+
         </style>
         <content select="repo-icon"></content>
-        <div class="wrapper" url="[[url]]">
+        <div id="wrapper" class="wrapper" url="[[url]]">
             <!--<div class$="[[type]] type">[[type]]</div>-->
             <slot></slot>
-            <paper-icon-button id="info" icon="info"></paper-icon-button>
+
+            <!--todo: conditional template dependent on installed state. -->
+
+
+            <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
             <!--todo: uninstall button for apps that are status=installed -->
-            <existdb-package-remove-action url="{{url}}"></existdb-package-remove-action>
+            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
         </div>
     </template>
 
@@ -148,7 +191,17 @@ element for displaying package metadata
                 url: {
                     type:String,
                     reflectToAttribute:true
+                },
+                packageTitle:{
+                    type: String,
+                    reflectToAttribute:true,
+                    notify:true
+                },
+                showAll:{
+                    type:Boolean,
+                    reflectToAttribute:true
                 }
+
 //                reflectToAttribute: true
             },
 
@@ -172,6 +225,8 @@ element for displaying package metadata
 
             attached: function () {
                 console.log("repo-app attached");
+                this.setAttribute('tabindex','0');
+
                 this.listen(this, 'tap', '_handleTap')
                 this.listen(this, 'keyup', '_handleEnter')
 /*
@@ -181,18 +236,27 @@ element for displaying package metadata
 */
             },
 
+            ready:function () {
+                console.log("repo-app title", this.querySelector('repo-title').textContent);
+                this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
+
+            },
+
 
             handleDelete: function (e) {
                 
             },
 
             _handleTap: function (e) {
-                this._openApp()
+                console.log('_handleTap ',e);
+                if(e.target.nodeName.toLowerCase() == "repo-app"){
+                    this._openApp()
+                }
             },
 
             _handleEnter: function (e) {
                 console.log("key ", e)
-                if (e.keyCode == 13) {
+                if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
                     this._openApp()
                 }
             },
@@ -215,7 +279,26 @@ element for displaying package metadata
 
             _isInstalled: function () {
                 return this.status=='installed'
+            },
+
+            _showInfo(e){
+                e.stopPropagation();
+                e.preventDefault();
+                var showsAll = this.$.wrapper.getAttribute('show-all');
+                console.log("############### ", showsAll)
+
+
+                if(!showsAll){
+                    this.$.wrapper.setAttribute('show-all','true');
+                }else{
+                    this.$.wrapper.removeAttribute('show-all');
+                }
+
+                console.log("showInfo ",e);
+                console.log("repo-app.showInfo");
+                console.log("repo-app.showInfo polymer ", Polymer.dom(e));
             }
+
 
         });
     </script>

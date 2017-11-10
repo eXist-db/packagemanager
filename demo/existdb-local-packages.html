@@ -9,8 +9,14 @@
 
     <link rel="import" href="../existdb-local-packages.html"/>
 
+    <style>
+      body{
+        padding:0;
+        margin:0;
+      }
+    </style>
   </head>
   <body>
-        <existdb-local-packages> </existdb-local-packages>
+        <existdb-local-packages service="/exist/apps/existdb-packageservice" apps-only="true"> </existdb-local-packages>
   </body>
 </html>

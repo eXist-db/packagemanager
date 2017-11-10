@@ -57,6 +57,10 @@ implements an interaction with the package repository
             properties: {
                 url: {
                     type: String,
+                },
+                packageTitle:{
+                    type: String,
+                    reflectToAttribute:true
                 }
             },
 
@@ -67,7 +71,10 @@ implements an interaction with the package repository
             },
 
             attached: function(){
+
+                console.log("existdb-package-remove-action attached");
                 console.log("url: ", this.url);
+                console.log("title: ", this.packageTitle);
             },
 
 
@@ -93,7 +100,7 @@ implements an interaction with the package repository
 
             _handleResponse: function (data) {
                 console.log("response: ", data)
-                this.fire("package-removed", {package: this.url});
+                this.fire("package-removed", {package: this.packageTitle});
             },
 
             _handleError: function (e) {
