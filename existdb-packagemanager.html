@@ -31,6 +31,7 @@
 <link rel="import" href="bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
 
+<link rel="import" href="existdb-packages.html">
 <link rel="import" href="existdb-package-descriptor.html">
 <link rel="import" href="repo-app.html">
 <link rel="import" href="repo-icon.html">
@@ -78,7 +79,6 @@ a web component implementing eXistdb packagemanager
             }
 
             .righttool{
-                /*margin-right:40px;*/
                 position: relative;
                 width: 34px;
             }
@@ -86,7 +86,7 @@ a web component implementing eXistdb packagemanager
                 width: 220px;
                 transition: width 0.3s ease-in-out;
             }
-            #query{
+            #search{
                 display:inline-block;
                 font-size:12px;
             }
@@ -94,6 +94,7 @@ a web component implementing eXistdb packagemanager
             #packageList {
             }
 
+/*
             ::content ul {
                 list-style: none;
                 padding: 0;
@@ -113,6 +114,7 @@ a web component implementing eXistdb packagemanager
             ::content ul li table {
                 display: none;
             }
+*/
 
             ::content .packageIconArea {
                 /*display: inline-flex;*/
@@ -254,12 +256,14 @@ a web component implementing eXistdb packagemanager
                 --iron-icon-fill-color: var(--paper-grey-50);
             }
         </style>
+<!--
         <iron-ajax id="loadInstalled"
                    verbose with-credentials
                    method="get" handle-as="text"
                    on-response="handleLocalItems"
                    url="/exist/apps/existdb-packageservice/packages/local"
                    on-error="_handleLocalError"></iron-ajax>
+-->
 
         <iron-ajax id="loadAvailable"
                    verbose with-credentials
@@ -274,16 +278,12 @@ a web component implementing eXistdb packagemanager
                 <app-toolbar sticky>
                     <iron-icon icon="apps"></iron-icon>
                     <div main-title>Package Manager</div>
-<!--
-                    <paper-input id="search" type="search" no-label-float tabindex="0" on-keyup="_handleSearchInput">
-                        <iron-icon icon="search" prefix></iron-icon>
-                        <iron-icon icon="clear" suffix></iron-icon>
-                    </paper-input>
--->
 
                     <div id="seachwrapper" class="righttool">
                         <paper-icon-button id="searchicon" icon="search" drawer-toggle on-click="_showSearch"></paper-icon-button>
-                        <paper-input id="query" class="searchbox" type="search" name="query" label="search..." no-label-float hidden></paper-input>
+                        <paper-input id="search" class="searchbox" type="search" name="query" label="search..." no-label-float hidden>
+                            <iron-icon icon="filter-list" slot="prefix"></iron-icon>
+                        </paper-input>
                     </div>
 
                     <!--<paper-toggle-button id="libToggle">show libraries</paper-toggle-button>-->
@@ -296,13 +296,6 @@ a web component implementing eXistdb packagemanager
                     </paper-menu-button>
 
                 </app-toolbar>
-<!--
-                <paper-tabs selected="{{selected}}">
-                    <paper-tab id="installedTab">Installed</paper-tab>
-                    <paper-tab id="availableTab">Available</paper-tab>
-                </paper-tabs>
-                <paper-progress id="progress" class="paper-progress" value="" hidden></paper-progress>
--->
 
             </app-header>
             <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
@@ -314,11 +307,13 @@ a web component implementing eXistdb packagemanager
                             DROPZONE - put your package(s) here.
                         </div>
                     </vaadin-upload>
-                    <div id="localItemList"></div>
-                    <paper-fab icon="add" on-click="_showAvailable"></paper-fab>
+                    <!--<div id="localItemList"></div>-->
+                    <existdb-packages id="localService" service="/exist/apps/existdb-packageservice/packages/apps"> </existdb-packages>
+                    <paper-fab icon="add" on-click="switchToAvailable"></paper-fab>
                 </neon-animatable>
                 <neon-animatable>
-                    <div id="availableItemList"></div>
+                    <!--<div id="availableItemList"></div>-->
+                    <existdb-packages id="remoteService" service="/exist/apps/existdb-packageservice/packages/remote"> </existdb-packages>
                 </neon-animatable>
             </neon-animated-pages>
 
@@ -404,7 +399,7 @@ a web component implementing eXistdb packagemanager
                     console.log("onuploadsuccess", e)
                     var file = e.detail.file
                     var self = this
-                    that.$.loadInstalled.generateRequest()
+//                    that.$.loadInstalled.generateRequest()
                     setTimeout(function () {
                         self.splice('files', self.files.indexOf(file), 1);
                     }, 1000)
@@ -415,6 +410,7 @@ a web component implementing eXistdb packagemanager
                     this._toastError("Upload failed for: " + e.detail.file)
                 });
 
+/*
                 this.addEventListener('keyup',function(e){
                     if(e.keyCode == 27){
                         console.log("ESC")
@@ -423,6 +419,7 @@ a web component implementing eXistdb packagemanager
                         this.$.search.focus()
                     }
                 })
+*/
 
                 this.switchToInstalled()
                 this.$.search.focus()
@@ -436,6 +433,7 @@ a web component implementing eXistdb packagemanager
                 this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt')
             },
 
+/*
             _handleSearchInput: function (e) {
                 var s = this.$.search.value.toLowerCase()
                 var descriptors = this.querySelectorAll('existdb-package-descriptor')
@@ -455,17 +453,18 @@ a web component implementing eXistdb packagemanager
                     found.focus()
                 }
             },
+*/
 
             handleLocalItems: function (data) {
-                this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
+//                this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
                 this.$.pages.selected = 0;
                 //reset search
-                this.$.search.value=""
+//                this.$.search.value=""
 //                this._resetProgress()
             },
 
             handleAvailableItems: function (data) {
-                this.$.availableItemList.innerHTML = this.$.loadAvailable.lastResponse
+//                this.$.availableItemList.innerHTML = this.$.loadAvailable.lastResponse
                 this.$.pages.selected = 1;
                 //reset search
                 this.$.search.value=""
@@ -494,17 +493,19 @@ a web component implementing eXistdb packagemanager
 //                this.$.pages.selected = 0;
 //                this.$.progress.indeterminate = true
 //                this.$.progress.hidden=false
-                this.$.loadInstalled.generateRequest();
+//                this.$.loadInstalled.generateRequest();
+                this.$.localService.loadPackages();
             },
 
             switchToAvailable: function (e) {
                 this.entryAnimation = 'slide-from-right-animation';
                 this.exitAnimation = 'slide-left-animation';
-//                this.$.pages.selected = 1;
+                this.$.pages.selected = 1;
                 console.log("location: ", location.host)
 //                this.$.progress.indeterminate = true
 //                this.$.progress.hidden=false
-                this.$.loadAvailable.generateRequest();
+//                this.$.loadAvailable.generateRequest();
+                this.$.remoteService.loadPackages();
 
             },
 
@@ -576,12 +577,12 @@ a web component implementing eXistdb packagemanager
                 this._toastError("Package Manager cannot be removed.")
             },
 
-            _showAvailable: function (e) {
-                this.$.pages.selected = 1;
-            },
 
             _showLibraries: function (e) {
                 //todo
+                console.log("_showLibraries ",e);
+                this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local"
+                this.$.localService.loadPackages();
             },
 
             _showSearch (e){
@@ -594,11 +595,11 @@ a web component implementing eXistdb packagemanager
 
                 if(classes.indexOf('anim') != -1){
                     this.$.seachwrapper.className="righttool";
-                    this.$.query.hidden=true;
+                    this.$.search.hidden=true;
                 }else{
                     this.$.seachwrapper.className="righttool anim";
-                    this.$.query.hidden=false;
-                    this.$.query.focus();
+                    this.$.search.hidden=false;
+                    this.$.search.focus();
                 }
 
                 return null;
