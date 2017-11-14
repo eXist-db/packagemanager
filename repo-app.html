@@ -166,7 +166,12 @@ element for displaying package metadata
 
             <!--todo: uninstall button for apps that are status=installed -->
             <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
-            <existdb-package-install-action id="install" hidden></existdb-package-install-action>
+            <existdb-package-install-action
+                    id="install"
+                    package-url="{{url}}"
+                    abbrev="{{abbrev}}"
+                    type="{{type}}"
+                    hidden></existdb-package-install-action>
 
             <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
         </div>
@@ -181,6 +186,19 @@ element for displaying package metadata
 
                 type: {
                     type: String,
+                    reflectToAttribute:true
+                },
+                abbrev:{
+                    type: String,
+                    reflectToAttribute:true
+                },
+                version:{
+                    type: String,
+                    reflectToAttribute:true
+                },
+                action: {
+                    type: String,
+                    reflectToAttribute:true
                 },
                 status: {
                     type: String,

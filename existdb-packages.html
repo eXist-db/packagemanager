@@ -64,7 +64,9 @@ element for displaying package metadata
                 --paper-toast-background-color: var(--paper-blue-700);
                 --paper-toast-color: white;
             }
-
+            #toastError{
+                background:var(--paper-red-500);
+            }
 
         </style>
 
@@ -72,9 +74,7 @@ element for displaying package metadata
                    verbose with-credentials
                    method="get" handle-as="text"
                    on-response="_handlePackages"
-                   <!--url="/exist/apps/existdb-packageservice/packages/local"-->
-                   on-error="_handleLocalError"
-                   ></iron-ajax>
+                   on-error="_handleLocalError"></iron-ajax>
 
 
         <paper-progress id="progress" class="paper-progress" value=""></paper-progress>

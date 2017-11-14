@@ -328,6 +328,9 @@ a web component implementing eXistdb packagemanager
 
             _handleSearchInput: function (e) {
                 console.log('_handleSearchInput',e);
+
+                if (this.$.search.value==undefined) return;
+
                 var s = this.$.search.value.toLowerCase()
                 var apps = this.querySelectorAll('repo-app')
 
