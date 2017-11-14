@@ -20,7 +20,8 @@ element for displaying package metadata
 
             }
         </style>
-        <img src="[[src]]">
+        <img src="{{src}}">
+        <slot></slot>
     </template>
 
     <script>
@@ -38,6 +39,8 @@ element for displaying package metadata
 
 
             attached: function () {
+                console.log("repo-icon attached ", this.textContent);
+//                this.src = this.textContent;
             }
 
 
