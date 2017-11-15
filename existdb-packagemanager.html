@@ -1,4 +1,4 @@
-<script src="../../ziziphus-ce/node_modules/bower/lib/node_modules/lodash/_arrayEach.js"></script>
+<!--<script src="../../ziziphus-ce/node_modules/bower/lib/node_modules/lodash/_arrayEach.js"></script>-->
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="bower_components/paper-tabs/paper-tab.html">
@@ -17,9 +17,11 @@
 <link rel="import" href="bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="bower_components/bottom-nav/bottom-nav.html">
 <link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="bower_components/neon-animation/web-animations.html">
 <link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="bower_components/neon-animation/neon-animatable-behavior.html">
 <link rel="import" href="bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
@@ -73,20 +75,6 @@ a web component implementing eXistdb packagemanager
                 font-size:12px;
             }
 
-
-/*
-            ::content.appIcon {
-                max-width: 100px;
-                height: 40px;
-            }
-*/
-
-/*
-            #packageList {
-                margin-bottom: 100px;
-            }
-*/
-
             iron-icon {
                 margin-right: 10px;
                 --iron-icon-fill-color: var(--paper-blue-700);
@@ -114,14 +102,6 @@ a web component implementing eXistdb packagemanager
                 --paper-toast-color: white;
             }
 
-/*
-            [nolibs='true'] ::content existdb-package-descriptor[type='library']{
-                display: none;
-            }
-            [nolibs='false'] ::content existdb-package-descriptor[type='library']{
-                display: block;
-            }
-*/
             ::content .upgrade{
                 color:var(--paper-red-700);
             }
@@ -159,22 +139,6 @@ a web component implementing eXistdb packagemanager
                 --iron-icon-fill-color: var(--paper-grey-50);
             }
         </style>
-<!--
-        <iron-ajax id="loadInstalled"
-                   verbose with-credentials
-                   method="get" handle-as="text"
-                   on-response="handleLocalItems"
-                   url="/exist/apps/existdb-packageservice/packages/local"
-                   on-error="_handleLocalError"></iron-ajax>
--->
-
-        <iron-ajax id="loadAvailable"
-                   verbose with-credentials
-                   method="get" handle-as="text"
-                   on-response="handleAvailableItems"
-                   headers='{"host": location.host}'
-                   url="/exist/apps/packagemanager/packages/?format=manager&type=remote"
-                   on-error="_handleLoadAvailableError"></iron-ajax>
 
         <app-header-layout fullbleed>
             <app-header slot="header" class="app-header" condenses reveals effects="waterfall" fixed>
@@ -213,7 +177,8 @@ a web component implementing eXistdb packagemanager
 
                 <neon-animatable>
                     <app-toolbar>
-                        <paper-icon-button icon="arrow-back" on-click="_switchToInstalled"></paper-icon-button>
+                        <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
+                        <span class="heading">Available Packages</span>
                     </app-toolbar>
                     <existdb-packages id="remoteService" service="/exist/apps/existdb-packageservice/packages/remote"> </existdb-packages>
                 </neon-animatable>
@@ -245,6 +210,7 @@ a web component implementing eXistdb packagemanager
                 targetUrl: {
                     type: String,
                 },
+/*
                 animationConfig: {
                     value: function () {
                         return {
@@ -254,6 +220,7 @@ a web component implementing eXistdb packagemanager
                         }
                     }
                 },
+*/
                 filter:{
                     type:String,
                     notify:true,
@@ -314,7 +281,7 @@ a web component implementing eXistdb packagemanager
                     self._handleSearchInput(e)
                 })
 
-                this.switchToInstalled()
+                this._switchToInstalled()
                 this.$.search.focus()
             },
 
@@ -352,42 +319,16 @@ a web component implementing eXistdb packagemanager
                 }
             },
 
-            handleLocalItems: function (data) {
-//                this.$.localItemList.innerHTML = this.$.loadInstalled.lastResponse
-                this.$.pages.selected = 0;
-                //reset search
-//                this.$.search.value=""
-//                this._resetProgress()
-            },
 
-            handleAvailableItems: function (data) {
-//                this.$.availableItemList.innerHTML = this.$.loadAvailable.lastResponse
-                this.$.pages.selected = 1;
-                //reset search
-                this.$.search.value="";
-//                this._resetProgress()
-            },
-
-/*            _resetProgress:function () {
-                this.$.progress.value = 100
-                var self = this;
-                setTimeout(function () {
-                    self.$.progress.value = 0
-                    self.$.progress.indeterminate = false
-                }, 1000)
-
-                this.$.progress.hidden=true
-            },
-*/
             showUpload: function (e) {
                 this.$.upload.open();
             },
 
 
-            switchToInstalled: function (e) {
+            _switchToInstalled: function (e) {
                 this.entryAnimation = 'slide-from-left-animation';
                 this.exitAnimation = 'slide-right-animation';
-//                this.$.pages.selected = 0;
+                this.$.pages.selected = 0;
                 this.$.localService.loadPackages();
             },
 
@@ -415,7 +356,7 @@ a web component implementing eXistdb packagemanager
 //                this.$.localService.generateRequest()
                 this.$.loadInstalled.loadPackages();
 
-                this.selected = 0
+                this.$.pages.selected = 0;
 
             },
             _handlePackageInstallError: function (e) {
@@ -435,42 +376,14 @@ a web component implementing eXistdb packagemanager
                 console.log('animation done!');
             },
 
-            _handleLocalError:function (e) {
-                console.log("loading of available packages failed", e.detail.error)
-                this._resetAndHideProgress()
-                this._toastError('loading of available packages failed')
-            },
-
-            _handleLoadAvailableError: function (e) {
-                console.log("loading of available packages failed", e.detail.error)
-//                this._resetAndHideProgress()
-                this._toastError('loading of available packages failed')
-            },
-
-            _resetAndHideProgress: function () {
-                this.$.progress.indeterminate = false;
-                this.$.progress.value = 0;
-                this.$.progress.hidden=true
-            },
 
             _hideToast: function (e) {
                 this.$.toastError.hide()
             },
 
-            _onLibToggle: function (e) {
-                var pages = this.$.pages
-                console.log(pages)
-                if(pages.getAttribute('nolibs') == 'true'){
-                    pages.setAttribute('nolibs','false')
-                }else{
-                    pages.setAttribute('nolibs','true')
-                }
-            },
-
             _handleRemoveAttempt: function (e) {
                 this._toastError("Package Manager cannot be removed.")
             },
-
 
             _showLibraries: function (e) {
                 //todo
@@ -492,10 +405,6 @@ a web component implementing eXistdb packagemanager
                 console.log('_handleFilter - filter string has changed ',e);
                 console.log('_handleFilter - filter string has changed this',this);
                 this.$.localService.loadPackages();
-            },
-
-            _switchToInstalled:function (e) {
-                this.$.pages.select(0);
             }
 
 

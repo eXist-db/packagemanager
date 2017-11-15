@@ -136,13 +136,7 @@ element for displaying package metadata
 
             loadPackages: function(){
                 this.$.progress.indeterminate = true
-//                if(this.appsOnly){
-//                    this.$.loadPackages.url = this.service + '/packages/apps';
-                    this.$.loadPackages.url = this.service;
-//                }else{
-//                    this.$.loadPackages.url = this.service + '/packages/local';
-//                    this.$.loadPackages.url = this.service;
-//                }
+                this.$.loadPackages.url = this.service;
                 this.$.loadPackages.generateRequest();
             },
 

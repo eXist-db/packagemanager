@@ -17,19 +17,28 @@ implements an interaction with the package repository
         <style>
             :host {
                 display: block;
+
                 --paper-icon-button: {
                     color: var(--paper-blue-300);
                 }
             }
         </style>
 
+        <iron-ajax id="installPackage"
+                   verbose with-credentials
+                   method="post" handle-as="text"
+                   on-response="_handleResponse"
+                   url="/exist/apps/existdb-packageservice/packages/action"
+                   on-error="_handleError"></iron-ajax>
+
+
         <paper-icon-button id="install" icon="file-download" title="install this package"></paper-icon-button>
-        <form id="installform" is="iron-form" method="post" action="/exist/apps/packagemanager/modules/install.xql">
+        <form id="installform" is="iron-form" method="post" action="">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>
             <input type="hidden" name="version" value="{{version}}"/>
             <input type="hidden" name="action" value="install"/>
-            <input type="hidden" name="type" value="application"/>
+            <input type="hidden" name="type" value="{{type}}"/>
         </form>
     </template>
 
@@ -41,20 +50,23 @@ implements an interaction with the package repository
             properties: {
                 url: {
                     type: String,
+                    reflectToAttribute:true
                 },
                 abbrev: {
-                    type: String
+                    type: String,
+                    reflectToAttribute:true
                 },
                 action: {
                     type: String,
-                    value:'install'
+                    reflectToAttribute:true
                 },
                 version:{
-                    type: String
+                    type: String,
+                    reflectToAttribute:true
                 },
                 type: {
                     type: String,
-                    value:'application'
+                    reflectToAttribute:true
                 }
             },
 
@@ -68,15 +80,23 @@ implements an interaction with the package repository
                 e.stopPropagation();
                 e.preventDefault()
 
-                this.$.installform.submit();
+//                this.$.installform.submit();
+                this.$.installPackage.params = {
+                                        "package-url":this.url,
+                                        "action":"install",
+                                        "abbrev":this.abbrev,
+                                        "version":this.version,
+                                        };
+                this.$.installPackage.generateRequest();
+
             },
 
-            handleResponse: function (data) {
+            _handleResponse: function (data) {
                 console.log("response: ", data)
                 this.fire("package-installed",{package:this.url});
             },
 
-            handleError:function (e) {
+            _handleError:function (e) {
                 console.log("error: ", e)
                 this.fire("package-install-error",{"error": e.detail});
             }

@@ -60,6 +60,12 @@ element for displaying package metadata
                 top:10px;
                 right:10px;
             }
+            #install{
+                position: absolute;
+                top:10px;
+                right:40px;
+            }
+
             ::slotted(repo-icon){
                 max-width:100px;
                 display: inline-block;
@@ -168,9 +174,10 @@ element for displaying package metadata
             <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
             <existdb-package-install-action
                     id="install"
-                    package-url="{{url}}"
+                    url="{{packageUrl}}"
                     abbrev="{{abbrev}}"
                     type="{{type}}"
+                    version="{{version}}"
                     hidden></existdb-package-install-action>
 
             <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
@@ -212,7 +219,7 @@ element for displaying package metadata
                 available: {
                     type: String
                 },
-                url: {
+                packageUrl: {
                     type:String,
                     reflectToAttribute:true
                 },
@@ -302,7 +309,7 @@ element for displaying package metadata
             },
 
             _handleStatus: function () {
-                console.log("_isInstalled ",this.status);
+                console.log("_handleStatus ",this.status);
 
                 if(this.status == 'installed'){
                     this.$.install.hidden = true;
