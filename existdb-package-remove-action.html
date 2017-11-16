@@ -72,9 +72,9 @@ implements an interaction with the package repository
 
             attached: function(){
 
-                console.log("existdb-package-remove-action attached");
-                console.log("url: ", this.url);
-                console.log("title: ", this.packageTitle);
+//                console.log("existdb-package-remove-action attached");
+//                console.log("url: ", this.url);
+//                console.log("title: ", this.packageTitle);
             },
 
 
@@ -82,14 +82,14 @@ implements an interaction with the package repository
                 e.stopPropagation();
                 e.preventDefault();
 
-                console.log("the form: ", this.$.removeform.body);
+//                console.log("the form: ", this.$.removeform.body);
 
                 if (this.url.endsWith("/packagemanager")) {
                     this.fire("packagemanager-remove-attempt")
                     return
                 }
                 //do it
-                console.log("submitting remove form: ", e);
+//                console.log("submitting remove form: ", e);
 
                 var r = confirm('Really remove package "' + this.packageTitle + '"?');
                 if (r == true) {

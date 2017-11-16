@@ -175,7 +175,7 @@ a web component implementing eXistdb packagemanager
             }
         </style>
 
-        <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
+        <neon-animated-pages id="pages" nolibs="true" selected="{{selected}}" entry-animation="[[entryAnimation]]"
                              exit-animation="[[exitAnimation]]">
 
             <neon-animatable id="localPage">
@@ -191,10 +191,10 @@ a web component implementing eXistdb packagemanager
                                 <iron-icon icon="filter-list" slot="suffix"></iron-icon>
                             </paper-input>
 
-                            <paper-menu-button horizontal-align="right">
+                            <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right">
                                 <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
                                 <paper-listbox slot="dropdown-content">
-                                    <paper-item on-click="_showLibraries">show libraries</paper-item>
+                                    <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
                                     <paper-item>logout</paper-item>
                                 </paper-listbox>
                             </paper-menu-button>
@@ -288,6 +288,10 @@ a web component implementing eXistdb packagemanager
                 },
                 remoteCount: {
                     type: Number
+                },
+                selected:{
+                    observer:'_handlePageChange',
+                    value:0
                 }
             },
             listeners: {
@@ -302,13 +306,14 @@ a web component implementing eXistdb packagemanager
                 this.listen(document, 'package-install-error', '_handlePackageInstallError');
                 this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
                 this.listen(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
+                this.listen(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
                 this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
                 this.$.uploader.formDataName = "uploadedfiles[]";
 
                 this.$.uploader.addEventListener('upload-before', function (event) {
                     console.log('upload xhr before open: ', event.detail.xhr);
                     var file = event.detail.file;
-                    file.uploadTarget = '/exist/apps/packagemanager/modules/install.xql?name=' + file.name;
+                    file.uploadTarget = '/exist/apps/existdb-packageservice/modules/install.xql?name=' + file.name;
                 });
                 this.$.uploader.addEventListener('upload-progress', function (event) {
                     console.log('upload progress: ', event.detail.file);
@@ -341,12 +346,23 @@ a web component implementing eXistdb packagemanager
                         self.$.search.value = ""
                         self.$.search.focus();
                     }
+/*
+                    if (e.keyCode == 65) {
+                        this.$.pages.selected=1;
+                    }
+                    if (e.keyCode == 66) {
+                        this.$.pages.selected=0;
+                    }
                     if (e.keyCode == 70) {
                         this.$.search.focus();
+                    }
+                    if (e.keyCode == 76) {
+                        this._showLibraries(e);
                     }
                     if (e.keyCode == 85) {
                         this.querySelector('#addFiles').click();
                     }
+*/
                     self._handleSearchInput(e)
                 });
 
@@ -355,11 +371,14 @@ a web component implementing eXistdb packagemanager
             },
 
             detached: function () {
-                this.unlisten(document, 'package-removed', '_handlePackageRemoved')
-                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError')
-                this.unlisten(document, 'package-installed', '_handlePackageInstalled')
-                this.unlisten(document, 'package-install-error', '_handlePackageInstallError')
-                this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt')
+                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
+                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
+                this.unlisten(document, 'package-installed', '_handlePackageInstalled');
+                this.unlisten(document, 'package-install-error', '_handlePackageInstallError');
+                this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
+                this.unlisten(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
+                this.unlisten(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
+
             },
 
             _handleSearchInput: function (e) {
@@ -393,21 +412,12 @@ a web component implementing eXistdb packagemanager
                 this.$.upload.open();
             },
 
-
             _switchToInstalled: function (e) {
-                this.entryAnimation = 'slide-from-left-animation';
-                this.exitAnimation = 'slide-right-animation';
                 this.$.pages.selected = 0;
-                this.$.localService.loadPackages();
             },
 
             switchToAvailable: function (e) {
-                this.entryAnimation = 'slide-from-right-animation';
-                this.exitAnimation = 'slide-left-animation';
                 this.$.pages.selected = 1;
-                console.log("location: ", location.host)
-                this.$.remoteService.loadPackages();
-
             },
 
             _handlePackageRemoved: function (e) {
@@ -458,10 +468,21 @@ a web component implementing eXistdb packagemanager
             _showLibraries: function (e) {
                 //todo
                 console.log("_showLibraries ", e);
-                this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local"
-                this.$.localService.loadPackages();
-                this.lastInstalled = 'libraries';
-                console.log('_showLibraries ', this.lastInstalled)
+                console.log("_showLibraries ", this.$.libSwitch.innerText);
+                if(this.$.libSwitch.innerText == 'show libraries'){
+                    this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local";
+                    this.$.localService.loadPackages();
+                    this.lastInstalled = 'libraries';
+                    this.$.libSwitch.innerText = "hide libraries";
+                }else{
+                    this.$.localService.service = "/exist/apps/existdb-packageservice/packages/apps";
+                    this.$.localService.loadPackages();
+                    this.lastInstalled = undefined;
+                    this.$.libSwitch.innerText = "show libraries";
+                    var firstApp = this.$.localService.querySelectorAll('repo-app[type="application"]')[0];
+                    this._scrollAndFocus(firstApp);
+                }
+                console.log('_showLibraries ', this.lastInstalled);
             },
 
 
@@ -479,11 +500,14 @@ a web component implementing eXistdb packagemanager
             },
 
             _handlePackagesLoaded: function (e) {
-                console.log('_handlePackagesLoaded', e);
-                console.log('_handlePackagesLoaded', this.lastInstalled);
+                console.log('################# _handlePackagesLoaded', e);
+                console.log('_handlePackagesLoaded lastInstalled', this.lastInstalled);
 
                 if (this.lastInstalled == 'libraries') {
                     this.lastInstalled = this.querySelectorAll('repo-app[type="library"]')[0];
+                    console.log("last lib ", this.lastInstalled);
+                    this._scrollAndFocus(this.lastInstalled);
+                    return;
                 }
                 var apps = this.$.localPage.querySelectorAll('repo-app');
                 this.localCount = apps.length;
@@ -493,14 +517,9 @@ a web component implementing eXistdb packagemanager
                         var app = apps[i]
                         var url = app.url;
                         if (url == this.lastInstalled) {
-                            console.log("scroll top");
+                            console.log("scroll top ",app);
                             this._scrollAndFocus(app);
                             this.lastInstalled = undefined;
-                            /*
-                                                        app.scrollIntoView();
-                                                        window.scrollBy(0, -70)
-                                                        app.focus();
-                            */
                         }
                     }
                 }
@@ -509,8 +528,26 @@ a web component implementing eXistdb packagemanager
 
             _scrollAndFocus: function (app) {
                 app.scrollIntoView();
-                window.scrollBy(0, -70)
+                window.scrollBy(0, -130)
                 app.focus();
+            },
+
+            _handlePageChange:function (newValue, oldValue) {
+                console.log('_handlePageChange ',newValue, oldValue);
+
+                if(newValue == 0){
+                    //local page
+                    this.focus();
+                    this.entryAnimation = 'slide-from-left-animation';
+                    this.exitAnimation = 'slide-right-animation';
+                    this.$.localService.loadPackages();
+                }else {
+                    //repo page
+                    this.$.repoPage.focus();
+                    this.entryAnimation = 'slide-from-right-animation';
+                    this.exitAnimation = 'slide-left-animation';
+                    this.$.remoteService.loadPackages();
+                }
             }
 
 

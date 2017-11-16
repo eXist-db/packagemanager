@@ -114,8 +114,9 @@ element for displaying package metadata
                 position:absolute;
                 top:0px;
                 padding-top:15px;
+                text-transform:uppercase;
             }
-            .wrapper ::slotted(repo-app)[type='library'] repo-type{
+            :host[type='library'] .wrapper ::slotted(repo-type){
                 color:var(--paper-green-700);
             }
 
@@ -353,7 +354,6 @@ element for displaying package metadata
                 e.stopPropagation()
                 e.preventDefault()
                var detail = this.querySelector('table');
-               console.log(detail)
                 if(detail.hasAttribute("class")){
                    detail.removeAttribute("class")
                 }else{
@@ -363,51 +363,41 @@ element for displaying package metadata
             },
 
             attached: function () {
-                console.log("repo-app attached");
+//                console.log("repo-app attached");
                 this.setAttribute('tabindex','0');
 
                 this.listen(this, 'tap', '_handleTap')
                 this.listen(this, 'keyup', '_handleEnter')
-/*
-                this.querySelector("a[target='_blank']").addEventListener("click", function (e) {
-                    e.preventDefault()
-                })
-*/
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
 //                this.listen(this, 'package-installed', '_onInstalled');
             },
 
             ready:function () {
-                console.log("repo-app title", this.querySelector('repo-title').textContent);
+//                console.log("repo-app title", this.querySelector('repo-title').textContent);
                 this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
-
             },
 
-
-            handleDelete: function (e) {
-                
-            },
 
             _handleTap: function (e) {
-                console.log('_handleTap ',e);
-                if(e.target.nodeName.toLowerCase() == "repo-app"){
+//                console.log('_handleTap ',e);
+                if(e.target.nodeName.toLowerCase() == 'repo-app'){
                     this._openApp()
                 }
             },
 
             _handleEnter: function (e) {
-                console.log("key ", e)
+//                console.log("key ", e)
                 if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
                     this._openApp()
                 }
             },
 
             _openApp: function () {
-                var isApp = this.querySelector("repo-type").textContent == 'application';
-                console.log("######## is App: ", isApp);
+                var isApp = this.type == 'application';
+//                console.log("######## is App: ", isApp);
 
-                if(isApp){
+                if(isApp && this.status == "installed"){
                     var targetUrl = this.path;
                     window.open(targetUrl)
                 }
@@ -420,7 +410,7 @@ element for displaying package metadata
             },
 
             _handleStatus: function () {
-                console.log("_handleStatus ",this.status);
+//                console.log("_handleStatus ",this.status);
 
                 if(this.status == 'installed'){
                     this.$.install.hidden = true;
@@ -435,7 +425,7 @@ element for displaying package metadata
                 e.stopPropagation();
                 e.preventDefault();
                 var showsAll = this.$.wrapper.getAttribute('show-all');
-                console.log("############### ", showsAll)
+//                console.log("############### ", showsAll)
 
 
                 if(!showsAll){
@@ -444,9 +434,9 @@ element for displaying package metadata
                     this.$.wrapper.removeAttribute('show-all');
                 }
 
-                console.log("showInfo ",e);
-                console.log("repo-app.showInfo");
-                console.log("repo-app.showInfo polymer ", Polymer.dom(e));
+//                console.log("showInfo ",e);
+//                console.log("repo-app.showInfo");
+//                console.log("repo-app.showInfo polymer ", Polymer.dom(e));
             },
 
             _onInstalled:function (e) {

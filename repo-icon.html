@@ -20,7 +20,7 @@ element for displaying package metadata
 
             }
         </style>
-        <img src="{{src}}">
+        <img src="{{src}}" on-click="_openApp">
         <slot></slot>
     </template>
 
@@ -39,8 +39,12 @@ element for displaying package metadata
 
 
             attached: function () {
-                console.log("repo-icon attached ", this.textContent);
+//                console.log("repo-icon attached ", this.textContent);
 //                this.src = this.textContent;
+            },
+
+            _openApp:function (e) {
+                this.parentNode._openApp(e);
             }
 
 

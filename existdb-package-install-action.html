@@ -32,7 +32,7 @@ implements an interaction with the package repository
                    on-error="_handleError"></iron-ajax>
 
 
-        <paper-icon-button id="install" icon="file-download" title="install this package"></paper-icon-button>
+        <paper-icon-button id="install" icon="file-download" title="download and install this package"></paper-icon-button>
         <form id="installform" is="iron-form" method="post" action="">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>

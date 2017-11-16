@@ -124,6 +124,7 @@ element for displaying package metadata
             },
 
             _handlePackages: function (data) {
+                console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
                 this._resetProgress()
                 this.fire('packages-loaded',{});
