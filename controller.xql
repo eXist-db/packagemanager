@@ -8,7 +8,7 @@ declare namespace rest="http://exquery.org/ns/restxq";
 import module namespace login="http://exist-db.org/xquery/login" at "resource:org/exist/xquery/modules/persistentlogin/login.xql";
 
 import module namespace restxq="http://exist-db.org/xquery/restxq" at "modules/restxq.xql";
-import module namespace packages="http://exist-db.org/apps/dashboard/packages/rest" at "modules/packages.xql";
+(:import module namespace packages="http://exist-db.org/apps/dashboard/packages/rest" at "modules/packages.xql";:)
 
 declare variable $exist:path external;
 declare variable $exist:resource external;
@@ -64,6 +64,7 @@ return (
             <set-attribute name="$exist:path" value="{$exist:path}"/>
         </dispatch>
     )
+(:
     else if (starts-with($exist:path, "/packages/"))
     then (
         let $log := util:log("info", $exist:path)
@@ -73,6 +74,7 @@ return (
           restxq:process($exist:path, $funcs)
         )
     )
+:)
     else (
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist" />
     )

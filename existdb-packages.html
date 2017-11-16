@@ -115,6 +115,7 @@ element for displaying package metadata
 
 //                this._loadPackages();
                 var self= this;
+
                 window.addEventListener('package-removed', function(e){
                     console.log("package was removed", e);
                     self._loadPackages();

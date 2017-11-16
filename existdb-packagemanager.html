@@ -81,6 +81,10 @@ a web component implementing eXistdb packagemanager
             #search {
                 display: inline-block;
                 font-size: 12px;
+                margin-right:20px;
+            }
+            #filterRepo{
+                margin-right:40px;
             }
 
             iron-icon {
@@ -162,15 +166,17 @@ a web component implementing eXistdb packagemanager
                 }
             }
 
-            .repo-toolbar{
-                position:fixed;
+            .repo-toolbar {
+                position: fixed;
                 height: 64px;
                 width: 100%;
             }
-            .repo-toolbar{
+
+            .repo-toolbar {
                 box-shadow: -1px 6px 6px -3px rgba(0, 0, 0, 0.4);
             }
-            #remoteService{
+
+            #remoteService {
                 padding-top: 65px;
             }
         </style>
@@ -208,16 +214,6 @@ a web component implementing eXistdb packagemanager
                         </vaadin-upload>
 
                     </app-header>
-                    <!--
-                                        <app-header slot="header">
-                                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
-                                            <div class="drop-label">
-                                                <iron-icon icon="image:adjust"></iron-icon>
-                                                DROPZONE - put your package(s) here.
-                                            </div>
-                                        </vaadin-upload>
-                                        </app-header>
-                    -->
                     <existdb-packages id="localService"
                                       service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
                     <paper-fab icon="add" on-click="switchToAvailable"></paper-fab>
@@ -226,15 +222,18 @@ a web component implementing eXistdb packagemanager
 
             <neon-animatable id="repoPage">
 
-                    <!--<app-header fixed scroll-target="remoteService">-->
-                        <app-toolbar class="repo-toolbar">
-                            <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                            <span class="heading">Available Packages {{remoteCount}}</span>
+                <app-toolbar class="repo-toolbar">
+                    <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
+                    <div class="heading">Available Packages {{remoteCount}}</div>
 
-                        </app-toolbar>
-                    <!--</app-header>-->
-                    <existdb-packages id="remoteService"
-                                      service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
+                    <paper-input id="filterRepo" class="searchbox" type="search" name="query" value="{{filter}}"
+                                 label="filter..." no-label-float auto-focus>
+                        <iron-icon icon="filter-list" slot="suffix"></iron-icon>
+                    </paper-input>
+
+                </app-toolbar>
+                <existdb-packages id="remoteService"
+                                  service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
             </neon-animatable>
 
         </neon-animated-pages>
@@ -289,16 +288,18 @@ a web component implementing eXistdb packagemanager
                 remoteCount: {
                     type: Number
                 },
-                selected:{
-                    observer:'_handlePageChange',
-                    value:0
+                selected: {
+                    observer: '_handlePageChange',
+                    value: 0
                 }
+
             },
             listeners: {
                 'neon-animation-finish': '_onNeonAnimationFinish'
             },
 
             attached: function () {
+                this.timeout = 0;
                 this.selected = 0;
                 this.listen(document, 'package-removed', '_handlePackageRemoved');
                 this.listen(document, 'package-remove-error', '_handlePackageRemoveError');
@@ -325,7 +326,6 @@ a web component implementing eXistdb packagemanager
                     console.log("onuploadsuccess", e)
                     var file = e.detail.file
                     var self = this
-//                    that.$.loadInstalled.generateRequest()
                     that.$.localService.loadPackages();
 
                     setTimeout(function () {
@@ -343,28 +343,34 @@ a web component implementing eXistdb packagemanager
                     console.log("kepup", this);
                     if (e.keyCode == 27) {
                         console.log("ESC")
-                        self.$.search.value = ""
-                        self.$.search.focus();
+                        self._resetFilters();
+                        self.focus();
                     }
-/*
-                    if (e.keyCode == 65) {
-                        this.$.pages.selected=1;
-                    }
-                    if (e.keyCode == 66) {
-                        this.$.pages.selected=0;
-                    }
-                    if (e.keyCode == 70) {
-                        this.$.search.focus();
-                    }
-                    if (e.keyCode == 76) {
-                        this._showLibraries(e);
-                    }
-                    if (e.keyCode == 85) {
-                        this.querySelector('#addFiles').click();
-                    }
-*/
-                    self._handleSearchInput(e)
+                    /*
+                                        if (e.keyCode == 65) {
+                                            this.$.pages.selected=1;
+                                        }
+                                        if (e.keyCode == 66) {
+                                            this.$.pages.selected=0;
+                                        }
+                                        if (e.keyCode == 70) {
+                                            this.$.search.focus();
+                                        }
+                                        if (e.keyCode == 76) {
+                                            this._showLibraries(e);
+                                        }
+                                        if (e.keyCode == 85) {
+                                            this.querySelector('#addFiles').click();
+                                        }
+                                        self.filter(e)
+                    */
                 });
+
+                /*
+                                this.$.search.addEventListener('keyup', function (e) {
+                                    this.filter(e);
+                                });
+                */
 
                 this._switchToInstalled()
                 this.$.search.focus()
@@ -381,20 +387,96 @@ a web component implementing eXistdb packagemanager
 
             },
 
+/*
+            filterPackages: function (e) {
+                this.debounce('filter', 'this._handleSearchInput', 500);
+            },
+*/
+            _handlePackagesLoaded: function (e) {
+                console.log('################# _handlePackagesLoaded', e);
+                console.log('_handlePackagesLoaded lastInstalled', this.lastInstalled);
+
+                this.local = [];
+                this.remote = [];
+                this.local = this.$.localPage.querySelectorAll('repo-app');
+                this.localCount = this.local.length;
+
+                console.log('_handlePackagesLoaded local', this.local);
+                console.log('_handlePackagesLoaded remote', this.remote);
+
+                if (this.lastInstalled == 'libraries') {
+                    this.lastInstalled = this.querySelectorAll('repo-app[type="library"]')[0];
+                    console.log("last lib ", this.lastInstalled);
+                    this._scrollAndFocus(this.lastInstalled);
+                    return;
+                }
+
+                this.remote = this.$.repoPage.querySelectorAll('repo-app');
+                this.remoteCount = this.remote.length;
+                if (this.lastInstalled) {
+                    for (i = 0; i < this.local.length; ++i) {
+                        var app = this.local[i]
+                        var url = app.url;
+                        if (url == this.lastInstalled) {
+                            console.log("scroll top ", app);
+                            this._scrollAndFocus(app);
+                            this.lastInstalled = undefined;
+                        }
+                    }
+                }
+
+            },
+
+            _scrollAndFocus: function (app) {
+                app.scrollIntoView();
+                window.scrollBy(0, -130)
+                app.focus();
+            },
+
+            _handlePageChange: function (newValue, oldValue) {
+                console.log('_handlePageChange ', newValue, oldValue);
+
+                if (newValue == 0) {
+                    //local page
+                    this.focus();
+                    this.entryAnimation = 'slide-from-left-animation';
+                    this.exitAnimation = 'slide-right-animation';
+                    this.$.localService.loadPackages();
+                } else {
+                    //repo page
+                    this.$.repoPage.focus();
+                    this.entryAnimation = 'slide-from-right-animation';
+                    this.exitAnimation = 'slide-left-animation';
+                    this.$.remoteService.loadPackages();
+                }
+            },
+
+
+            _handleFilter: function (e) {
+                console.log('_handleFilter - filter string has changed ', e);
+                console.log('_handleFilter - filter string has changed this', this);
+                this._handleSearchInput(e);
+            },
+
+
             _handleSearchInput: function (e) {
                 console.log('_handleSearchInput', e);
 
-                if (this.$.search.value == undefined) return;
-
-                var s = this.$.search.value.toLowerCase()
-                var apps = this.$.localPage.querySelectorAll('repo-app')
+                var apps, filterString;
+                if(this.selected == 0){
+                    if (this.$.search.value == undefined) return;
+                    apps = this.local;
+                    filterString = this.$.search.value.toLowerCase();
+                }else{
+                    apps = this.remote;
+                    filterString = this.$.filterRepo.value.toLowerCase();
+                }
 
                 for (i = 0; i < apps.length; ++i) {
                     var app = apps[i]
-                    var abbrev = app.querySelector("repo-abbrev").textContent;
                     var shortTitle = app.querySelector("repo-title").textContent;
 
-                    if (!shortTitle.toLowerCase().startsWith(s)) {
+                    if (!shortTitle.toLowerCase().startsWith(filterString)) {
                         app.setAttribute('hidden', '')
                     } else if (app.hasAttribute('hidden')) {
                         app.removeAttribute('hidden')
@@ -407,6 +489,10 @@ a web component implementing eXistdb packagemanager
                 }
             },
 
+            _resetFilters:function () {
+                this.$.search.value='';
+                this.$.filterRepo.value='';
+            },
 
             showUpload: function (e) {
                 this.$.upload.open();
@@ -421,7 +507,6 @@ a web component implementing eXistdb packagemanager
             },
 
             _handlePackageRemoved: function (e) {
-//                this.$.loadInstalled.generateRequest()
                 this.$.localService.loadPackages();
                 this._toast('Package has been removed: ' + e.detail.package)
             },
@@ -432,13 +517,11 @@ a web component implementing eXistdb packagemanager
 
             _handlePackageInstalled: function (e) {
                 this._toast('Package has been installed: ' + e.detail.package)
-//                this.$.localService.generateRequest()
                 this.$.localService.loadPackages();
-
                 this.$.pages.selected = 0;
-
                 this.lastInstalled = e.detail.package;
             },
+
             _handlePackageInstallError: function (e) {
                 this._toastError(e.detail.error.error.message)
             },
@@ -456,7 +539,6 @@ a web component implementing eXistdb packagemanager
                 console.log('animation done!');
             },
 
-
             _hideToast: function (e) {
                 this.$.toastError.hide()
             },
@@ -466,15 +548,14 @@ a web component implementing eXistdb packagemanager
             },
 
             _showLibraries: function (e) {
-                //todo
-                console.log("_showLibraries ", e);
-                console.log("_showLibraries ", this.$.libSwitch.innerText);
-                if(this.$.libSwitch.innerText == 'show libraries'){
+                this._resetFilters();
+
+                if (this.$.libSwitch.innerText == 'show libraries') {
                     this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local";
                     this.$.localService.loadPackages();
                     this.lastInstalled = 'libraries';
                     this.$.libSwitch.innerText = "hide libraries";
-                }else{
+                } else {
                     this.$.localService.service = "/exist/apps/existdb-packageservice/packages/apps";
                     this.$.localService.loadPackages();
                     this.lastInstalled = undefined;
@@ -483,7 +564,7 @@ a web component implementing eXistdb packagemanager
                     this._scrollAndFocus(firstApp);
                 }
                 console.log('_showLibraries ', this.lastInstalled);
-            },
+            }
 
 
             /*
@@ -493,62 +574,8 @@ a web component implementing eXistdb packagemanager
              }
              */
 
-            _handleFilter: function (e) {
-                console.log('_handleFilter - filter string has changed ', e);
-                console.log('_handleFilter - filter string has changed this', this);
-                this.$.localService.loadPackages();
-            },
 
-            _handlePackagesLoaded: function (e) {
-                console.log('################# _handlePackagesLoaded', e);
-                console.log('_handlePackagesLoaded lastInstalled', this.lastInstalled);
 
-                if (this.lastInstalled == 'libraries') {
-                    this.lastInstalled = this.querySelectorAll('repo-app[type="library"]')[0];
-                    console.log("last lib ", this.lastInstalled);
-                    this._scrollAndFocus(this.lastInstalled);
-                    return;
-                }
-                var apps = this.$.localPage.querySelectorAll('repo-app');
-                this.localCount = apps.length;
-                this.remoteCount = this.$.repoPage.querySelectorAll('repo-app').length;
-                if (this.lastInstalled) {
-                    for (i = 0; i < apps.length; ++i) {
-                        var app = apps[i]
-                        var url = app.url;
-                        if (url == this.lastInstalled) {
-                            console.log("scroll top ",app);
-                            this._scrollAndFocus(app);
-                            this.lastInstalled = undefined;
-                        }
-                    }
-                }
-
-            },
-
-            _scrollAndFocus: function (app) {
-                app.scrollIntoView();
-                window.scrollBy(0, -130)
-                app.focus();
-            },
-
-            _handlePageChange:function (newValue, oldValue) {
-                console.log('_handlePageChange ',newValue, oldValue);
-
-                if(newValue == 0){
-                    //local page
-                    this.focus();
-                    this.entryAnimation = 'slide-from-left-animation';
-                    this.exitAnimation = 'slide-right-animation';
-                    this.$.localService.loadPackages();
-                }else {
-                    //repo page
-                    this.$.repoPage.focus();
-                    this.entryAnimation = 'slide-from-right-animation';
-                    this.exitAnimation = 'slide-left-animation';
-                    this.$.remoteService.loadPackages();
-                }
-            }
 
 
         });
