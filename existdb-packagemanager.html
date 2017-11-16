@@ -78,7 +78,7 @@ a web component implementing eXistdb packagemanager
                 background: var(--paper-blue-500);
             }
 
-            #search {
+            #filterLocal {
                 display: inline-block;
                 font-size: 12px;
                 margin-right:20px;
@@ -192,7 +192,7 @@ a web component implementing eXistdb packagemanager
                             <div main-title>PackageManager</div>
                             <span class="heading">Installed packages {{localCount}}</span>
 
-                            <paper-input id="search" class="searchbox" type="search" name="query" value="{{filter}}"
+                            <paper-input id="filterLocal" class="searchbox" type="search" name="query" value="{{filter}}"
                                          label="filter..." no-label-float auto-focus>
                                 <iron-icon icon="filter-list" slot="suffix"></iron-icon>
                             </paper-input>
@@ -373,7 +373,7 @@ a web component implementing eXistdb packagemanager
                 */
 
                 this._switchToInstalled()
-                this.$.search.focus()
+                this.$.filterLocal.focus()
             },
 
             detached: function () {
@@ -464,10 +464,12 @@ a web component implementing eXistdb packagemanager
 
                 var apps, filterString;
                 if(this.selected == 0){
-                    if (this.$.search.value == undefined) return;
+                    // ### on local page
+                    if (this.$.filterLocal.value == undefined) return;
                     apps = this.local;
-                    filterString = this.$.search.value.toLowerCase();
+                    filterString = this.$.filterLocal.value.toLowerCase();
                 }else{
+                    // ### on remote page
                     apps = this.remote;
                     filterString = this.$.filterRepo.value.toLowerCase();
                 }
@@ -490,7 +492,7 @@ a web component implementing eXistdb packagemanager
             },
 
             _resetFilters:function () {
-                this.$.search.value='';
+                this.$.filterLocal.value='';
                 this.$.filterRepo.value='';
             },
 
