@@ -105,6 +105,10 @@ element for displaying package metadata
                     reflectToAttribute:true,
                     notify:true,
                     observer: '_serviceChanged'
+                },
+                autoLoad:{
+                    type:Boolean,
+                    value:false
                 }
             },
 
@@ -112,7 +116,9 @@ element for displaying package metadata
                 console.log("existdb-packages attached");
                 console.log("existdb-packages attached ", this.service);
 
-//                this._loadPackages();
+                if(this.autoLoad){
+                    this.loadPackages();
+                }
                 var self= this;
 
                 window.addEventListener('package-removed', function(e){
