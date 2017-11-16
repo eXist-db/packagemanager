@@ -5,6 +5,8 @@
 <link rel="import" href="bower_components/paper-styles/typography.html">
 <link rel="import" href="existdb-package-remove-action.html">
 <link rel="import" href="existdb-package-install-action.html">
+<link rel="import" href="bower_components/paper-progress/paper-progress.html">
+
 
 
 <!--
@@ -16,6 +18,13 @@ element for displaying package metadata
 
 <dom-module id="repo-app">
     <template>
+        <custom-style>
+            <style is="custom-style">
+                paper-progress.slow {
+                    --paper-progress-indeterminate-cycle-duration: 10s;
+                }
+            </style>
+        </custom-style>
         <style>
             :host {
 
@@ -34,6 +43,18 @@ element for displaying package metadata
                 };
 
 
+            }
+/*
+            :host:focus{
+                background: var(--paper-blue-50);
+            }
+*/
+            #progress{
+                position: absolute;
+                top:0;
+                left:0;
+                width:100%;
+                display: block;
             }
             :host ::slotted(*){
                 @apply(--paper-font-common-base);
@@ -66,6 +87,14 @@ element for displaying package metadata
                 right:40px;
             }
 
+            existdb-package-remove-action{
+                position: absolute;
+                top:10px;
+                right:40px;
+            }
+
+
+            /* styles for metadata elements */
             ::slotted(repo-icon){
                 max-width:100px;
                 display: inline-block;
@@ -81,15 +110,24 @@ element for displaying package metadata
             .wrapper ::slotted(repo-type){
                 display:block;
                 color:var(--paper-blue-700);
-                font-size:12px;
+                font-size:16px;
                 position:absolute;
                 top:0px;
                 padding-top:15px;
             }
+            .wrapper ::slotted(repo-app)[type='library'] repo-type{
+                color:var(--paper-green-700);
+            }
 
+            .wrapper ::slotted(repo-version){
+                display:table-row;
+                width:100%;
+                font-size:16px;
+            }
             .wrapper ::slotted(repo-version)::before{
                 content:"Version ";
             }
+
             .wrapper ::slotted(repo-title){
                 font-size:24px;
                 font-weight:500;
@@ -98,53 +136,83 @@ element for displaying package metadata
                 @apply(--paper-font-common-base);
 
             }
-            .wrapper ::slotted(repo-version){
-                display:table-row;
-                width:100%;
-                font-size:16px;
-            }
-
-
-            existdb-package-remove-action{
-                position: absolute;
-                top:10px;
-                right:40px;
-            }
 
             .wrapper ::slotted(repo-name),
             .wrapper ::slotted(repo-description),
-            .wrapper ::slotted(repo-author),
+            .wrapper ::slotted(repo-authors),
             .wrapper ::slotted(repo-abbrev),
             .wrapper ::slotted(repo-license),
             .wrapper ::slotted(repo-website),
-            .wrapper ::slotted(repo-url)
+            .wrapper ::slotted(repo-url),
+            .wrapper ::slotted(repo-requires),
+            .wrapper ::slotted(repo-changelog),
+            .wrapper ::slotted(repo-other),
+            .wrapper ::slotted(repo-note)
             {
                 display:none;
             }
 
             .wrapper[show-all] ::slotted(repo-name),
             .wrapper[show-all] ::slotted(repo-description),
-            .wrapper[show-all] ::slotted(repo-author),
+            .wrapper[show-all] ::slotted(repo-authors),
             .wrapper[show-all] ::slotted(repo-abbrev),
             .wrapper[show-all] ::slotted(repo-license),
             .wrapper[show-all] ::slotted(repo-website),
-            .wrapper[show-all] ::slotted(repo-url)
+            .wrapper[show-all] ::slotted(repo-url),
+            .wrapper[show-all] ::slotted(repo-requires),
+            .wrapper[show-all] ::slotted(repo-changelog),
+            .wrapper[show-all] ::slotted(repo-changelog) repo-change,
+            .wrapper[show-all] ::slotted(repo-other),
+            .wrapper[show-all] ::slotted(repo-other) *,
+            .wrapper[show-all] ::slotted(repo-note),
+            .wrapper[show-all] ::slotted(repo-authors) repo-author
             {
                 display:table-row;
+                padding:10px 0;
+                margin-bottom: 6px;
+            }
+            .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires{
+                display: table-cell;
+            }
+            .wrapper[show-all] ::slotted(repo-changelog) {
+                padding-top:10px;
+            }
+            .wrapper[show-all] ::slotted(repo-changelog) repo-change ul{
+                padding:0 0 10px 10px;
+                margin:0;
             }
 
+
+
+            /* CSS Labels for the meta elements */
             .wrapper[show-all] ::slotted(*)::before{
                 display: table-cell;
                 min-width: 120px;
+                padding:2px;
+                font-weight:300;
             }
+
+
+            .wrapper[show-all] ::slotted(repo-requires)::after{
+                display:table-row;
+                content: 'eXistdb ' attr(semver-min);
+            }
+
+            .wrapper[show-all] ::slotted(repo-version) repo-change{
+                display:table-row;
+            }
+            .wrapper[show-all] ::slotted(repo-version) repo-change:before{
+                content:attr(version);
+            }
+
             .wrapper[show-all] ::slotted(repo-name)::before{
                 content: "Name: ";
             }
             .wrapper[show-all] ::slotted(repo-description)::before{
                 content:"Description: ";
             }
-            .wrapper[show-all] ::slotted(repo-author)::before{
-                content:"Author:";
+            .wrapper[show-all] ::slotted(repo-authors)::before{
+                content:"Author(s):";
             }
             .wrapper[show-all] ::slotted(repo-abbrev)::before{
                 content:"Abbreviation:";
@@ -159,13 +227,48 @@ element for displaying package metadata
                 content:"License:";
             }
 
+            .wrapper[show-all] ::slotted(repo-version[version])::before{
+                min-width: auto;
+            }
+
+            .wrapper[show-all] ::slotted(repo-requires):before{
+                content:'Requires';
+            }
+
+            .wrapper[show-all] ::slotted(repo-changelog) repo-change:before{
+                content:'Changes in ' attr(version);
+            }
+
+            .wrapper[show-all] ::slotted(repo-changelog):before{
+                content:'Changelog';
+                paddding-top:10px;
+            }
+
+            .wrapper[show-all] ::slotted(repo-other):before{
+                content:'Older versions';
+            }
+
+            .wrapper[show-all] ::slotted(repo-other) repo-version:before{
+                content:'Version ' attr(version);
+            }
+            .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires:before{
+                content:'requires eXistdb ' attr(version);
+                padding-left:6px;
+            }
+
+            .wrapper[show-all] ::slotted(repo-note):before{
+                content:'Notes';
+            }
+
 
 
         </style>
+        <paper-progress id="progress" class="slow" hidden></paper-progress>
         <content select="repo-icon"></content>
         <div id="wrapper" class="wrapper" url="[[url]]">
             <!--<div class$="[[type]] type">[[type]]</div>-->
             <slot></slot>
+
 
             <!--todo: conditional template dependent on installed state. -->
 
@@ -174,7 +277,7 @@ element for displaying package metadata
             <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
             <existdb-package-install-action
                     id="install"
-                    url="{{packageUrl}}"
+                    url="{{url}}"
                     abbrev="{{abbrev}}"
                     type="{{type}}"
                     version="{{version}}"
@@ -219,7 +322,7 @@ element for displaying package metadata
                 available: {
                     type: String
                 },
-                packageUrl: {
+                url: {
                     type:String,
                     reflectToAttribute:true
                 },
@@ -231,7 +334,12 @@ element for displaying package metadata
                 showAll:{
                     type:Boolean,
                     reflectToAttribute:true
+                },
+                path:{
+                    type: String,
+                    reflectToAttribute:true
                 }
+
 
 //                reflectToAttribute: true
             },
@@ -265,6 +373,9 @@ element for displaying package metadata
                     e.preventDefault()
                 })
 */
+                this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
+                this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
+//                this.listen(this, 'package-installed', '_onInstalled');
             },
 
             ready:function () {
@@ -297,7 +408,7 @@ element for displaying package metadata
                 console.log("######## is App: ", isApp);
 
                 if(isApp){
-                    var targetUrl = this.url
+                    var targetUrl = this.path;
                     window.open(targetUrl)
                 }
 /*
@@ -336,6 +447,19 @@ element for displaying package metadata
                 console.log("showInfo ",e);
                 console.log("repo-app.showInfo");
                 console.log("repo-app.showInfo polymer ", Polymer.dom(e));
+            },
+
+            _onInstalled:function (e) {
+                console.log('_onInstalled ', e);
+                this.$.progress.indeterminate=false;
+                this.$.progress.value=100;
+//                this.fire("package-installed",{package:e.detail.package});
+            },
+
+            _onInstallStarted:function (e) {
+                console.log('_onInstallStarted ', e);
+                this.$.progress.hidden=false;
+                this.$.progress.indeterminate=true;
             }
 
 

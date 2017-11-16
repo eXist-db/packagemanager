@@ -62,17 +62,25 @@ a web component implementing eXistdb packagemanager
                     background: var(--paper-blue-700);
                 };
 
-                --paper-toggle-button-checked-button-color:var(--paper-blue-700);
+                --paper-toggle-button-checked-button-color: var(--paper-blue-700);
+
+                --app-header-background-front-layer: {
+                    background: var(--paper-blue-500);
+
+                };
             }
 
             app-header-layout app-header.app-header {
                 /*border-bottom: 1px solid #dedede;*/
-                background: white;
             }
 
-            #search{
-                display:inline-block;
-                font-size:12px;
+            app-header {
+                background: var(--paper-blue-500);
+            }
+
+            #search {
+                display: inline-block;
+                font-size: 12px;
             }
 
             iron-icon {
@@ -85,10 +93,12 @@ a web component implementing eXistdb packagemanager
                 background: white;
 
             }
-            #uploader{
+
+            #uploader {
                 background: var(--paper-blue-50);
             }
-            #uploader .drop-label{
+
+            #uploader .drop-label {
                 color: var(--paper-blue-900);
             }
 
@@ -102,35 +112,33 @@ a web component implementing eXistdb packagemanager
                 --paper-toast-color: white;
             }
 
-            ::content .upgrade{
-                color:var(--paper-red-700);
+            ::content .upgrade {
+                color: var(--paper-red-700);
             }
 
-            paper-input[type='search']{
-                width:140px;
+            paper-input[type='search'] {
+                width: 140px;
             }
 
-
-            ::slotted(repo-title){
-                font-size:28px;
-                font-weight:500;
+            ::slotted(repo-title) {
+                font-size: 28px;
+                font-weight: 500;
             }
 
+            /*
+                        ::slotted(repo-name),
+                        ::slotted(repo-description),
+                        ::slotted(repo-author),
+                        ::slotted(repo-abbrev),
+                        ::slotted(repo-license),
+                        ::slotted(repo-website),
+                        ::slotted(repo-url)
+                        {
+                            display: none;
+                        }
 
-/*
-            ::slotted(repo-name),
-            ::slotted(repo-description),
-            ::slotted(repo-author),
-            ::slotted(repo-abbrev),
-            ::slotted(repo-license),
-            ::slotted(repo-website),
-            ::slotted(repo-url)
-            {
-                display: none;
-            }
-
-*/
-            paper-fab{
+            */
+            paper-fab {
                 position: fixed;
                 right: 45px;
                 bottom: 40px;
@@ -138,53 +146,98 @@ a web component implementing eXistdb packagemanager
                 --paper-fab-background: var(--paper-pink-500);
                 --iron-icon-fill-color: var(--paper-grey-50);
             }
+
+            .heading {
+                display: none;
+            }
+
+            @media only screen and (min-width: 768px) {
+                .heading {
+                    width: 100%;
+                    display: inline-block;
+                    font-weight: 300;
+                    text-align: center;
+                    flex-grow: 2;
+                    color: var(--paper-grey-500);
+                }
+            }
+
+            .repo-toolbar{
+                position:fixed;
+                height: 64px;
+                width: 100%;
+            }
+            .repo-toolbar{
+                box-shadow: -1px 6px 6px -3px rgba(0, 0, 0, 0.4);
+            }
+            #remoteService{
+                padding-top: 65px;
+            }
         </style>
 
-        <app-header-layout fullbleed>
-            <app-header slot="header" class="app-header" condenses reveals effects="waterfall" fixed>
-                <app-toolbar sticky>
-                    <iron-icon icon="apps"></iron-icon>
-                    <div main-title>Package Manager</div>
+        <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
+                             exit-animation="[[exitAnimation]]">
 
-                    <paper-input id="search" class="searchbox" type="search" name="query" value="{{filter}}" label="filter..." no-label-float>
-                        <iron-icon icon="filter-list" slot="prefix"></iron-icon>
-                    </paper-input>
+            <neon-animatable id="localPage">
+                <app-header-layout fullbleed>
+                    <app-header slot="header" class="app-header" condenses reveals effects="waterfall" fixed>
+                        <app-toolbar sticky>
+                            <iron-icon icon="apps"></iron-icon>
+                            <div main-title>PackageManager</div>
+                            <span class="heading">Installed packages {{localCount}}</span>
 
-                    <paper-menu-button horizontal-align="right">
-                        <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
-                        <paper-listbox slot="dropdown-content">
-                            <paper-item on-click="_showLibraries">show libraries</paper-item>
-                            <paper-item>logout</paper-item>
-                        </paper-listbox>
-                    </paper-menu-button>
+                            <paper-input id="search" class="searchbox" type="search" name="query" value="{{filter}}"
+                                         label="filter..." no-label-float auto-focus>
+                                <iron-icon icon="filter-list" slot="suffix"></iron-icon>
+                            </paper-input>
 
-                </app-toolbar>
+                            <paper-menu-button horizontal-align="right">
+                                <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
+                                <paper-listbox slot="dropdown-content">
+                                    <paper-item on-click="_showLibraries">show libraries</paper-item>
+                                    <paper-item>logout</paper-item>
+                                </paper-listbox>
+                            </paper-menu-button>
 
-            </app-header>
-            <neon-animated-pages id="pages" nolibs="true" selected="[[selected]]" entry-animation="[[entryAnimation]]"
-                                 exit-animation="[[exitAnimation]]">
+                        </app-toolbar>
+                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
+                            <div class="drop-label">
+                                <iron-icon icon="image:adjust"></iron-icon>
+                                DROPZONE - put your package(s) here.
+                            </div>
+                        </vaadin-upload>
 
-                <neon-animatable>
-                    <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
-                        <div class="drop-label">
-                            <iron-icon icon="image:adjust"></iron-icon>
-                            DROPZONE - put your package(s) here.
-                        </div>
-                    </vaadin-upload>
-                    <existdb-packages id="localService" service="/exist/apps/existdb-packageservice/packages/apps"> </existdb-packages>
+                    </app-header>
+                    <!--
+                                        <app-header slot="header">
+                                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
+                                            <div class="drop-label">
+                                                <iron-icon icon="image:adjust"></iron-icon>
+                                                DROPZONE - put your package(s) here.
+                                            </div>
+                                        </vaadin-upload>
+                                        </app-header>
+                    -->
+                    <existdb-packages id="localService"
+                                      service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
                     <paper-fab icon="add" on-click="switchToAvailable"></paper-fab>
-                </neon-animatable>
+                </app-header-layout>
+            </neon-animatable>
 
-                <neon-animatable>
-                    <app-toolbar>
-                        <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                        <span class="heading">Available Packages</span>
-                    </app-toolbar>
-                    <existdb-packages id="remoteService" service="/exist/apps/existdb-packageservice/packages/remote"> </existdb-packages>
-                </neon-animatable>
+            <neon-animatable id="repoPage">
 
-            </neon-animated-pages>
-        </app-header-layout>
+                    <!--<app-header fixed scroll-target="remoteService">-->
+                        <app-toolbar class="repo-toolbar">
+                            <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
+                            <span class="heading">Available Packages {{remoteCount}}</span>
+
+                        </app-toolbar>
+                    <!--</app-header>-->
+                    <existdb-packages id="remoteService"
+                                      service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
+            </neon-animatable>
+
+        </neon-animated-pages>
         <paper-toast id="toast" text="" duration="4000"></paper-toast>
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
@@ -210,22 +263,31 @@ a web component implementing eXistdb packagemanager
                 targetUrl: {
                     type: String,
                 },
-/*
-                animationConfig: {
-                    value: function () {
-                        return {
-                            // provided by neon-animation/animations/scale-down-animation.html
-                            name: 'scale-down-animation',
-                            node: this.$.uploader
-                        }
-                    }
-                },
-*/
-                filter:{
-                    type:String,
-                    notify:true,
-                    reflectToAttribute:true,
+                /*
+                                animationConfig: {
+                                    value: function () {
+                                        return {
+                                            // provided by neon-animation/animations/scale-down-animation.html
+                                            name: 'scale-down-animation',
+                                            node: this.$.uploader
+                                        }
+                                    }
+                                },
+                */
+                filter: {
+                    type: String,
+                    notify: true,
+                    reflectToAttribute: true,
                     observer: '_handleFilter'
+                },
+                lastInstalled: {
+                    type: String
+                },
+                localCount: {
+                    type: Number
+                },
+                remoteCount: {
+                    type: Number
                 }
             },
             listeners: {
@@ -234,13 +296,14 @@ a web component implementing eXistdb packagemanager
 
             attached: function () {
                 this.selected = 0;
-                this.listen(document, 'package-removed', '_handlePackageRemoved')
-                this.listen(document, 'package-remove-error', '_handlePackageRemoveError')
-                this.listen(document, 'package-installed', '_handlePackageInstalled')
-                this.listen(document, 'package-install-error', '_handlePackageInstallError')
-                this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt')
-                this.targetUrl = "/exist/apps/packagemanager/modules/install.xql"
-                this.$.uploader.formDataName = "uploadedfiles[]"
+                this.listen(document, 'package-removed', '_handlePackageRemoved');
+                this.listen(document, 'package-remove-error', '_handlePackageRemoveError');
+                this.listen(document, 'package-installed', '_handlePackageInstalled');
+                this.listen(document, 'package-install-error', '_handlePackageInstallError');
+                this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
+                this.listen(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
+                this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
+                this.$.uploader.formDataName = "uploadedfiles[]";
 
                 this.$.uploader.addEventListener('upload-before', function (event) {
                     console.log('upload xhr before open: ', event.detail.xhr);
@@ -270,16 +333,22 @@ a web component implementing eXistdb packagemanager
                     this._toastError("Upload failed for: " + e.detail.file)
                 });
 
-                var self=this;
-                this.addEventListener('keyup',function(e){
+                var self = this;
+                this.addEventListener('keyup', function (e) {
                     console.log("kepup", this);
-                    if(e.keyCode == 27) {
+                    if (e.keyCode == 27) {
                         console.log("ESC")
                         self.$.search.value = ""
                         self.$.search.focus();
                     }
+                    if (e.keyCode == 70) {
+                        this.$.search.focus();
+                    }
+                    if (e.keyCode == 85) {
+                        this.querySelector('#addFiles').click();
+                    }
                     self._handleSearchInput(e)
-                })
+                });
 
                 this._switchToInstalled()
                 this.$.search.focus()
@@ -294,26 +363,26 @@ a web component implementing eXistdb packagemanager
             },
 
             _handleSearchInput: function (e) {
-                console.log('_handleSearchInput',e);
+                console.log('_handleSearchInput', e);
 
-                if (this.$.search.value==undefined) return;
+                if (this.$.search.value == undefined) return;
 
                 var s = this.$.search.value.toLowerCase()
-                var apps = this.querySelectorAll('repo-app')
+                var apps = this.$.localPage.querySelectorAll('repo-app')
 
                 for (i = 0; i < apps.length; ++i) {
                     var app = apps[i]
                     var abbrev = app.querySelector("repo-abbrev").textContent;
                     var shortTitle = app.querySelector("repo-title").textContent;
 
-                    if(!abbrev.toLowerCase().startsWith(s) && !shortTitle.toLowerCase().startsWith(s)){
-                        app.setAttribute('hidden','')
-                    }else if(app.hasAttribute('hidden')){
+                    if (!shortTitle.toLowerCase().startsWith(s)) {
+                        app.setAttribute('hidden', '')
+                    } else if (app.hasAttribute('hidden')) {
                         app.removeAttribute('hidden')
                     }
                 }
                 var hiddenItems = this.querySelectorAll("repo-app[hidden]")
-                if(hiddenItems.length ==  apps.length -1){
+                if (hiddenItems.length == apps.length - 1) {
                     var found = this.querySelector("repo-app:not([hidden])")
                     found.focus()
                 }
@@ -354,10 +423,11 @@ a web component implementing eXistdb packagemanager
             _handlePackageInstalled: function (e) {
                 this._toast('Package has been installed: ' + e.detail.package)
 //                this.$.localService.generateRequest()
-                this.$.loadInstalled.loadPackages();
+                this.$.localService.loadPackages();
 
                 this.$.pages.selected = 0;
 
+                this.lastInstalled = e.detail.package;
             },
             _handlePackageInstallError: function (e) {
                 this._toastError(e.detail.error.error.message)
@@ -387,11 +457,12 @@ a web component implementing eXistdb packagemanager
 
             _showLibraries: function (e) {
                 //todo
-                console.log("_showLibraries ",e);
+                console.log("_showLibraries ", e);
                 this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local"
                 this.$.localService.loadPackages();
+                this.lastInstalled = 'libraries';
+                console.log('_showLibraries ', this.lastInstalled)
             },
-
 
 
             /*
@@ -401,10 +472,45 @@ a web component implementing eXistdb packagemanager
              }
              */
 
-            _handleFilter:function(e){
-                console.log('_handleFilter - filter string has changed ',e);
-                console.log('_handleFilter - filter string has changed this',this);
+            _handleFilter: function (e) {
+                console.log('_handleFilter - filter string has changed ', e);
+                console.log('_handleFilter - filter string has changed this', this);
                 this.$.localService.loadPackages();
+            },
+
+            _handlePackagesLoaded: function (e) {
+                console.log('_handlePackagesLoaded', e);
+                console.log('_handlePackagesLoaded', this.lastInstalled);
+
+                if (this.lastInstalled == 'libraries') {
+                    this.lastInstalled = this.querySelectorAll('repo-app[type="library"]')[0];
+                }
+                var apps = this.$.localPage.querySelectorAll('repo-app');
+                this.localCount = apps.length;
+                this.remoteCount = this.$.repoPage.querySelectorAll('repo-app').length;
+                if (this.lastInstalled) {
+                    for (i = 0; i < apps.length; ++i) {
+                        var app = apps[i]
+                        var url = app.url;
+                        if (url == this.lastInstalled) {
+                            console.log("scroll top");
+                            this._scrollAndFocus(app);
+                            this.lastInstalled = undefined;
+                            /*
+                                                        app.scrollIntoView();
+                                                        window.scrollBy(0, -70)
+                                                        app.focus();
+                            */
+                        }
+                    }
+                }
+
+            },
+
+            _scrollAndFocus: function (app) {
+                app.scrollIntoView();
+                window.scrollBy(0, -70)
+                app.focus();
             }
 
 

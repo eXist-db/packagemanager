@@ -79,6 +79,7 @@ implements an interaction with the package repository
             submit: function (e) {
                 e.stopPropagation();
                 e.preventDefault()
+                this.fire("package-install-started");
 
 //                this.$.installform.submit();
                 this.$.installPackage.params = {

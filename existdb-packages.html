@@ -126,6 +126,7 @@ element for displaying package metadata
             _handlePackages: function (data) {
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
                 this._resetProgress()
+                this.fire('packages-loaded',{});
             },
 
             _handleLocalError:function (e) {
