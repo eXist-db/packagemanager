@@ -37,6 +37,7 @@
 <link rel="import" href="bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="existdb-packages.html">
+<link rel="import" href="existdb-package-descriptor.html">
 <link rel="import" href="repo-app.html">
 <link rel="import" href="repo-icon.html">
 
@@ -208,30 +209,17 @@ a web component implementing eXistdb packagemanager
             #remoteService {
                 padding-top: 65px;
             }
-            paper-listbox{
-                z-index:10;
-            }
             paper-card{
                 position:fixed;
-                z-index:1;
+                z-index:200;
                 width:340px;
                 padding:10px;
-                top:10px;
+                top:60px;
                 right:30px;
                 --paper-card-background-color:var(--paper-orange-500);
             }
-            .card-content{
-                background:var(--paper-orange-300);
-            }
             paper-card td:first-child{
                 padding:10px 10px 10px 0;
-            }
-            .count{
-                background:var(--paper-blue-300);
-                display:inline-block;
-                border-radius:20px;
-                padding:6px;
-                color:var(--paper-blue-800);
             }
 
         </style>
@@ -311,7 +299,7 @@ a web component implementing eXistdb packagemanager
                         <app-toolbar id="maintool" sticky>
                             <iron-icon icon="apps"></iron-icon>
                             <div main-title>PackageManager</div>
-                            <span class="heading">Installed packages <span class="count">{{localCount}}</span></span>
+                            <span class="heading">Installed packages {{localCount}}</span>
 
                             <paper-input-container>
                                 <iron-input slot="input">
@@ -324,7 +312,7 @@ a web component implementing eXistdb packagemanager
                                 <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
                                 <paper-listbox slot="dropdown-content">
                                     <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
-                                    <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
+                                    <paper-item on-click="_showShortcuts">show shortcuts</paper-item>
                                     <paper-item>logout</paper-item>
                                 </paper-listbox>
                             </paper-menu-button>
@@ -348,7 +336,7 @@ a web component implementing eXistdb packagemanager
 
                 <app-toolbar class="repo-toolbar">
                     <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                    <div class="heading">Available Packages <span class="count">{{remoteCount}}</span></div>
+                    <div class="heading">Available Packages {{remoteCount}}</div>
 
                     <paper-input-container class="remote-filter-wrapper">
                         <iron-input slot="input">
@@ -404,6 +392,9 @@ a web component implementing eXistdb packagemanager
                     notify: true,
                     reflectToAttribute: true,
                     observer: '_handleFilter'
+                },
+                lastInstalled: {
+                    type: String
                 },
                 localCount: {
                     type: Number
@@ -510,6 +501,7 @@ a web component implementing eXistdb packagemanager
 
             _handlePackagesLoaded: function (e) {
                 console.log('################# _handlePackagesLoaded', e);
+                console.log('_handlePackagesLoaded lastInstalled', this.lastInstalled);
 
                 //resetting arrays
                 this.local = [];
@@ -519,10 +511,28 @@ a web component implementing eXistdb packagemanager
                 this.localCount = this.local.length;
 //                console.log('_handlePackagesLoaded local', this.local);
 
+                if (this.lastInstalled == 'libraries') {
+                    this.lastInstalled = this.querySelectorAll('repo-app[type="library"]')[0];
+                    console.log("last lib ", this.lastInstalled);
+                    this._scrollAndFocus(this.lastInstalled);
+                    return;
+                }
+
                 this.remote = this.$.repoPage.querySelectorAll('repo-app');
                 this.remoteCount = this.remote.length;
 //                console.log('_handlePackagesLoaded remote', this.remote);
 
+                if (this.lastInstalled) {
+                    for (i = 0; i < this.local.length; ++i) {
+                        var app = this.local[i]
+                        var url = app.url;
+                        if (url == this.lastInstalled) {
+                            console.log("scroll top ", app);
+                            this._scrollAndFocus(app);
+                            this.lastInstalled = undefined;
+                        }
+                    }
+                }
                 if(this.selected == 0){
                     this.$.filterLocal.focus();
                 }else{
@@ -621,6 +631,9 @@ a web component implementing eXistdb packagemanager
             _handlePackageInstalled: function (e) {
                 this._toast('Package has been installed: ' + e.detail.package)
                 this.$.remoteService.loadPackages();
+//                this.$.localService.loadPackages();
+//                this.$.pages.selected = 0;
+                this.lastInstalled = e.detail.package;
             },
 
             _handlePackageInstallError: function (e) {
@@ -654,14 +667,17 @@ a web component implementing eXistdb packagemanager
                 if (this.$.libSwitch.innerText.trim() == 'show libraries') {
                     this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local";
                     this.$.localService.loadPackages();
+                    this.lastInstalled = 'libraries';
                     this.$.libSwitch.innerText = "hide libraries";
                 } else {
                     this.$.localService.service = "/exist/apps/existdb-packageservice/packages/apps";
                     this.$.localService.loadPackages();
+                    this.lastInstalled = undefined;
                     this.$.libSwitch.innerText = "show libraries";
                     var firstApp = this.$.localService.querySelectorAll('repo-app[type="application"]')[0];
                     this.focus();
                 }
+                console.log('_showLibraries ', this.lastInstalled);
             },
 
             _moveToNext:function (e) {

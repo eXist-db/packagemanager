@@ -23,6 +23,7 @@ element for displaying package metadata
                 paper-progress.slow {
                     --paper-progress-indeterminate-cycle-duration: 10s;
                 }
+
             </style>
         </custom-style>
         <style>
@@ -86,6 +87,9 @@ element for displaying package metadata
                 top:10px;
                 right:40px;
             }
+            :host.update #install ::slotted(iron-icon){
+                stroke:var(--paper-orange-100);
+            }
 
             existdb-package-remove-action{
                 position: absolute;
@@ -129,6 +133,21 @@ element for displaying package metadata
                 content:"Version ";
             }
 
+            :host.update .wrapper ::slotted(repo-version){
+                color: var(--paper-orange-900);
+                font-weight: 500;
+                font-size:18px;
+            }
+            :host.update .wrapper ::slotted(repo-version)::before{
+                content:"New Version ";
+                color: var(--paper-orange-900);
+                font-weight: 500;
+                font-size:18px;
+                width: 150px;
+                display: table-cell;
+            }
+
+
             .wrapper ::slotted(repo-title){
                 font-size:24px;
                 font-weight:500;
@@ -148,9 +167,25 @@ element for displaying package metadata
             .wrapper ::slotted(repo-requires),
             .wrapper ::slotted(repo-changelog),
             .wrapper ::slotted(repo-other),
-            .wrapper ::slotted(repo-note)
+            .wrapper ::slotted(repo-note),
+            .wrapper ::slotted(repo-available)
             {
                 display:none;
+            }
+            .wrapper ::slotted(repo-installed):before{
+                content: "Installed Version ";
+                color:var(--paper-orange-900);
+                font-size: 18px;
+                font-weight: 500;
+                width: 150px;
+                display: table-cell;
+
+            }
+            .wrapper ::slotted(repo-installed){
+                color:var(--paper-orange-900);
+                font-size: 18px;
+                font-weight: 500;
+
             }
 
             .wrapper[show-all] ::slotted(repo-name),
@@ -261,7 +296,18 @@ element for displaying package metadata
                 content:'Notes';
             }
 
-
+            :host.update{
+                /*background: var(--paper-orange-300);*/
+            }
+            :host.update:before{
+                content: "updated";
+                position:absolute;
+                top:138px;
+                left:30px;
+                background: var(--paper-orange-700);
+                color:var(--paper-orange-100);
+                padding:4px 20px;
+            }
 
         </style>
         <paper-progress id="progress" class="slow" hidden></paper-progress>
@@ -370,6 +416,7 @@ element for displaying package metadata
                 this.listen(this, 'keyup', '_handleEnter')
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
+                this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
 //                this.listen(this, 'package-installed', '_onInstalled');
             },
 
