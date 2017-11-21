@@ -4,7 +4,7 @@
     {
       "name": "production",
       "bundle": true,
-      "js": {"compile": true, "minify": true},
+      "js": {"compile": false, "minify": true},
       "css": {"minify": true},
       "html": {"minify": true}
     },
