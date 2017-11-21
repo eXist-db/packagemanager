@@ -1,8 +1,14 @@
-# \<existdb-packagemanager\>
+# existdb Packagemanager
 
-a web component implementing eXistdb packagemanager
+This application allows to browse local and remote packages, install, upload or remove packages.
+
+
+## Building
 
 ## Install the Polymer-CLI
+
+The Polymer Command Line tool is needed to compress the application into a single file. It also has some further
+convenience tools. While 
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
 
