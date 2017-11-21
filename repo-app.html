@@ -9,6 +9,7 @@
 
 
 
+
 <!--
 `repo-app`
 element for displaying package metadata
@@ -311,7 +312,10 @@ element for displaying package metadata
 
         </style>
         <paper-progress id="progress" class="slow" hidden></paper-progress>
+
+        <!-- todo: find a working 2.0 solution. -->
         <content select="repo-icon"></content>
+
         <div id="wrapper" class="wrapper" url="[[url]]">
             <!--<div class$="[[type]] type">[[type]]</div>-->
             <slot></slot>
@@ -391,11 +395,6 @@ element for displaying package metadata
 //                reflectToAttribute: true
             },
 
-            listeners: {
-//                'info.tap': 'handleInfo',
-//                'delete.tap': 'handleDelete'
-            },
-
             handleInfo: function (e) {
                 e.stopPropagation()
                 e.preventDefault()
@@ -418,6 +417,9 @@ element for displaying package metadata
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
                 this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
 //                this.listen(this, 'package-installed', '_onInstalled');
+
+                this.listen(this,'requestInstall','_installOtherVersion');
+
             },
 
             ready:function () {
@@ -497,6 +499,12 @@ element for displaying package metadata
                 console.log('_onInstallStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
+            },
+
+            _installOtherVersion:function (e) {
+                console.log("###################### install other version", e.detail.version);
+                this.$.install.version = e.detail.version;
+                this.$.install.submit(e);
             }
 
 
