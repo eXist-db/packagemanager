@@ -18,6 +18,8 @@
 <link rel="import" href="bower_components/bottom-nav/bottom-nav.html">
 <link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="bower_components/neon-animation/web-animations.html">
+
+<!--
 <link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="bower_components/neon-animation/neon-animations.html">
@@ -25,6 +27,9 @@
 <link rel="import" href="bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/ripple-animation.html">
+-->
+
 <link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
@@ -35,6 +40,7 @@
 <link rel="import" href="bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="bower_components/paper-card/paper-card.html">
+<link rel="import" href="bower_components/paper-ripple/paper-ripple.html">
 
 <link rel="import" href="existdb-packages.html">
 <link rel="import" href="repo-app.html">
@@ -89,6 +95,7 @@ a web component implementing eXistdb packagemanager
             app-header {
                 background: var(--paper-blue-500);
                 color:white;
+                height: 128px;
             }
 
             [icon="apps"],[icon="search"]{
@@ -135,7 +142,6 @@ a web component implementing eXistdb packagemanager
                 z-index: 10;
                 background: var(--paper-blue-800);
                 color:white;
-
             }
 
             #uploader {
@@ -304,16 +310,19 @@ a web component implementing eXistdb packagemanager
                 <paper-button id="closeCard" on-click="_showHideShortcuts">close</paper-button>
             </div>
         </paper-card>
+<!--
         <neon-animated-pages id="pages" nolibs="true" selected="{{selected}}" entry-animation="[[entryAnimation]]"
                              exit-animation="[[exitAnimation]]">
+-->
+        <iron-pages id="pages" nolibs="true" selected="{{selected}}">
 
-            <neon-animatable id="localPage">
+            <div id="localPage">
                 <app-header-layout fullbleed>
-                    <app-header slot="header" class="app-header" condenses reveals effects="waterfall" fixed>
+                    <app-header slot="header" class="app-header" reveals condenses fixed>
                         <app-toolbar id="maintool" sticky>
                             <iron-icon icon="apps"></iron-icon>
                             <div main-title>PackageManager</div>
-                            <span class="heading">Installed packages <span class="count">{{localCount}}</span></span>
+                            <span class="heading">Installed packages <span class="count">[[count]]</span></span>
 
                             <paper-input-container>
                                 <iron-input slot="input">
@@ -340,17 +349,18 @@ a web component implementing eXistdb packagemanager
                         </vaadin-upload>
 
                     </app-header>
+
                     <existdb-packages id="localService"
                                       service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
-                    <paper-fab icon="add" on-click="_switchToAvailable"></paper-fab>
+                    <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
                 </app-header-layout>
-            </neon-animatable>
+            </div>
 
-            <neon-animatable id="repoPage">
+            <div id="repoPage">
 
                 <app-toolbar class="repo-toolbar">
                     <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                    <div class="heading">Available Packages <span class="count">{{remoteCount}}</span></div>
+                    <div class="heading">Available Packages <span class="count">{{count}}</span></div>
 
                     <paper-input-container class="remote-filter-wrapper">
                         <iron-input slot="input">
@@ -362,9 +372,9 @@ a web component implementing eXistdb packagemanager
                 </app-toolbar>
                 <existdb-packages id="remoteService"
                                   service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
-            </neon-animatable>
+            </div>
 
-        </neon-animated-pages>
+        </iron-pages>
         <paper-toast id="toast" text="" duration="4000"></paper-toast>
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
@@ -407,12 +417,6 @@ a web component implementing eXistdb packagemanager
                     reflectToAttribute: true,
                     observer: '_handleFilter'
                 },
-                localCount: {
-                    type: Number
-                },
-                remoteCount: {
-                    type: Number
-                },
                 selected: {
                     observer: '_handlePageChange',
                     value: 0
@@ -430,6 +434,9 @@ a web component implementing eXistdb packagemanager
                 remote:{
                     type:Array,
                     value:[]
+                },
+                count:{
+                    type:Number
                 }
 
             },
@@ -516,19 +523,17 @@ a web component implementing eXistdb packagemanager
                 //resetting arrays
                 this.local = [];
                 this.remote = [];
+                this.visible= [];
 
                 this.local = this.$.localPage.querySelectorAll('repo-app');
-                this.localCount = this.local.length;
-//                console.log('_handlePackagesLoaded local', this.local);
-
                 this.remote = this.$.repoPage.querySelectorAll('repo-app');
-                this.remoteCount = this.remote.length;
-//                console.log('_handlePackagesLoaded remote', this.remote);
 
                 if(this.selected == 0){
                     this.$.filterLocal.focus();
+                    this.count = this.local.length;
                 }else{
                     this.$.filterRepo.focus();
+                    this.count = this.remote.length;
                 }
             },
 
@@ -541,18 +546,13 @@ a web component implementing eXistdb packagemanager
             _handlePageChange: function (newValue, oldValue) {
                 console.log('_handlePageChange ', newValue, oldValue);
                 this._resetFilters();
-
                 if (newValue == 0) {
                     //local page
                     this.focus();
-                    this.entryAnimation = 'slide-from-left-animation';
-                    this.exitAnimation = 'slide-right-animation';
                     this.$.localService.loadPackages();
                 } else {
                     //repo page
                     this.$.repoPage.focus();
-                    this.entryAnimation = 'slide-from-right-animation';
-                    this.exitAnimation = 'slide-left-animation';
                     this.$.remoteService.loadPackages();
                 }
                 this.currentFocus=undefined;
@@ -572,12 +572,10 @@ a web component implementing eXistdb packagemanager
             _handleFilter: function (e) {
                 console.log('_handleSearchInput', e);
 
-//                if(this.$.filterLocal.value == undefined || this.$.filterLocal.value == '') return;
 
                 var apps, filterString;
                 if(this.selected == 0){
                     // ### on local page
-//                    if (this.$.filterLocal.value == undefined) return;
                     apps = this.local;
                     filterString = this.$.filterLocal.value.toLowerCase();
                 }else{
@@ -586,16 +584,19 @@ a web component implementing eXistdb packagemanager
                     filterString = this.$.filterRepo.value.toLowerCase();
                 }
 
+                this.count = apps.length;
                 for (i = 0; i < apps.length; ++i) {
                     var app = apps[i]
                     var shortTitle = app.querySelector("repo-title").textContent;
 
                     if (!shortTitle.toLowerCase().includes(filterString)) {
                         app.setAttribute('hidden', '')
+                        this.count--;
                     } else if (app.hasAttribute('hidden')) {
                         app.removeAttribute('hidden')
                     }
                 }
+                console.log('_handleFilter visible ', this.visible);
             },
 
             _resetFilters:function () {
@@ -720,9 +721,6 @@ a web component implementing eXistdb packagemanager
          this.$.progress.value = e.detail.file.progress
          }
          */
-
-
-
 
 
         });
