@@ -48,6 +48,8 @@ element for displaying package metadata
                 0 1px 5px 0 rgba(0, 0, 0, 0.12),
                 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 
+                cursor: pointer;
+
             }
 /*
             :host:focus{
@@ -158,7 +160,6 @@ element for displaying package metadata
                 margin:10px 0;
                 display: inline-block;
                 @apply(--paper-font-common-base);
-
             }
 
             .wrapper ::slotted(repo-name),
@@ -416,6 +417,9 @@ element for displaying package metadata
 
                 this.listen(this, 'tap', '_handleTap')
                 this.listen(this, 'keyup', '_handleEnter')
+
+
+
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
                 this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
@@ -423,22 +427,35 @@ element for displaying package metadata
 
                 this.listen(this,'requestInstall','_installOtherVersion');
 
+                var that = this;
+                this.querySelector("repo-title").addEventListener('tap', function(e){
+                    that._handleTap(e);
+                });
+                this.querySelector("repo-version").addEventListener('tap', function(e){
+                    that._handleTap(e);
+                });
+
             },
 
             ready:function () {
-//                console.log("repo-app title", this.querySelector('repo-title').textContent);
+//                console.log('ready');
                 this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
             },
 
 
             _handleTap: function (e) {
-//                console.log('_handleTap ',e);
-                if(e.target.nodeName.toLowerCase() == 'repo-app'){
-                    this._openApp()
-                }
+//                console.log('_handleTap');
+                e.stopPropagation();
+                var t = e.target.nodeName.toLowerCase();
+
+                if(t == 'existdb-package-remove') return;
+                if(t == "paper-icon-button") return;
+                if(t == "iron-icon") return;
+
+                this._openApp()
             },
 
-            _handleEnter: function (e) {
+            _handleEnter: function(e) {
 //                console.log("key ", e)
                 if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
                     this._openApp()
@@ -453,12 +470,6 @@ element for displaying package metadata
                     var targetUrl = this.path;
                     window.open(targetUrl)
                 }
-/*
-                if(this.status == 'installed' && this.type== 'application'){
-                    var targetUrl = this.querySelector("repo-url").href
-                    window.open(targetUrl)
-                }
-*/
             },
 
             _handleStatus: function () {
@@ -486,24 +497,23 @@ element for displaying package metadata
             },
 
             _onInstalled:function (e) {
-                console.log('_onInstalled ', e);
+//                console.log('_onInstalled ', e);
                 this.$.progress.indeterminate=false;
                 this.$.progress.value=100;
 //                this.fire("package-installed",{package:e.detail.package});
             },
 
             _onInstallStarted:function (e) {
-                console.log('_onInstallStarted ', e);
+//                console.log('_onInstallStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
             },
 
             _installOtherVersion:function (e) {
-                console.log("###################### install other version", e.detail.version);
+//                console.log("###################### install other version", e.detail.version);
                 this.$.install.version = e.detail.version;
                 this.$.install.submit(e);
             }
-
 
         });
     </script>
