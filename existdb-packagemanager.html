@@ -47,6 +47,8 @@
 <link rel="import" href="repo-icon.html">
 <link rel="import" href="repo-version.html">
 
+<script src="bower_components/velocity/velocity.min.js"></script>
+<script src="bower_components/velocity/velocity.ui.min.js"></script>
 
 <!--
 `existdb-packagemanager`
@@ -65,7 +67,7 @@ a web component implementing eXistdb packagemanager
                 --paper-tabs-selection-bar-color: var(--paper-blue-700);
                 @apply(--paper-font-common-base);
                 position: relative;
-                background: whitesmoke;
+                background: var(--paper-blue-100);
                 padding: 0;
                 margin: 0;
                 --vaadin-upload-button-add: {
@@ -84,7 +86,13 @@ a web component implementing eXistdb packagemanager
                     /*background: var(--paper-blue-900);*/
                     padding:0;
                 };
-                --iron-icon-stroke-color:white;
+
+                --paper-input-container-underline-focus:{
+                    background: var(--paper-blue-900);
+                    border:var(--paper-blue-900);
+                    color:var(--paper-blue-100);
+                };
+                /*--iron-icon-stroke-color:white;*/
 
             }
 
@@ -100,10 +108,12 @@ a web component implementing eXistdb packagemanager
 
             [icon="apps"],[icon="search"]{
                 --iron-icon-fill-color:white;
-                --iron-icon-stroke-color:var(--paper-blue-900);
+                --iron-icon-stroke-color:white;
                 width: 60px;
             }
             [icon="chevron-left"]{
+                --iron-icon-fill-color:var(--paper-blue-100);
+                /*--iron-icon-stroke-color:var(--paper-blue-900);*/
                 --paper-icon-button:{
                     width: 64px;
                     height:52px;
@@ -119,13 +129,20 @@ a web component implementing eXistdb packagemanager
                 outline:none;
                 width: 260px;
                 font-size:16px;
-                background: var(--paper-blue-900);
+                background: var(--paper-blue-700);
                 color:var(--paper-blue-100);
                 padding:10px;
+
+                --paper-input-container-underline:{
+                    color: var(--paper-blue-700);
+                };
             }
             .filter::placeholder{
                 color:var(--paper-blue-100);
-
+            }
+            ::selection{
+                /*background: var(--paper-blue-700);*/
+                color:var(--paper-blue-900);
             }
 
 
@@ -135,22 +152,28 @@ a web component implementing eXistdb packagemanager
 
             iron-icon {
                 margin-right: 10px;
-                --iron-icon-stroke-color: var(--paper-blue-700);
+                --iron-icon-stroke-color: var(--paper-blue-500);
             }
 
             app-toolbar {
                 z-index: 10;
-                background: var(--paper-blue-800);
+                background: var(--paper-blue-500);
                 color:white;
             }
 
             #uploader {
                 background: var(--paper-blue-50);
+                background: var(--paper-blue-200);
             }
 
             #uploader .drop-label {
-                color: var(--paper-blue-900);
+                color: var(--paper-blue-700);
+                background: var(--paper-blue-200);
             }
+            #addFiles{
+                background: var(--paper-blue-500);
+            }
+
 
             #toast {
                 --paper-toast-background-color: var(--paper-blue-700);
@@ -166,7 +189,7 @@ a web component implementing eXistdb packagemanager
                 color: var(--paper-red-700);
             }
 
-            paper-input[type='search'] {
+            [type='search'] {
                 width: 140px;
 
             }
@@ -181,7 +204,7 @@ a web component implementing eXistdb packagemanager
 
             paper-fab {
                 position: fixed;
-                right: 45px;
+                right: 80px;
                 bottom: 40px;
                 z-index: 100;
                 --paper-fab-background: var(--paper-pink-500);
@@ -199,7 +222,7 @@ a web component implementing eXistdb packagemanager
                     font-weight: 300;
                     text-align: center;
                     flex-grow: 2;
-                    /*color: var(--paper-grey-500);*/
+                    color: var(--paper-blue-100);
                 }
             }
 
@@ -234,12 +257,18 @@ a web component implementing eXistdb packagemanager
             paper-card td:first-child{
                 padding:10px 10px 10px 0;
             }
+            [main-title]{
+                color:var(--paper-blue-100);
+            }
             .count{
                 background:var(--paper-blue-300);
                 display:inline-block;
-                border-radius:20px;
-                padding:6px;
+                /*border-radius:20px;*/
+                padding:10px;
                 color:var(--paper-blue-800);
+                font-size:20px;
+                line-height:20px;
+                font-weight: 700;
             }
 
         </style>
@@ -257,10 +286,12 @@ a web component implementing eXistdb packagemanager
                         on-keys-pressed="_showLibraries"></iron-a11y-keys>
         <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+u"
                         on-keys-pressed="_showUpload"></iron-a11y-keys>
+<!--
         <iron-a11y-keys id="a11y" target="[[target]]" keys="down"
                         on-keys-pressed="_moveToNext"></iron-a11y-keys>
         <iron-a11y-keys id="a11y" target="[[target]]" keys="up"
                         on-keys-pressed="_moveToPrevious"></iron-a11y-keys>
+-->
 
 
         <paper-card id="shortcuts" heading="shortcuts" hidden>
@@ -352,7 +383,6 @@ a web component implementing eXistdb packagemanager
 
                     <existdb-packages id="localService"
                                       service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
-                    <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
                 </app-header-layout>
             </div>
 
@@ -375,6 +405,9 @@ a web component implementing eXistdb packagemanager
             </div>
 
         </iron-pages>
+
+        <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
+
         <paper-toast id="toast" text="" duration="4000"></paper-toast>
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
@@ -609,7 +642,8 @@ a web component implementing eXistdb packagemanager
             },
 
             _switchToAvailable: function (e) {
-                this.$.pages.selected = 1;
+                this._doAnim();
+//                this.$.pages.selected = 1;
             },
 
             _handlePackageRemoved: function (e) {
@@ -711,6 +745,26 @@ a web component implementing eXistdb packagemanager
                 }
                 this.focus();
             },
+
+            _doAnim: function () {
+                this.$.showRepo.color="transparent";
+                console.log('_doAnim');
+                var elem = this.$.showRepo;
+                var animation = elem.animate({
+                    opacity: [0.5, 1],
+                    transform: ['scale(0.5)', 'scale(100)'],
+                    color: ['blue', 'red']
+                }, {
+                    duration: 400,
+                    iterations: 1,
+                });
+
+                var that=this;
+                animation.onfinish = function() {
+                    console.log("its done");
+                    that.$.pages.selected = 1;
+                };
+            }
 
 
 

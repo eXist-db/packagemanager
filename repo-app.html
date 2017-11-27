@@ -36,12 +36,12 @@ element for displaying package metadata
                 position: relative;
                 background: white;
                 margin-bottom:10px;
-                border-top:1px solid var(--paper-grey-300);
-                border-bottom:1px solid var(--paper-grey-300);
+                /*border-top:1px solid var(--paper-blue-300);*/
+                /*border-bottom:1px solid var(--paper-blue-300);*/
                 min-height:70px;
 
                 --paper-icon-button: {
-                    color: var(--paper-blue-300);
+                    color: var(--paper-blue-700);
                 };
 
 
@@ -114,7 +114,7 @@ element for displaying package metadata
 
             .wrapper ::slotted(repo-type){
                 display:block;
-                color:var(--paper-blue-700);
+                color:var(--paper-blue--700);
                 font-size:16px;
                 position:absolute;
                 top:0px;
@@ -135,14 +135,14 @@ element for displaying package metadata
             }
 
             :host.update .wrapper ::slotted(repo-version){
-                color: var(--paper-orange-900);
-                font-weight: 500;
+                color: var(--paper-orange-700);
+                /*font-weight: 500;*/
                 font-size:18px;
             }
             :host.update .wrapper ::slotted(repo-version)::before{
                 content:"New Version ";
-                color: var(--paper-orange-900);
-                font-weight: 500;
+                color: var(--paper-orange-700);
+                /*font-weight: 500;*/
                 font-size:18px;
                 width: 150px;
                 display: table-cell;
@@ -175,17 +175,17 @@ element for displaying package metadata
             }
             .wrapper ::slotted(repo-installed):before{
                 content: "Installed Version ";
-                color:var(--paper-orange-900);
+                color:var(--paper-orange-700);
                 font-size: 18px;
-                font-weight: 500;
+                /*font-weight: 500;*/
                 width: 150px;
                 display: table-cell;
 
             }
             .wrapper ::slotted(repo-installed){
-                color:var(--paper-orange-900);
+                color:var(--paper-orange-700);
                 font-size: 18px;
-                font-weight: 500;
+                /*font-weight: 500;*/
 
             }
 
@@ -226,7 +226,7 @@ element for displaying package metadata
                 display: table-cell;
                 min-width: 120px;
                 padding:2px;
-                font-weight:300;
+                /*font-weight:300;*/
             }
 
 
@@ -303,7 +303,7 @@ element for displaying package metadata
             :host.update:before{
                 content: "updated";
                 position:absolute;
-                top:138px;
+                bottom:14px;
                 left:30px;
                 background: var(--paper-orange-700);
                 color:var(--paper-orange-100);

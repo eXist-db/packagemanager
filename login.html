@@ -6,37 +6,67 @@
     <style>
         body {
             font-family: sans-serif;
+            background:#1976d2;
+            color:white;
         }
         .login-box{
             height: 250px;
-            width: 300px;
-            padding: 20px;
+            width: 320px;
+            padding: 10px;
             margin: 80px auto;
         }
         .form-group {
             margin: 2em 1em;
         }
+
+        .login-box-body{
+            border: 1px inset white;
+            padding: 30px;
+        }
+        .form-group{
+            padding: 0;
+        }
+
         label,
         input,
         button {
-            font-size: 1.5em;
+            font-size: 1.2em;
             line-height: 1.6667em;
             width: 100%;
+            color:#1976d2;
+            font-weight: 300;
         }
+        label{
+            color:white;
+        }
+        button{
+            /*margin-top:1.6667em;*/
+            padding: 8px 0;
+
+        }
+        .login-box-body input[type='text']{
+            background: white;
+        }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px white inset;
+            -webkit-text-fill-color: #1976d2 !important;
+        }
+
     </style>
 </head>
 <body class="login-page">
 <div class="login-box well">
     <div class="login-box-body">
+        <div class="header"></div>
         <form action="/exist/apps/packagemanager" method="post">
             <input type="hidden" name="duration" value="P7D"/>
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="user" class="form-control" placeholder="User ID" autofocus="autofocus"/>
+                <label for="user">Username</label>
+                <input type="text" id="user" name="user" class="form-control" placeholder="User ID" autofocus="autofocus"/>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password"/>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password"/>
             </div>
             <div class="form-group">
                 <button type="submit" class="button">Login</button>
