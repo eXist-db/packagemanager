@@ -69,6 +69,14 @@ actuals tests however should pass. We'll have to look for a more stable solution
 
 The relevant test framework can be found here: [web-component-tester](https://github.com/Polymer/web-component-tester)
 
+You can serve the built versions by giving `polymer serve` a folder to serve
+from:
+
+```
+$ polymer serve build/bundled
+```
+
+
 ### What [Ant](https://ant.apache.org/) does for you
 
 Ant (as always in eXistdb app development) does the final packaging as a xar app. In this app template the standard build.xml

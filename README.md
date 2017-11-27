@@ -48,50 +48,23 @@ creates build/packagemanager-dev-x.x.x.xar
 
 There's additional development support through gulp. Most prominently with
 
+`gulp deploy`
+
+pushes the local workspace into the app collection in eXistdb on localhost.
+
+
 `
 gulp watch
 `
 
-you can synchronize the local workspace with the app deployed in eXistdb.
+synchronizes the local workspace with the app deployed in eXistdb. Changed files will be
+automatically deployed when stored.
 
-Every changed file will automatically deployed into the `target' collection
- 
-`/db/apps/[target]`
- 
-To make this and other goodies work you'll need to have Nodejs installed
-and call `npm install` once.
-
-
-## Polymer-only
-
-***This option is for UI Developers that want to use in http server built into Polymer CLI e.g. for testing
-purposes outside the scope of a xar application.***
+***Please note that the app must be installed in eXistdb first before these task work.***
 
 
 
-```
-$ polymer build
-```
+## More information
 
-This will create a `build/` folder with `bundled/` and `unbundled/` sub-folders
-containing a bundled (Vulcanized) and unbundled builds, both run through HTML,
-CSS, and JS optimizers.
-
-You can serve the built versions by giving `polymer serve` a folder to serve
-from:
-
-```
-$ polymer serve build/bundled
-```
-
-### Running Tests
-
-```
-$ polymer test
-```
-
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
-
-
-
-  
+Please refer to the [tools document](tools.md) for more information on effective use of the 
+bundled tools.  
