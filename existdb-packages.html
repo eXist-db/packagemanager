@@ -27,12 +27,11 @@ element for displaying package metadata
                 padding:0;
             }
             :host {
-                display: block;
                 position: relative;
-                background: var(--paper-blue-50);
+                background: whitesmoke;
                 margin:0;
                 padding:0;
-                min-height:70px;
+                /*height: 100%;*/
                 /*width: 100%;*/
 
                 --paper-icon-button: {
@@ -40,10 +39,11 @@ element for displaying package metadata
                 }
             }
             #localItemList{
-                width:100%;
+                /*width:100%;*/
                 display: block;
-                padding: 0;
+                padding: 10px;
                 margin:0;
+                background: whitesmoke;
             }
 
             ::slotted(repo-packages){
@@ -79,7 +79,7 @@ element for displaying package metadata
 
         <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
 
-        <div id="localItemList"></div>
+        <div id="localItemList" class="items"></div>
 
 
         <paper-toast id="toast" text="" duration="4000"></paper-toast>

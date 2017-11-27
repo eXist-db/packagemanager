@@ -19,16 +19,6 @@
 <link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="bower_components/neon-animation/web-animations.html">
 
-<!--
-<link rel="import" href="bower_components/neon-animation/neon-animated-pages.html">
-<link rel="import" href="bower_components/neon-animation/neon-animatable.html">
-<link rel="import" href="bower_components/neon-animation/neon-animations.html">
-<link rel="import" href="bower_components/neon-animation/neon-animatable-behavior.html">
-<link rel="import" href="bower_components/neon-animation/neon-shared-element-animatable-behavior.html">
-<link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
-<link rel="import" href="bower_components/neon-animation/animations/ripple-animation.html">
--->
 
 <link rel="import" href="bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="bower_components/paper-progress/paper-progress.html">
@@ -47,9 +37,7 @@
 <link rel="import" href="repo-icon.html">
 <link rel="import" href="repo-version.html">
 
-<script src="bower_components/velocity/velocity.min.js"></script>
-<script src="bower_components/velocity/velocity.ui.min.js"></script>
-
+-->
 <!--
 `existdb-packagemanager`
 a web component implementing eXistdb packagemanager
@@ -67,7 +55,8 @@ a web component implementing eXistdb packagemanager
                 --paper-tabs-selection-bar-color: var(--paper-blue-700);
                 @apply(--paper-font-common-base);
                 position: relative;
-                background: var(--paper-blue-100);
+                /*background: var(--paper-blue-100);*/
+                background: whitesmoke;
                 padding: 0;
                 margin: 0;
                 --vaadin-upload-button-add: {
@@ -104,6 +93,14 @@ a web component implementing eXistdb packagemanager
                 background: var(--paper-blue-500);
                 color:white;
                 height: 128px;
+            }
+
+            #pages{
+                display: block;
+            }
+            #pages > div{
+                width: 100%;
+                height:100%;
             }
 
             [icon="apps"],[icon="search"]{
@@ -162,7 +159,7 @@ a web component implementing eXistdb packagemanager
             }
 
             #uploader {
-                background: var(--paper-blue-50);
+                /*background: var(--paper-blue-50);*/
                 background: var(--paper-blue-200);
             }
 
@@ -194,17 +191,9 @@ a web component implementing eXistdb packagemanager
 
             }
 
-
-/*
-            ::slotted(repo-title) {
-                font-size: 28px;
-                font-weight: 500;
-            }
-*/
-
             paper-fab {
                 position: fixed;
-                right: 80px;
+                right: 96px;
                 bottom: 40px;
                 z-index: 100;
                 --paper-fab-background: var(--paper-pink-500);
@@ -271,6 +260,14 @@ a web component implementing eXistdb packagemanager
                 font-weight: 700;
             }
 
+            existdb-packages{
+                margin-top:8px;
+            }
+
+            .wrapService{
+                padding-top:64px;
+            }
+
         </style>
         <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+h"
                         on-keys-pressed="_showHideShortcuts"></iron-a11y-keys>
@@ -286,12 +283,6 @@ a web component implementing eXistdb packagemanager
                         on-keys-pressed="_showLibraries"></iron-a11y-keys>
         <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+u"
                         on-keys-pressed="_showUpload"></iron-a11y-keys>
-<!--
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="down"
-                        on-keys-pressed="_moveToNext"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="up"
-                        on-keys-pressed="_moveToPrevious"></iron-a11y-keys>
--->
 
 
         <paper-card id="shortcuts" heading="shortcuts" hidden>
@@ -319,14 +310,6 @@ a web component implementing eXistdb packagemanager
                             <td>upload</td>
                         </tr>
                         <tr>
-                            <td>down</td>
-                            <td>next package</td>
-                        </tr>
-                        <tr>
-                            <td>up</td>
-                            <td>previous package</td>
-                        </tr>
-                        <tr>
                             <td>right</td>
                             <td>show available packages</td>
                         </tr>
@@ -349,8 +332,8 @@ a web component implementing eXistdb packagemanager
 
             <div id="localPage">
                 <app-header-layout fullbleed>
-                    <app-header slot="header" class="app-header" reveals condenses fixed>
-                        <app-toolbar id="maintool" sticky>
+                    <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
+                        <app-toolbar id="maintool" style="height:64px;" sticky>
                             <iron-icon icon="apps"></iron-icon>
                             <div main-title>PackageManager</div>
                             <span class="heading">Installed packages <span class="count">[[count]]</span></span>
@@ -400,8 +383,10 @@ a web component implementing eXistdb packagemanager
                     </paper-input-container>
 
                 </app-toolbar>
+                <div class="wrapService">
                 <existdb-packages id="remoteService"
                                   service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
+                </div>
             </div>
 
         </iron-pages>
@@ -433,17 +418,6 @@ a web component implementing eXistdb packagemanager
                 targetUrl: {
                     type: String,
                 },
-                /*
-                                animationConfig: {
-                                    value: function () {
-                                        return {
-                                            // provided by neon-animation/animations/scale-down-animation.html
-                                            name: 'scale-down-animation',
-                                            node: this.$.uploader
-                                        }
-                                    }
-                                },
-                */
                 filter: {
                     type: String,
                     notify: true,
@@ -459,14 +433,6 @@ a web component implementing eXistdb packagemanager
                 },
                 currentFocus:{
                     type:Number
-                },
-                local:{
-                    type:Array,
-                    value:[]
-                },
-                remote:{
-                    type:Array,
-                    value:[]
                 },
                 count:{
                     type:Number
@@ -553,11 +519,6 @@ a web component implementing eXistdb packagemanager
             _handlePackagesLoaded: function (e) {
                 console.log('################# _handlePackagesLoaded', e);
 
-                //resetting arrays
-                this.local = [];
-                this.remote = [];
-                this.visible= [];
-
                 this.local = this.$.localPage.querySelectorAll('repo-app');
                 this.remote = this.$.repoPage.querySelectorAll('repo-app');
 
@@ -568,12 +529,6 @@ a web component implementing eXistdb packagemanager
                     this.$.filterRepo.focus();
                     this.count = this.remote.length;
                 }
-            },
-
-            _scrollAndFocus: function (app) {
-                app.scrollIntoView();
-                window.scrollBy(0, -130)
-                app.focus();
             },
 
             _handlePageChange: function (newValue, oldValue) {
@@ -637,13 +592,13 @@ a web component implementing eXistdb packagemanager
                 this.$.filterRepo.value='';
             },
 
-            _switchToInstalled: function (e) {
+            _switchToInstalled: function () {
                 this.$.pages.selected = 0;
             },
 
+
             _switchToAvailable: function (e) {
-                this._doAnim();
-//                this.$.pages.selected = 1;
+                this.$.pages.selected = 1;
             },
 
             _handlePackageRemoved: function (e) {
@@ -701,41 +656,6 @@ a web component implementing eXistdb packagemanager
                 }
             },
 
-            _moveToNext:function (e) {
-
-                if(this.selected == 0){
-                    this._focusNext(this.local);
-                }else{
-                    this._focusNext(this.remote);
-                }
-            },
-            
-            _focusNext:function (items) {
-                if(this.currentFocus == undefined){
-                    this.currentFocus = 0;
-                    items[this.currentFocus].focus();
-                }else if (this.currentFocus < items.length -1){
-                    this.currentFocus++;
-                    items[this.currentFocus].focus();
-                }
-            },
-
-            _moveToPrevious:function (e) {
-
-                if(this.selected == 0){
-                    this._focusPrevious(this.local);
-                }else{
-                    this._focusPrevious(this.remote);
-                }
-
-            },
-
-            _focusPrevious: function (items) {
-                if(this.currentFocus == 0) return false;
-                this.currentFocus--;
-                items[this.currentFocus].focus();
-            },
-
             _showHideShortcuts:function (e) {
 
                 if(this.$.shortcuts.hidden){
@@ -744,37 +664,7 @@ a web component implementing eXistdb packagemanager
                     this.$.shortcuts.hidden=true;
                 }
                 this.focus();
-            },
-
-            _doAnim: function () {
-                this.$.showRepo.color="transparent";
-                console.log('_doAnim');
-                var elem = this.$.showRepo;
-                var animation = elem.animate({
-                    opacity: [0.5, 1],
-                    transform: ['scale(0.5)', 'scale(100)'],
-                    color: ['blue', 'red']
-                }, {
-                    duration: 400,
-                    iterations: 1,
-                });
-
-                var that=this;
-                animation.onfinish = function() {
-                    console.log("its done");
-                    that.$.pages.selected = 1;
-                };
             }
-
-
-
-
-        /*
-         _onUploadProgress: function (e) {
-         console.log("onprogress ", e.detail.file.progress)
-         this.$.progress.value = e.detail.file.progress
-         }
-         */
 
 
         });
