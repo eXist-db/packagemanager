@@ -1,6 +1,6 @@
 {
   "name": "packagemanager",
-  "version": "1.0.0",
+  "version": "3.11.4",
   "description": "eXistdb Packagemanager application",
   "main": "index.j",
   "scripts": {

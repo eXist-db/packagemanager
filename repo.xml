@@ -12,6 +12,11 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="3.11.4">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>fixed version number in package.json</li>
+            </ul>
+        </change>
         <change version="3.11.3">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>fixed svg icon styling</li>
