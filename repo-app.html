@@ -1,4 +1,4 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="bower_components/paper-styles/color.html">
@@ -105,14 +105,15 @@ element for displaying package metadata
 
 
             /* styles for metadata elements */
-            ::slotted(repo-icon){
-                max-width:100px;
+            :host ::slotted(repo-icon){
+                width:120px;
                 display: inline-block;
             }
             ::slotted(repo-icon) img{
-                max-width: 100px;
-                min-width: 100px;
+                /*max-width: 100px;*/
+                width: 100px;
             }
+
             .wrapper{
                 display: inline-block;
                 padding-left:20px;
@@ -161,6 +162,7 @@ element for displaying package metadata
                 margin:10px 0;
                 display: inline-block;
                 @apply(--paper-font-common-base);
+
             }
 
             .wrapper ::slotted(repo-name),
@@ -178,6 +180,7 @@ element for displaying package metadata
             {
                 display:none;
             }
+
             .wrapper ::slotted(repo-installed):before{
                 content: "Installed Version ";
                 color:var(--paper-orange-700);
@@ -192,6 +195,7 @@ element for displaying package metadata
                 font-size: 18px;
                 /*font-weight: 500;*/
 
+
             }
 
             .wrapper[show-all] ::slotted(repo-name),
@@ -203,12 +207,13 @@ element for displaying package metadata
             .wrapper[show-all] ::slotted(repo-url),
             .wrapper[show-all] ::slotted(repo-requires),
             .wrapper[show-all] ::slotted(repo-changelog),
-            .wrapper[show-all] ::slotted(repo-changelog) repo-change,
+            .wrapper[show-all] ::slotted(repo-change),
             .wrapper[show-all] ::slotted(repo-other),
-            .wrapper[show-all] ::slotted(repo-other) *,
-            .wrapper[show-all] ::slotted(repo-note),
-            .wrapper[show-all] ::slotted(repo-authors) repo-author
+            /*.wrapper[show-all] ::slotted(repo-other) *,*/
+            .wrapper[show-all] ::slotted(repo-note)
+            /*.wrapper[show-all] ::slotted(repo-authors) repo-author*/
             {
+
                 display:table-row;
                 padding:10px 0;
                 margin-bottom: 6px;
@@ -319,7 +324,8 @@ element for displaying package metadata
         <paper-progress id="progress" class="slow" hidden></paper-progress>
 
         <!-- todo: find a working 2.0 solution. -->
-        <content select="repo-icon"></content>
+        <!--<content select="repo-icon"></content>-->
+        <slot name="icon"></slot>
 
         <div id="wrapper" class="wrapper" url="[[url]]">
             <!--<div class$="[[type]] type">[[type]]</div>-->
@@ -330,7 +336,7 @@ element for displaying package metadata
 
 
             <!--todo: uninstall button for apps that are status=installed -->
-            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
+            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}" on-click="_doRemove"></existdb-package-remove-action>
             <existdb-package-install-action
                     id="install"
                     url="{{url}}"
@@ -344,63 +350,69 @@ element for displaying package metadata
     </template>
 
     <script>
-        Polymer({
+        class RepoApp extends Polymer.Element {
 
-            is: 'repo-app',
+            static get is() {
+                return 'repo-app';
+            }
 
-            properties: {
+            static get properties() {
+                return {
+                    type: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    abbrev: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    version: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    action: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    status: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true,
+                        observer: '_handleStatus'
+                    },
+                    installed: {
+                        type: String
+                    },
+                    available: {
+                        type: String
+                    },
+                    url: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    packageTitle: {
+                        type: String,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    showAll: {
+                        type: Boolean,
+                        reflectToAttribute: true
+                    },
+                    path: {
+                        type: String,
+                        reflectToAttribute: true
+                    }
+                };
+            }
 
-                type: {
-                    type: String,
-                    reflectToAttribute:true
-                },
-                abbrev:{
-                    type: String,
-                    reflectToAttribute:true
-                },
-                version:{
-                    type: String,
-                    reflectToAttribute:true
-                },
-                action: {
-                    type: String,
-                    reflectToAttribute:true
-                },
-                status: {
-                    type: String,
-                    reflectToAttribute:true,
-                    notify:true,
-                    observer: '_handleStatus'
-                },
-                installed: {
-                    type: String
-                },
-                available: {
-                    type: String
-                },
-                url: {
-                    type:String,
-                    reflectToAttribute:true
-                },
-                packageTitle:{
-                    type: String,
-                    reflectToAttribute:true,
-                    notify:true
-                },
-                showAll:{
-                    type:Boolean,
-                    reflectToAttribute:true
-                },
-                path:{
-                    type: String,
-                    reflectToAttribute:true
-                }
+            constructor() {
+                console.log('constructor RepoApp')
+                super();
+            }
 
 
-//                reflectToAttribute: true
-            },
-
-            handleInfo: function (e) {
+            handleInfo (e) {
                 e.stopPropagation()
                 e.preventDefault()
                var detail = this.querySelector('table');
@@ -410,60 +422,67 @@ element for displaying package metadata
                     detail.setAttribute("class","hidden")
                 }
 
-            },
+            }
 
-            attached: function () {
-//                console.log("repo-app attached");
+            connectedCallback() {
+                super.connectedCallback();
+                console.log("repo-app attached");
                 this.setAttribute('tabindex','0');
 
-                this.listen(this, 'tap', '_handleTap')
-                this.listen(this, 'keyup', '_handleEnter')
+//                this.listen(this, 'tap', '_handleTap')
+//                this.listen(this, 'keyup', '_handleEnter')
 
 
+            }
+
+            ready () {
+                super.ready();
+//                console.log('ready');
+
+                this.addEventListener('click', this._handleTap);
+                this.addEventListener('keyup',this._handleEnter);
 
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
-                this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
+//                this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
 //                this.listen(this, 'package-installed', '_onInstalled');
 
-                this.listen(this,'requestInstall','_installOtherVersion');
+//                this.listen(this,'requestInstall','_installOtherVersion');
+                this.addEventListener('requestInstall', e => this._installOtherVersion);
+
 
                 var that = this;
-                this.querySelector("repo-title").addEventListener('tap', function(e){
+                this.querySelector("repo-title").addEventListener('click', function(e){
                     that._handleTap(e);
                 });
                 this.querySelector("repo-version").addEventListener('tap', function(e){
                     that._handleTap(e);
                 });
 
-            },
 
-            ready:function () {
-//                console.log('ready');
                 this.$.remove.packageTitle = this.querySelector('repo-title').textContent;
-            },
+            }
 
-
-            _handleTap: function (e) {
-//                console.log('_handleTap');
-                e.stopPropagation();
+            _handleTap (e) {
+                console.log('_handleTap ',e);
+//                e.stopPropagation();
                 var t = e.target.nodeName.toLowerCase();
 
-                if(t == 'existdb-package-remove') return;
+//                if(t == 'existdb-package-remove') return;
                 if(t == "paper-icon-button") return;
                 if(t == "iron-icon") return;
 
-                this._openApp()
-            },
+                this._openApp();
+            }
 
-            _handleEnter: function(e) {
+            _handleEnter(e) {
 //                console.log("key ", e)
                 if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
                     this._openApp()
                 }
-            },
+            }
 
-            _openApp: function () {
+            _openApp () {
                 var isApp = this.type == 'application';
 //                console.log("######## is App: ", isApp);
 
@@ -471,9 +490,9 @@ element for displaying package metadata
                     var targetUrl = this.path;
                     window.open(targetUrl)
                 }
-            },
+            }
 
-            _handleStatus: function () {
+            _handleStatus () {
 //                console.log("_handleStatus ",this.status);
 
                 if(this.status == 'installed'){
@@ -483,9 +502,11 @@ element for displaying package metadata
                     this.$.remove.hidden = true;
                     this.$.install.hidden = false;
                 }
-            },
+            }
 
-            _showInfo: function(e){
+
+            _showInfo(e){
+                console.log('_showInfo');
                 e.stopPropagation();
                 e.preventDefault();
                 var showsAll = this.$.wrapper.getAttribute('show-all');
@@ -495,27 +516,37 @@ element for displaying package metadata
                 }else{
                     this.$.wrapper.removeAttribute('show-all');
                 }
-            },
 
-            _onInstalled:function (e) {
+            }
+
+            _onInstalled (e) {
 //                console.log('_onInstalled ', e);
                 this.$.progress.indeterminate=false;
                 this.$.progress.value=100;
 //                this.fire("package-installed",{package:e.detail.package});
-            },
+            }
 
-            _onInstallStarted:function (e) {
+            _onInstallStarted (e) {
 //                console.log('_onInstallStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
-            },
+            }
 
-            _installOtherVersion:function (e) {
+            _installOtherVersion (e) {
 //                console.log("###################### install other version", e.detail.version);
                 this.$.install.version = e.detail.version;
                 this.$.install.submit(e);
             }
 
-        });
+            _doRemove(e){
+                console.log("doRemove ",e);
+                e.preventDefault();
+                e.stopPropagation();
+                this.$.remove.submit(e);
+            }
+
+        }
+        window.customElements.define(RepoApp.is, RepoApp);
+
     </script>
 </dom-module>

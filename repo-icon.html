@@ -1,4 +1,4 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 
 <!--
 `repo-icon`
@@ -12,12 +12,11 @@ element for displaying package metadata
         <style>
             :host {
                 display:inline-block;
-                width: 100%;
-
+                position: relative;
             }
             img{
-                display: block;
-
+                display: inline-block;
+                width: 100%;
             }
         </style>
         <img src="{{src}}" on-click="_openApp">
@@ -25,30 +24,36 @@ element for displaying package metadata
     </template>
 
     <script>
-        Polymer({
+        class RepoIcon extends Polymer.Element{
 
-            is: 'repo-icon',
+            static get is() {
+                return 'repo-icon';
+            }
 
-            properties: {
-                src:{
-                    type:String,
-                    reflectToAttribute:true,
-                    notify:true
-                }
-            },
+            static get properties() {
+                return{
+                    src:{
+                        type:String,
+                        reflectToAttribute:true,
+                        notify:true
+                    }
+                };
+            }
+
+            constructor() {
+                console.log('ExistdbPackageRemoveAction constructor')
+                super();
+            }
 
 
-            attached: function () {
-//                console.log("repo-icon attached ", this.textContent);
-//                this.src = this.textContent;
-            },
-
-            _openApp:function (e) {
+            _openApp (e) {
                 this.parentNode._openApp(e);
             }
 
 
 
-        });
+        }
+        window.customElements.define(RepoIcon.is, RepoIcon);
+
     </script>
 </dom-module>

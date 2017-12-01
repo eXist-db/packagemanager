@@ -14,9 +14,27 @@
   <body>
     <div class="vertical-section-container centered">
       <h3>Basic existdb-packagemanager demo</h3>
-        <repo-app url="/packages/?format=manager&type=local">
-          <repo-title>dummy</repo-title>
-        </repo-app>
+
+      <repo-app url="http://exist-db.org/apps/wiki" abbrev="wiki" type="application" version="0.5" status="installed" path="/exist/apps/wiki/">
+        <repo-type>application</repo-type>
+        <repo-title>AtomicWiki</repo-title>
+        <repo-name>http://exist-db.org/apps/wiki</repo-name>
+        <repo-description>Redesign of AtomicWiki</repo-description>
+        <repo-authors>
+          <repo-author>Wolfgang Meier</repo-author>
+          <repo-author>Denis Richter</repo-author>
+          <repo-author>Sabine Meier</repo-author>
+          <repo-author>Maciek Jerominek</repo-author>
+          <repo-author>Lars Windauer</repo-author>
+          <repo-author>Robert Netzschwitz</repo-author>
+        </repo-authors>
+        <repo-abbrev>wiki</repo-abbrev>
+        <repo-website>http://atomic.exist-db.org</repo-website>
+        <repo-license>GNU-LGPL</repo-license>
+        <repo-icon src="/exist/apps/existdb-packageservice/resources/images/package.png" slot="icon"> </repo-icon>
+        <repo-url>/exist/apps/wiki/</repo-url>
+        <repo-version>0.5</repo-version>
+      </repo-app>
     </div>
   </body>
 </html>

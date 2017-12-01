@@ -1,4 +1,4 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
@@ -78,7 +78,9 @@ element for displaying package metadata
 
         <paper-progress id="progress" class="paper-progress" value=""></paper-progress>
 
-        <div id="localItemList" class="items"></div>
+        <div id="localItemList" class="items">
+            <slot></slot>
+        </div>
 
 
         <paper-toast id="toast" text="" duration="4000"></paper-toast>
@@ -89,29 +91,45 @@ element for displaying package metadata
     </template>
 
     <script>
-        Polymer({
+        class ExistdbPackages extends Polymer.Element {
 
-            is: 'existdb-packages',
+            static get is() {
+                return 'existdb-packages';
+            }
 
-            properties: {
+            static get properties() {
+                return {
+                    url: {
+                        type:String,
+                        reflectToAttribute:true
+                    },
+                    service:{
+                        type: String,
+                        reflectToAttribute:true,
+                        notify:true,
+                        observer: '_serviceChanged'
+                    },
+                    autoLoad:{
+                        type:Boolean,
+                        value:false
+                    }
+                };
+            }
 
-                url: {
-                    type:String,
-                    reflectToAttribute:true
-                },
-                service:{
-                    type: String,
-                    reflectToAttribute:true,
-                    notify:true,
-                    observer: '_serviceChanged'
-                },
-                autoLoad:{
-                    type:Boolean,
-                    value:false
-                }
-            },
+            constructor() {
+                console.log('ExistdbPackages constructor')
+                super();
+            }
 
-            attached: function () {
+            connectedCallback() {
+                super.connectedCallback();
+                console.log("existdb-packages connected");
+
+            }
+
+
+            ready () {
+                super.ready();
                 console.log("existdb-packages attached");
                 console.log("existdb-packages attached ", this.service);
 
@@ -126,28 +144,30 @@ element for displaying package metadata
                     self._toast('successfully removed "' + e.detail.package + '"');
 
                 });
-            },
+            }
 
-            _handlePackages: function (data) {
+            _handlePackages (data) {
                 console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
                 this._resetProgress()
-                this.fire('packages-loaded',{});
-            },
+//                this.fire('packages-loaded',{});
+                this.dispatchEvent(new CustomEvent('packages-loaded', {detail: {}}));
 
-            _handleLocalError:function (e) {
+            }
+
+            _handleLocalError(e) {
                 console.log("loading of available packages failed", e.detail.error)
                 this._resetAndHideProgress()
                 this._toastError('loading of available packages failed')
-            },
+            }
 
-            loadPackages: function(){
+            loadPackages(){
                 this.$.progress.indeterminate = true
                 this.$.loadPackages.url = this.service;
                 this.$.loadPackages.generateRequest();
-            },
+            }
 
-            _resetProgress:function () {
+            _resetProgress () {
                 this.$.progress.value = 100
                 var self = this;
                 setTimeout(function () {
@@ -155,24 +175,25 @@ element for displaying package metadata
                     self.$.progress.indeterminate = false
                 }, 1000)
 
-            },
+            }
 
-            _resetAndHideProgress: function () {
+            _resetAndHideProgress () {
                 this.$.progress.indeterminate = false;
                 this.$.progress.value = 0;
                 this.$.progress.hidden=true
-            },
+            }
 
-            _toast: function (msg) {
+            _toast (msg) {
                 this.$.toast.text = msg
                 this.$.toast.open()
-            },
-            _toastError: function (msg) {
+            }
+
+            _toastError (msg) {
                 this.$.toastError.text = msg
                 this.$.toastError.open()
-            },
+            }
 
-            _serviceChanged: function(e){
+            _serviceChanged(e){
                 console.log("the service has changed!");
                 // DO NOT!!!!
 //                this.$.loadPackages.generateRequest();
@@ -180,6 +201,9 @@ element for displaying package metadata
             }
 
 
-        });
+        }
+
+        window.customElements.define(ExistdbPackages.is, ExistdbPackages);
+
     </script>
 </dom-module>

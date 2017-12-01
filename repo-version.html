@@ -1,79 +1,94 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 
 <dom-module id="repo-version">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
 
-      button#install{
-        display: table-cell;
-        padding:4px;
-        margin-left:10px;
-      }
-/*
-      :host:after{
-        content:attr(version);
-      }
-*/
-    </style>
+            button#install {
+                display: table-cell;
+                padding: 4px;
+                margin-left: 10px;
+            }
+
+            /*
+                  :host:after{
+                    content:attr(version);
+                  }
+            */
+        </style>
 
 
-    <slot></slot>
+        <slot></slot>
 
-    <template is="dom-if" if="{{_hasOtherParent()}}">
-      <button id="install" on-click="_triggerInstall">Install</button>
+        <template is="dom-if" if="{{_hasOtherParent()}}">
+            <button id="install" on-click="_triggerInstall">Install</button>
+        </template>
+
+
     </template>
 
+    <script>
+        class RepoVersion extends Polymer.Element {
 
-  </template>
+            static get is() {
+                return 'repo-version';
+            }
 
-  <script>
-      Polymer({
+            static get properties() {
+                return {
+                    url: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    abbrev: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    type: {
+                        type: String,
+                        reflectToAttribute: true
+                    },
+                    version: {
+                        type: String,
+                        reflectToAttribute: true
+                    }
 
-          is: 'repo-version',
+                };
+            }
 
-          properties: {
-              url:{
-                  type:String,
-                  reflectToAttribute:true
-              },
-              abbrev:{
-                  type: String,
-                  reflectToAttribute:true
-              },
-              type: {
-                  type: String,
-                  reflectToAttribute:true
-              },
-              version:{
-                  type:String,
-                  reflectToAttribute:true
-              }
-          },
+            constructor() {
+                console.log('ExistdbPackageRemoveAction constructor')
+                super();
+            }
 
+            connectedCallback() {
+                super.connectedCallback();
 
-          attached: function () {
+                if (this._hasOtherParent()) {
+//                    this.fire('attachedVersion');
+                    this.dispatchEvent(new CustomEvent('attachedVersion', {detail: {}}));
+                }
+            }
 
-              if(this._hasOtherParent()){
-                  this.fire('attachedVersion');
-              }
-
-          },
-
-          _hasOtherParent:function () {
+            _hasOtherParent() {
 //              console.log('_hasOtherParent ',this.parentNode.nodeName.toLowerCase() == 'repo-other');
-              return this.parentNode.nodeName.toLowerCase() == 'repo-other';
-          },
+                return this.parentNode.nodeName.toLowerCase() == 'repo-other';
+            }
 
-          _triggerInstall:function (e) {
+            _triggerInstall(e) {
 //              console.log('_triggerInstall', this.version);
-              this.fire('requestInstall',{version:this.version});
+//                this.fire('requestInstall', {version: this.version});
+                this.dispatchEvent(new CustomEvent('requestInstall', {detail: {version: this.version}}));
 
-          }
+            }
 
 
-      });
-  </script>
+        }
+
+        window.customElements.define(RepoVersion.is, RepoVersion);
+
+    </script>
 </dom-module>

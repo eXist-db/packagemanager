@@ -1,7 +1,9 @@
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="bower_components/iron-form/iron-form.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 
 
 <!--
@@ -15,6 +17,7 @@ implements an interaction with the package repository
     <template>
         <style>
             :host {
+                position: relative;
                 display: block;
 
                 --paper-icon-button: {
@@ -23,16 +26,6 @@ implements an interaction with the package repository
 
             }
         </style>
-        <!--
-                <iron-ajax id="removePackage"
-                           verbose with-credentials
-                           body='{"package-url": url, "abbrev": abbrev, "action":"remove","type":type}'
-                           method="post" handle-as="json"
-                           on-response="handleResponse"
-                           on-error="handleError"
-                           url="/exist/apps/packagemanager/modules/install.xql"
-                           ></iron-ajax>
-        -->
 
         <iron-ajax id="removePackage"
                    verbose with-credentials
@@ -50,42 +43,52 @@ implements an interaction with the package repository
     </template>
 
     <script>
-        Polymer({
+        class ExistdbPackageRemoveAction extends Polymer.Element{
 
-            is: 'existdb-package-remove-action',
+            static get is() {
+                return 'existdb-package-remove-action';
+            }
 
-            properties: {
-                url: {
-                    type: String,
-                },
-                packageTitle:{
-                    type: String,
-                    reflectToAttribute:true
-                }
-            },
+            static get properties() {
+                return{
+                    url: {
+                        type: String,
+                    },
+                    packageTitle:{
+                        type: String,
+                        reflectToAttribute:true
+                    }
+                };
+            }
 
-            listeners: {
-                'removeBtn.tap': 'submit',
-                'iron-form-response': 'handleResponse',
-                'iron-form-error': 'handleError'
-            },
+            constructor() {
+                console.log('ExistdbPackageRemoveAction constructor')
+                super();
+            }
 
-            attached: function(){
+            connectedCallback() {
+                console.log('ExistdbPackageRemoveAction connectedCallback')
+                super.connectedCallback();
 
-//                console.log("existdb-package-remove-action attached");
-//                console.log("url: ", this.url);
-//                console.log("title: ", this.packageTitle);
-            },
+            }
+
+            ready(){
+                super.ready();
+                this.addEventListener('iron-form-response',this.handleResponse);
+                this.addEventListener('iron-form-error', this.handleError);
+            }
 
 
-            submit: function (e) {
+            submit (e) {
+                console.log('remove action submit: ', e);
                 e.stopPropagation();
                 e.preventDefault();
 
 //                console.log("the form: ", this.$.removeform.body);
 
                 if (this.url.endsWith("/packagemanager")) {
-                    this.fire("packagemanager-remove-attempt")
+//                    this.fire("packagemanager-remove-attempt")
+                    this.dispatchEvent(new CustomEvent('packagemanager-remove-attempt', {detail: {}}));
                     return
                 }
                 //do it
@@ -96,17 +99,22 @@ implements an interaction with the package repository
                     this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
                     this.$.removePackage.generateRequest();
                 }
-            },
-
-            _handleResponse: function (data) {
-                console.log("response: ", data)
-                this.fire("package-removed", {package: this.packageTitle});
-            },
-
-            _handleError: function (e) {
-                console.log("error: ", e)
-                this.fire("package-remove-error", {"error": e.detail});
             }
-        });
+
+            _handleResponse (data) {
+                console.log("response: ", data);
+//                this.fire("package-removed", {package: this.packageTitle});
+                this.dispatchEvent(new CustomEvent('package-removed', {detail: {package: this.packageTitle}}));
+            }
+
+            _handleError (e) {
+                console.log("error: ", e);
+//                this.fire("package-remove-error", {"error": e.detail});
+                this.dispatchEvent(new CustomEvent('package-remove-error', {detail: {error: e.detail}}));
+            }
+        }
+
+        window.customElements.define(ExistdbPackageRemoveAction.is, ExistdbPackageRemoveAction);
+
     </script>
 </dom-module>
