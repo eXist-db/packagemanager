@@ -1,6 +1,7 @@
 {
   "name": "existdb-packagemanager",
   "description": "a web component implementing eXistdb packagemanager",
+  "version": "3.11.2",
   "main": "existdb-packagemanager.html",
   "repository": {
     "type": "git",

@@ -1,8 +1,8 @@
 {
-  "name": "shc",
+  "name": "packagemanager",
   "version": "1.0.0",
-  "description": "Shakespeare His Contemporaries",
-  "main": "index.js",
+  "description": "eXistdb Packagemanager application",
+  "main": "index.j",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -2,7 +2,7 @@
 <meta xmlns="http://exist-db.org/xquery/repo">
     <description>eXistdb Package Manager</description>
     <author>Joern Turner</author>
-    <website/>
+    <website>https://github.com/eXist-db/existdb-packagemanager</website>
     <status>beta</status>
     <license>GNU-LGPL</license>
     <copyright>true</copyright>
@@ -11,4 +11,35 @@
     <prepare/>
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
+    <changelog>
+        <change version="3.11.3">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>fixed svg icon styling</li>
+                <li>added missing version number to bower.json</li>
+            </ul>
+        </change>
+        <change version="3.11.2">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>added changelog</li>
+            </ul>
+        </change>
+        <change version="3.11.1">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>removed unstable key binding for up and down arrow</li>
+                <li>replaced neon-animated-pages with iron-pages for stability</li>
+                <li>detail layout enhancements</li>
+                <li>fixed missing activation of packages when clicking app title for installed apps</li>
+            </ul>
+        </change>
+        <change version="3.9.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>ported to Polymer 2 hybrid mode</li>
+                <li>removed tab navigation. Replaced by '+' button</li>
+                <li>keyboard shortcut support</li>
+                <li>improved filtering</li>
+                <li>moved upload to top of screen for better accessibility</li>
+                <li>improved keyboard navigation of packages</li>
+            </ul>
+        </change>
+    </changelog>
 </meta>
