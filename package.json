@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.exist-db.org:eXistdbElements/existdb-packagemanager.git"
+    "url": "https://github.com/eXist-db/existdb-packagemanager.git"
   },
   "author": "",
   "license": "ISC",
