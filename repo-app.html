@@ -320,9 +320,12 @@ element for displaying package metadata
                 color:var(--paper-orange-100);
                 padding:4px 20px;
             }
+            [hidden]{
+                display: none;
+            }
 
         </style>
-        <paper-progress id="progress" class="slow" hidden></paper-progress>
+        <paper-progress id="progress" class="slow"></paper-progress>
 
         <!-- todo: find a working 2.0 solution. -->
         <!--<content select="repo-icon"></content>-->
@@ -427,7 +430,7 @@ element for displaying package metadata
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log("repo-app attached");
+//                console.log("repo-app attached");
                 this.setAttribute('tabindex','0');
 
 //                this.$.remove.addEventListener('click',e => this._doRemove(e));
@@ -436,7 +439,7 @@ element for displaying package metadata
 
             ready () {
                 super.ready();
-                console.log('repo-app ready');
+//                console.log('repo-app ready');
 
 //                this.addEventListener('click', this._handleTap);
                 this.addEventListener('keyup',this._handleEnter);
@@ -444,7 +447,11 @@ element for displaying package metadata
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
                 this.addEventListener('click',e => this._handleTap(e));
+
+
 //                this.listen(this, 'package-installed', '_onInstalled');
+//                this.$.install.addEventListener('_onInstalled', e => this.)
+
 
 //                this.listen(this,'requestInstall','_installOtherVersion');
                 this.addEventListener('requestInstall', e => this._installOtherVersion);
@@ -525,16 +532,19 @@ element for displaying package metadata
             }
 
             _onInstalled (e) {
-//                console.log('_onInstalled ', e);
+                console.log('_onInstalled ', e);
                 this.$.progress.indeterminate=false;
                 this.$.progress.value=100;
 //                this.fire("package-installed",{package:e.detail.package});
+//                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
+
             }
 
             _onInstallStarted (e) {
-//                console.log('_onInstallStarted ', e);
+                console.log('_onInstallStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
+                this.$.install.install();
             }
 
             _installOtherVersion (e) {
@@ -543,12 +553,12 @@ element for displaying package metadata
                 this.$.install.submit(e);
             }
 
-            _doRemove(e){
-                console.log("doRemove ",e);
-//                e.preventDefault();
-//                e.stopPropagation();
-//                this.$.remove.submit(e);
-            }
+//            _doRemove(e){
+//                console.log("doRemove ",e);
+////                e.preventDefault();
+////                e.stopPropagation();
+////                this.$.remove.submit(e);
+//            }
 /*
             _attachDom(dom) {
                 this.appendChild(dom);

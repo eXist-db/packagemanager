@@ -64,12 +64,12 @@ implements an interaction with the package repository
 
             constructor() {
                 super();
-                console.log('ExistdbPackageRemoveAction constructor')
+//                console.log('ExistdbPackageRemoveAction constructor')
             }
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('ExistdbPackageRemoveAction connectedCallback');
+//                console.log('ExistdbPackageRemoveAction connectedCallback');
 
                 this.tabindex=0;
 
@@ -88,19 +88,19 @@ implements an interaction with the package repository
 
             ready(){
                 super.ready();
-                console.log('ExistdbPackageRemoveAction ready')
+//                console.log('ExistdbPackageRemoveAction ready')
 
             }
 
-            _doSubmit(e){
-                console.log("remove action click ",e);
-                this.dispatchEvent(new CustomEvent('package-removed', {detail: {package: this.packageTitle}}));
-
-            }
+//            _doSubmit(e){
+////                console.log("remove action click ",e);
+//                this.dispatchEvent(new CustomEvent('package-removed', {detail: {package: this.packageTitle}}));
+//
+//            }
 
 
             submit (e) {
-                console.log('remove action submit: ', e);
+//                console.log('remove action submit: ', e);
                 e.stopPropagation();
                 e.preventDefault();
 
@@ -130,7 +130,7 @@ implements an interaction with the package repository
             _handleError (e) {
                 console.log("error: ", e);
 //                this.fire("package-remove-error", {"error": e.detail});
-                this.dispatchEvent(new CustomEvent('package-remove-error', {detail: {error: e.detail}}));
+                this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error: e.detail}}));
             }
 
         }

@@ -67,6 +67,9 @@ element for displaying package metadata
             #toastError{
                 background:var(--paper-red-500);
             }
+            [hidden]{
+                display:none;
+            }
         </style>
 
         <iron-ajax id="loadPackages"
@@ -112,6 +115,13 @@ element for displaying package metadata
                     autoLoad:{
                         type:Boolean,
                         value:false
+                    },
+                    count:{
+                        type:Number,
+                        value:0,
+                        notify:true,
+                        reflectToAttribute:true,
+                        observer:'_handleCount'
                     }
                 };
             }
@@ -130,8 +140,7 @@ element for displaying package metadata
 
             ready () {
                 super.ready();
-                console.log("existdb-packages attached");
-                console.log("existdb-packages attached ", this.service);
+                console.log("existdb-packages ready ", this.service);
 
                 if(this.autoLoad){
                     this.loadPackages();
@@ -142,13 +151,33 @@ element for displaying package metadata
                     this.loadPackages();
                     this._toast('successfully removed "' + e.detail.package + '"');
                 }.bind(this));
+
+                window.addEventListener('package-remove-error', function (e) {
+                    this._toastError(e.detail.error.error.message)
+                }.bind(this));
+
+                window.addEventListener('package-installed', function (e) {
+                    this._toast('Package has been installed: ' + e.detail.package)
+                    this.loadPackages();
+                }.bind(this));
             }
+
+            getPackages(){
+                return this.packages;
+            }
+
 
             _handlePackages (data) {
                 console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
-                this._resetProgress()
-                this.dispatchEvent(new CustomEvent('packages-loaded', {detail: {}}));
+
+                this._resetProgress();
+//                console.log('######################## ', this.shadowRoot.querySelectorAll('repo-app').length);
+
+                this.packages = this.shadowRoot.querySelectorAll('repo-app')
+                this.count = this.packages.length;
+
+                this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {}}));
             }
 
             _handleLocalError(e) {
@@ -194,6 +223,9 @@ element for displaying package metadata
                 // DO NOT!!!!
 //                this.$.loadPackages.generateRequest();
 
+            }
+            _handleCount(newValue, oldValue){
+                console.log("_handleCount ", newValue, oldValue)
             }
 
 

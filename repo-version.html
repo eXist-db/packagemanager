@@ -69,7 +69,8 @@
 
                 if (this._hasOtherParent()) {
 //                    this.fire('attachedVersion');
-                    this.dispatchEvent(new CustomEvent('attachedVersion', {detail: {}}));
+                    this.dispatchEvent(new CustomEvent('attachedVersion', {bubbles: true, composed: true, detail: {}}));
+
                 }
             }
 
@@ -81,7 +82,7 @@
             _triggerInstall(e) {
 //              console.log('_triggerInstall', this.version);
 //                this.fire('requestInstall', {version: this.version});
-                this.dispatchEvent(new CustomEvent('requestInstall', {detail: {version: this.version}}));
+                this.dispatchEvent(new CustomEvent('requestInstall', {bubbles: true, composed: true, detail: {version: this.version}}));
 
             }
 

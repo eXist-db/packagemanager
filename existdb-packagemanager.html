@@ -1,5 +1,5 @@
 <!--<script src="../../ziziphus-ce/node_modules/bower/lib/node_modules/lodash/_arrayEach.js"></script>-->
-<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="bower_components/paper-styles/color.html">
 <link rel="import" href="bower_components/paper-styles/typography.html">
@@ -55,9 +55,11 @@ a web component implementing eXistdb packagemanager
                 background: whitesmoke;
                 padding: 0;
                 margin: 0;
+/*
                 --vaadin-upload-button-add: {
                     background: var(--paper-blue-700);
                 };
+*/
 
                 --paper-toggle-button-checked-button-color: var(--paper-blue-700);
 
@@ -154,8 +156,29 @@ a web component implementing eXistdb packagemanager
                 color:white;
             }
 
+            vaadin-upload{
+                background: var(--paper-blue-300);
+                padding:20px;
+            }
+            vaadin-upload:not([nodrop]){
+                border:none;
+            }
+
+            vaadin-upload #add-button{
+                background: blue;
+            }
+
+
+            #uploader ::slotted(button){
+                height:auto;
+                background: red;
+            }
+            #uploader [part="primary-buttons"].vaadin-button{
+                background: green;
+            }
+
+/*
             #uploader {
-                /*background: var(--paper-blue-50);*/
                 background: var(--paper-blue-200);
             }
 
@@ -163,9 +186,15 @@ a web component implementing eXistdb packagemanager
                 color: var(--paper-blue-700);
                 background: var(--paper-blue-200);
             }
-            #addFiles{
+
+            #uploader add-button{
                 background: var(--paper-blue-500);
             }
+
+            #uploader[part="primary-buttons"]{
+                background: var(--paper-blue-500);
+            }
+*/
 
 
             #toast {
@@ -225,7 +254,7 @@ a web component implementing eXistdb packagemanager
             }
             paper-card{
                 position:fixed;
-                z-index:1;
+                z-index:101;
                 width:340px;
                 padding:10px;
                 top:10px;
@@ -253,27 +282,37 @@ a web component implementing eXistdb packagemanager
             }
 
             existdb-packages{
-                margin-top:8px;
+                margin-top:2px;
             }
 
             .wrapService{
                 padding-top:64px;
             }
 
+            [hidden]{
+                display: none;
+            }
+
         </style>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+h"
+        <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
                         on-keys-pressed="_showHideShortcuts"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="esc"
+
+        <iron-a11y-keys id="a11y2" target="[[target]]" keys="esc"
                         on-keys-pressed="_handleESC"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="right"
+
+        <iron-a11y-keys id="a11y3" target="[[target]]" keys="right"
                         on-keys-pressed="_switchToAvailable"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="left"
+
+        <iron-a11y-keys id="a11y4" target="[[target]]" keys="left"
                         on-keys-pressed="_switchToInstalled"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+f"
+
+        <iron-a11y-keys id="a11y5" target="[[target]]" keys="ctrl+f"
                         on-keys-pressed="_handleFilterShortcut"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+l"
+
+        <iron-a11y-keys id="a11y6" target="[[target]]" keys="ctrl+l"
                         on-keys-pressed="_showLibraries"></iron-a11y-keys>
-        <iron-a11y-keys id="a11y" target="[[target]]" keys="ctrl+u"
+
+        <iron-a11y-keys id="a11y7" target="[[target]]" keys="ctrl+u"
                         on-keys-pressed="_showUpload"></iron-a11y-keys>
 
 
@@ -346,15 +385,17 @@ a web component implementing eXistdb packagemanager
                                 </paper-listbox>
                             </paper-menu-button>
 
+
                         </app-toolbar>
+<!--
                         <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
-                            <div class="drop-label">
-                                <iron-icon icon="image:adjust"></iron-icon>
-                                DROPZONE - put your package(s) here.
-                            </div>
+                            <iron-icon slot="drop-label-icon" icon="image:adjust"></iron-icon>
+                            <div slot="drop-label">DROPZONE - put your package(s) here.</div>
                         </vaadin-upload>
+-->
 
                     </app-header>
+
 
                     <existdb-packages id="localService"
                                       service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
@@ -365,7 +406,7 @@ a web component implementing eXistdb packagemanager
 
                 <app-toolbar class="repo-toolbar">
                     <paper-icon-button icon="chevron-left" on-click="_switchToInstalled"></paper-icon-button>
-                    <div class="heading">Available Packages <span class="count">{{count}}</span></div>
+                    <div class="heading">Available Packages <span class="count">[[count]]</span></div>
 
                     <paper-input-container class="remote-filter-wrapper">
                         <iron-input slot="input">
@@ -392,70 +433,89 @@ a web component implementing eXistdb packagemanager
     </template>
 
     <script>
-        Polymer({
+        class ExistdbPackagemanager extends Polymer.Element{
 
-            is: 'existdb-packagemanager',
+            static get is() {
+                return 'existdb-packagemanager';
+            }
 
-            behaviors: [
-                Polymer.NeonAnimationBehavior,
-                Polymer.NeonAnimationRunnerBehavior
-            ],
+            static get properties(){
+                return{
+                    url: {
+                        type: String,
+                        notify: true,
+                        reflectToAttribute: true
+                    },
+                    targetUrl: {
+                        type: String,
+                        reflectToAttribute:true
+                    },
+                    filter: {
+                        type: String,
+                        notify: true,
+                        reflectToAttribute: true,
+//                        observer: '_handleFilter'
+                    },
+                    selected: {
+                        observer: '_handlePageChange',
+                        value: 0
+                    },
+                    target:{
+                        type:Object
+                    },
+                    currentFocus:{
+                        type:Number
+                    },
+                    count:{
+                        type:Number,
+                        value:0
+                    },
+                    local:{
+                        type:Array,
+                        value:[]
+                    }
+                };
+            }
 
-            properties: {
-                url: {
-                    type: String,
-                    notify: true,
-                    reflectToAttribute: true
-                },
-                targetUrl: {
-                    type: String,
-                },
-                filter: {
-                    type: String,
-                    notify: true,
-                    reflectToAttribute: true,
-                    observer: '_handleFilter'
-                },
-                selected: {
-                    observer: '_handlePageChange',
-                    value: 0
-                },
-                target:{
-                    type:Object
-                },
-                currentFocus:{
-                    type:Number
-                },
-                count:{
-                    type:Number
-                }
+            constructor() {
+                super();
+                console.log('ExistdbPackagemanager constructor')
+            }
 
-            },
-            listeners: {
-                'neon-animation-finish': '_onNeonAnimationFinish'
-            },
+            connectedCallback() {
+                super.connectedCallback();
+                console.log("existdb-packages connected");
 
-            attached: function () {
+            }
+
+            ready () {
+                super.ready();
                 this.target=this;
                 this.tabindex=0;
                 this.timeout = 0;
                 this.selected = 0;
-                this.listen(document, 'package-removed', '_handlePackageRemoved');
-                this.listen(document, 'package-remove-error', '_handlePackageRemoveError');
-                this.listen(document, 'package-installed', '_handlePackageInstalled');
-                this.listen(document, 'package-install-error', '_handlePackageInstallError');
-                this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
-                this.listen(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
-                this.listen(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
+//                this.listen(document, 'package-removed', '_handlePackageRemoved');
+//                this.listen(document, 'package-remove-error', '_handlePackageRemoveError');
+//                this.listen(document, 'package-installed', '_handlePackageInstalled');
+//                this.listen(document, 'package-install-error', '_handlePackageInstallError');
+//                this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
+//                this.listen(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
+//                this.listen(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
+
+
+                window.addEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
+
                 this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
 
 
                 this.$.uploader.formDataName = "uploadedfiles[]";
+
                 this.$.uploader.addEventListener('upload-before', function (event) {
                     console.log('upload xhr before open: ', event.detail.xhr);
                     var file = event.detail.file;
                     file.uploadTarget = '/exist/apps/existdb-packageservice/packages/action?name=' + file.name;
-                });
+                }.bind(this));
+
                 this.$.uploader.addEventListener('upload-progress', function (event) {
                     console.log('upload progress: ', event.detail.file);
                     var file = event.detail.file;
@@ -479,22 +539,21 @@ a web component implementing eXistdb packagemanager
 
                 this._switchToInstalled();
                 this.$.filterLocal.focus();
-            },
+            }
 
-
-
-            detached: function () {
-                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
-                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
+            disconnectedCallback() {
+                super.disconnectedCallback();
+//                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
+//                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
                 this.unlisten(document, 'package-installed', '_handlePackageInstalled');
                 this.unlisten(document, 'package-install-error', '_handlePackageInstallError');
                 this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
                 this.unlisten(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
                 this.unlisten(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
 
-            },
+            }
 
-            _handleESC: function (e) {
+            _handleESC (e) {
                 this._resetFilters();
                 if(this.selected == 0){
                     this.$.localService.loadPackages();
@@ -502,28 +561,35 @@ a web component implementing eXistdb packagemanager
                     this.$.remoteService.loadPackages();
                 }
                 this.focus();
-            },
+            }
 
-            _showUpload: function (e) {
-                this.querySelector('#addFiles').click();
-            },
+            _showUpload (e) {
+                this.$.uploader.click();
+            }
 
-            _handlePackagesLoaded: function (e) {
+            _handlePackagesLoaded (e) {
                 console.log('################# _handlePackagesLoaded', e);
 
-                this.local = this.$.localPage.querySelectorAll('repo-app');
-                this.remote = this.$.repoPage.querySelectorAll('repo-app');
+//                this.local = this.$.localPage.querySelectorAll('repo-app');
+//                this.local = this.$.localService.querySelectorAll('repo-app');
+                this.local = this.$.localService.getPackages();
+                console.log("zzzzzzzzzzz local ", this.local);
+//                this.remote = this.$.repoPage.querySelectorAll('repo-app');
+                this.remote = this.$.remoteService.getPackages();
 
                 if(this.selected == 0){
                     this.$.filterLocal.focus();
-                    this.count = this.local.length;
+//                    this.count = this.local.length;
+//
+                    this.count = this.$.localService.count;
                 }else{
                     this.$.filterRepo.focus();
-                    this.count = this.remote.length;
+//                    this.count = this.remote.length;
+                    this.count = this.$.remoteService.count;
                 }
-            },
+            }
 
-            _handlePageChange: function (newValue, oldValue) {
+            _handlePageChange (newValue, oldValue) {
                 console.log('_handlePageChange ', newValue, oldValue);
                 this._resetFilters();
                 if (newValue == 0) {
@@ -537,9 +603,9 @@ a web component implementing eXistdb packagemanager
                 }
                 this.currentFocus=undefined;
                 this.focus();
-            },
+            }
 
-            _handleFilterShortcut: function () {
+            _handleFilterShortcut () {
                 console.log('_handleFilterShortcut');
                 if(this.selected == 0){
                     this.focus();
@@ -547,10 +613,10 @@ a web component implementing eXistdb packagemanager
                 }else{
                     this.$.filterRepo.focus();
                 }
-            },
+            }
 
-            _handleFilter: function (e) {
-                console.log('_handleSearchInput', e);
+            _handleFilter (e) {
+                console.log('_handleFilter', e);
 
 
                 var apps, filterString;
@@ -565,7 +631,7 @@ a web component implementing eXistdb packagemanager
                 }
 
                 this.count = apps.length;
-                for (i = 0; i < apps.length; ++i) {
+                for (var i = 0; i < apps.length; ++i) {
                     var app = apps[i]
                     var shortTitle = app.querySelector("repo-title").textContent;
 
@@ -576,63 +642,69 @@ a web component implementing eXistdb packagemanager
                         app.removeAttribute('hidden')
                     }
                 }
-                console.log('_handleFilter visible ', this.visible);
-            },
+            }
 
-            _resetFilters:function () {
+            _resetFilters () {
                 this.$.filterLocal.value='';
                 this.$.filterRepo.value='';
-            },
+            }
 
-            _switchToInstalled: function () {
+            _switchToInstalled () {
                 this.$.pages.selected = 0;
-            },
+            }
 
 
-            _switchToAvailable: function (e) {
+            _switchToAvailable (e) {
                 this.$.pages.selected = 1;
-            },
+            }
 
-            _handlePackageRemoved: function (e) {
+/*
+            _handlePackageRemoved (e) {
                 this.$.localService.loadPackages();
                 this._toast('Package has been removed: ' + e.detail.package)
-            },
+            }
+*/
 
-            _handlePackageRemoveError: function (e) {
+/*
+            _handlePackageRemoveError (e) {
                 this._toastError(e.detail.error.error.message)
-            },
+            }
+*/
 
-            _handlePackageInstalled: function (e) {
+/*
+            _handlePackageInstalled (e) {
                 this._toast('Package has been installed: ' + e.detail.package)
                 this.$.remoteService.loadPackages();
-            },
+            }
+*/
 
-            _handlePackageInstallError: function (e) {
+            _handlePackageInstallError (e) {
                 this._toastError(e.detail.error.error.message)
-            },
+            }
 
-            _toast: function (msg) {
-                this.$.toast.text = msg
-                this.$.toast.open()
-            },
-            _toastError: function (msg) {
-                this.$.toastError.text = msg
-                this.$.toastError.open()
-            },
+            _toast (msg) {
+                this.$.toast.text = msg;
+                this.$.toast.open();
+            }
 
-            _onNeonAnimationFinish: function () {
+            _toastError (msg) {
+                this.$.toastError.text = msg;
+                this.$.toastError.open();
+            }
+
+            _onNeonAnimationFinish () {
                 console.log('animation done!');
-            },
+            }
 
-            _hideToast: function (e) {
-                this.$.toastError.hide()
-            },
+            _hideToast (e) {
+                this.$.toastError.hide();
+            }
 
-            _handleRemoveAttempt: function (e) {
+            _handleRemoveAttempt (e) {
                 this._toastError("Package Manager cannot be removed.")
-            },
+            }
 
-            _showLibraries: function (e) {
+            _showLibraries (e) {
                 this._resetFilters();
 
                 if (this.$.libSwitch.innerText.trim() == 'show libraries') {
@@ -646,9 +718,10 @@ a web component implementing eXistdb packagemanager
                     var firstApp = this.$.localService.querySelectorAll('repo-app[type="application"]')[0];
                     this.focus();
                 }
-            },
+            }
 
-            _showHideShortcuts:function (e) {
+            _showHideShortcuts (e) {
+                console.log('_showHideShortcuts')
 
                 if(this.$.shortcuts.hidden){
                     this.$.shortcuts.hidden=false;
@@ -659,6 +732,8 @@ a web component implementing eXistdb packagemanager
             }
 
 
-        });
+        }
+        window.customElements.define(ExistdbPackagemanager.is, ExistdbPackagemanager);
+
     </script>
 </dom-module>
