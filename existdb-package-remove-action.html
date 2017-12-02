@@ -17,8 +17,8 @@ implements an interaction with the package repository
     <template>
         <style>
             :host {
-                position: relative;
                 display: block;
+                z-index:100;
 
                 --paper-icon-button: {
                     color: var(--paper-blue-700);
@@ -35,7 +35,7 @@ implements an interaction with the package repository
                    on-error="_handleError"></iron-ajax>
 
 
-        <paper-icon-button id="removeBtn" icon="delete" title="remove this package"></paper-icon-button>
+        <paper-icon-button id="removeBtn" icon="delete" title="remove this package" on-click="submit"></paper-icon-button>
         <form id="removeform" is="iron-form" method="post" action="/exist/apps/existdb-packageservice/packages/action">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="action" value="remove"/>
@@ -53,6 +53,7 @@ implements an interaction with the package repository
                 return{
                     url: {
                         type: String,
+                        reflectToAttribute:true
                     },
                     packageTitle:{
                         type: String,
@@ -62,20 +63,39 @@ implements an interaction with the package repository
             }
 
             constructor() {
-                console.log('ExistdbPackageRemoveAction constructor')
                 super();
+                console.log('ExistdbPackageRemoveAction constructor')
             }
 
             connectedCallback() {
-                console.log('ExistdbPackageRemoveAction connectedCallback')
                 super.connectedCallback();
+                console.log('ExistdbPackageRemoveAction connectedCallback');
+
+                this.tabindex=0;
+
+                this.addEventListener('iron-form-response',this.handleResponse);
+                this.addEventListener('iron-form-error', this.handleError);
+
+/*
+                var that = this;
+                window.addEventListener('WebComponentsReady', function() {
+                    that.addEventListener('click', e => this.doSubmit(e));
+
+                });
+*/
 
             }
 
             ready(){
                 super.ready();
-                this.addEventListener('iron-form-response',this.handleResponse);
-                this.addEventListener('iron-form-error', this.handleError);
+                console.log('ExistdbPackageRemoveAction ready')
+
+            }
+
+            _doSubmit(e){
+                console.log("remove action click ",e);
+                this.dispatchEvent(new CustomEvent('package-removed', {detail: {package: this.packageTitle}}));
+
             }
 
 
@@ -112,6 +132,7 @@ implements an interaction with the package repository
 //                this.fire("package-remove-error", {"error": e.detail});
                 this.dispatchEvent(new CustomEvent('package-remove-error', {detail: {error: e.detail}}));
             }
+
         }
 
         window.customElements.define(ExistdbPackageRemoveAction.is, ExistdbPackageRemoveAction);

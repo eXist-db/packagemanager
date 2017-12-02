@@ -87,6 +87,7 @@ element for displaying package metadata
                 position: absolute;
                 top:10px;
                 right:10px;
+                z-index:100;
             }
             #install{
                 position: absolute;
@@ -336,7 +337,7 @@ element for displaying package metadata
 
 
             <!--todo: uninstall button for apps that are status=installed -->
-            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}" on-click="_doRemove"></existdb-package-remove-action>
+            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
             <existdb-package-install-action
                     id="install"
                     url="{{url}}"
@@ -429,22 +430,20 @@ element for displaying package metadata
                 console.log("repo-app attached");
                 this.setAttribute('tabindex','0');
 
-//                this.listen(this, 'tap', '_handleTap')
-//                this.listen(this, 'keyup', '_handleEnter')
-
-
+//                this.$.remove.addEventListener('click',e => this._doRemove(e));
+//                this.addEventListener('click',this._doRemove);
             }
 
             ready () {
                 super.ready();
-//                console.log('ready');
+                console.log('repo-app ready');
 
-                this.addEventListener('click', this._handleTap);
+//                this.addEventListener('click', this._handleTap);
                 this.addEventListener('keyup',this._handleEnter);
 
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
-//                this.$.wrapper.addEventListener('tap',e => this._handleTap(e));
+                this.addEventListener('click',e => this._handleTap(e));
 //                this.listen(this, 'package-installed', '_onInstalled');
 
 //                this.listen(this,'requestInstall','_installOtherVersion');
@@ -455,7 +454,7 @@ element for displaying package metadata
                 this.querySelector("repo-title").addEventListener('click', function(e){
                     that._handleTap(e);
                 });
-                this.querySelector("repo-version").addEventListener('tap', function(e){
+                this.querySelector("repo-version").addEventListener('click', function(e){
                     that._handleTap(e);
                 });
 
@@ -465,10 +464,9 @@ element for displaying package metadata
 
             _handleTap (e) {
                 console.log('_handleTap ',e);
-//                e.stopPropagation();
                 var t = e.target.nodeName.toLowerCase();
 
-//                if(t == 'existdb-package-remove') return;
+                if(t == 'existdb-package-remove') return;
                 if(t == "paper-icon-button") return;
                 if(t == "iron-icon") return;
 
@@ -476,8 +474,15 @@ element for displaying package metadata
             }
 
             _handleEnter(e) {
-//                console.log("key ", e)
+                console.log("_handleEnter key ", e);
+                console.log("_handleEnter key original", e.composedPath()[0]);
+                var originalTarget = e.composedPath()[0];
+
+                console.log("node ", originalTarget.nodeName);
+
+                if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
                 if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
+                    console.log('_handleEnter key enter fired');
                     this._openApp()
                 }
             }
@@ -506,7 +511,7 @@ element for displaying package metadata
 
 
             _showInfo(e){
-                console.log('_showInfo');
+                console.log('_showInfo ', e);
                 e.stopPropagation();
                 e.preventDefault();
                 var showsAll = this.$.wrapper.getAttribute('show-all');
@@ -540,11 +545,15 @@ element for displaying package metadata
 
             _doRemove(e){
                 console.log("doRemove ",e);
-                e.preventDefault();
-                e.stopPropagation();
-                this.$.remove.submit(e);
+//                e.preventDefault();
+//                e.stopPropagation();
+//                this.$.remove.submit(e);
             }
-
+/*
+            _attachDom(dom) {
+                this.appendChild(dom);
+            }
+*/
         }
         window.customElements.define(RepoApp.is, RepoApp);
 
