@@ -14,6 +14,6 @@ vertical-section-container.centered{
     display: none !important;
 }
 
-#uploader [part="button"]{
+#uploader [part="button"], button{
     background:yellow;
 }

@@ -13,6 +13,7 @@
 <link rel="import" href="bower_components/paper-button/paper-button.html">
 <link rel="import" href="bower_components/vaadin-upload/vaadin-upload.html">
 <link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="bower_components/polymer/lib/elements/custom-style.html">
 
 <!--<link rel="import" href="bower_components/neon-animation/web-animations.html">-->
 
@@ -158,23 +159,33 @@ a web component implementing eXistdb packagemanager
 
             vaadin-upload{
                 background: var(--paper-blue-300);
-                padding:20px;
+                padding:12px;
             }
             vaadin-upload:not([nodrop]){
                 border:none;
             }
 
-            vaadin-upload #add-button{
-                background: blue;
+            [slot="drop-label"] {
+                padding:11px 0;
+                color:var(--paper-blue-900);
+                font-weight:300;
             }
-
-
-            #uploader ::slotted(button){
-                height:auto;
-                background: red;
+            [slot="drop-label-icon"] {
+                margin: 0 1em;
+                width: 40px;
+                color:var(--paper-blue-500);
+                height:40px;
             }
-            #uploader [part="primary-buttons"].vaadin-button{
-                background: green;
+/*
+            [slot="drop-label-icon"].drop-icon{
+                width:40px;
+            }
+*/
+
+            [slot="add-button"] {
+                background: var(--paper-blue-500);
+                color:white;
+
             }
 
 /*
@@ -376,7 +387,7 @@ a web component implementing eXistdb packagemanager
                                 </iron-input>
                             </paper-input-container>
 
-                            <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right">
+                            <paper-menu-button id="moreMenu" close-on-activate horizontal-align="right" tabindex="-1">
                                 <paper-icon-button icon="more-vert" mini slot="dropdown-trigger"></paper-icon-button>
                                 <paper-listbox slot="dropdown-content">
                                     <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
@@ -387,12 +398,11 @@ a web component implementing eXistdb packagemanager
 
 
                         </app-toolbar>
-<!--
-                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}">
-                            <iron-icon slot="drop-label-icon" icon="image:adjust"></iron-icon>
+                        <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}" tabindex="-1">
+                            <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust" size="48" width="48"></iron-icon>
                             <div slot="drop-label">DROPZONE - put your package(s) here.</div>
+                            <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
                         </vaadin-upload>
--->
 
                     </app-header>
 
@@ -426,7 +436,7 @@ a web component implementing eXistdb packagemanager
 
         <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
 
-        <paper-toast id="toast" text="" duration="4000"></paper-toast>
+        <paper-toast id="toast" text="" duration="5000"></paper-toast>
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
@@ -485,7 +495,7 @@ a web component implementing eXistdb packagemanager
             connectedCallback() {
                 super.connectedCallback();
                 console.log("existdb-packages connected");
-
+                this.focus();
             }
 
             ready () {
@@ -506,7 +516,6 @@ a web component implementing eXistdb packagemanager
                 window.addEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
 
                 this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
-
 
                 this.$.uploader.formDataName = "uploadedfiles[]";
 
@@ -545,11 +554,13 @@ a web component implementing eXistdb packagemanager
                 super.disconnectedCallback();
 //                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
 //                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
-                this.unlisten(document, 'package-installed', '_handlePackageInstalled');
-                this.unlisten(document, 'package-install-error', '_handlePackageInstallError');
-                this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
-                this.unlisten(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
-                this.unlisten(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
+//                this.unlisten(document, 'package-installed', '_handlePackageInstalled');
+//                this.unlisten(document, 'package-install-error', '_handlePackageInstallError');
+//                this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
+//                this.unlisten(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
+//                this.unlisten(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
+
+                window.removeEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
 
             }
 
@@ -564,7 +575,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _showUpload (e) {
-                this.$.uploader.click();
+                this.$.uploadBtn.click();
             }
 
             _handlePackagesLoaded (e) {
@@ -692,10 +703,6 @@ a web component implementing eXistdb packagemanager
                 this.$.toastError.open();
             }
 
-            _onNeonAnimationFinish () {
-                console.log('animation done!');
-            }
-
             _hideToast (e) {
                 this.$.toastError.hide();
             }
@@ -705,6 +712,8 @@ a web component implementing eXistdb packagemanager
             }
 
             _showLibraries (e) {
+                console.log('_showLibraries ',e);
+
                 this._resetFilters();
 
                 if (this.$.libSwitch.innerText.trim() == 'show libraries') {

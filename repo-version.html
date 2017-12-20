@@ -8,9 +8,10 @@
             }
 
             button#install {
-                display: table-cell;
-                padding: 4px;
-                margin-left: 10px;
+                display: inline-block;
+                /*padding: 4px;*/
+                /*margin-left: 10px;*/
+                background: whitesmoke;
             }
 
             /*
@@ -18,6 +19,21 @@
                     content:attr(version);
                   }
             */
+
+            :host:before{
+                content:"Version " attr(version);
+                display: inline;
+            }
+
+/*
+            :host[version]:before{
+                content: attr(version);
+            }
+*/
+
+            repo-requires{
+
+            }
         </style>
 
 
@@ -68,9 +84,7 @@
                 super.connectedCallback();
 
                 if (this._hasOtherParent()) {
-//                    this.fire('attachedVersion');
                     this.dispatchEvent(new CustomEvent('attachedVersion', {bubbles: true, composed: true, detail: {}}));
-
                 }
             }
 
@@ -80,9 +94,12 @@
             }
 
             _triggerInstall(e) {
-//              console.log('_triggerInstall', this.version);
-//                this.fire('requestInstall', {version: this.version});
-                this.dispatchEvent(new CustomEvent('requestInstall', {bubbles: true, composed: true, detail: {version: this.version}}));
+                console.log('_triggerInstall', this.version);
+                this.dispatchEvent(new CustomEvent('requestInstall', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {version: this.version}
+                }));
 
             }
 

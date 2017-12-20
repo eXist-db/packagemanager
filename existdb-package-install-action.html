@@ -104,6 +104,8 @@ implements an interaction with the package repository
             }
 
             install(){
+                console.log('install action install');
+                console.log('install action install url ', this.url);
                 this.$.installPackage.params = {
                     "package-url":this.url,
                     "action":"install",
@@ -115,9 +117,10 @@ implements an interaction with the package repository
 
             _handleResponse (data) {
                 console.log("response: ", data);
+                console.log("install response: ", this.url);
 
 //                this.fire("package-installed",{package:this.url});
-                this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {packageUrl:this.url}}));
+                this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
 
             }
 

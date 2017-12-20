@@ -122,7 +122,7 @@ implements an interaction with the package repository
             }
 
             _handleResponse (data) {
-                console.log("response: ", data);
+//                console.log("response: ", data);
 //                this.fire("package-removed", {package: this.packageTitle});
                 this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {package: this.packageTitle}}));
             }

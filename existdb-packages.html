@@ -110,7 +110,7 @@ element for displaying package metadata
                         type: String,
                         reflectToAttribute:true,
                         notify:true,
-                        observer: '_serviceChanged'
+//                        observer: '_serviceChanged'
                     },
                     autoLoad:{
                         type:Boolean,
@@ -148,8 +148,8 @@ element for displaying package metadata
 
                 window.addEventListener('package-removed', function(e){
                     console.log("package was removed", e);
-                    this.loadPackages();
                     this._toast('successfully removed "' + e.detail.package + '"');
+                    this.loadPackages();
                 }.bind(this));
 
                 window.addEventListener('package-remove-error', function (e) {
@@ -157,8 +157,12 @@ element for displaying package metadata
                 }.bind(this));
 
                 window.addEventListener('package-installed', function (e) {
-                    this._toast('Package has been installed: ' + e.detail.package)
+                    console.log('package-installed ', e);
+                    this._toast('Package has been installed: ' + e.detail.abbrev)
                     this.loadPackages();
+                }.bind(this));
+                window.addEventListener('package-install-error', function (e) {
+                    this._toastError(e.detail.error.error.message)
                 }.bind(this));
             }
 

@@ -69,6 +69,11 @@ return (
         )
     )
 :)
+    else if(starts-with($exist:path, "/resources")) then
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <cache-control cache="yes"/>
+        </dispatch>
+
     else (
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist" />
     )
