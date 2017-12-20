@@ -90,7 +90,7 @@ a web component implementing eXistdb packagemanager
 
             app-header {
                 background: var(--paper-blue-500);
-                color:white;
+                color:var(--paper-blue-900);
                 height: 128px;
             }
 
@@ -159,7 +159,9 @@ a web component implementing eXistdb packagemanager
 
             vaadin-upload{
                 background: var(--paper-blue-300);
-                padding:12px;
+                padding:10px;
+                color: var(--paper-blue-700);
+                display:block;
             }
             vaadin-upload:not([nodrop]){
                 border:none;
@@ -176,37 +178,12 @@ a web component implementing eXistdb packagemanager
                 color:var(--paper-blue-500);
                 height:40px;
             }
-/*
-            [slot="drop-label-icon"].drop-icon{
-                width:40px;
-            }
-*/
 
             [slot="add-button"] {
                 background: var(--paper-blue-500);
                 color:white;
-
+                margin: 0 0 10px 0;
             }
-
-/*
-            #uploader {
-                background: var(--paper-blue-200);
-            }
-
-            #uploader .drop-label {
-                color: var(--paper-blue-700);
-                background: var(--paper-blue-200);
-            }
-
-            #uploader add-button{
-                background: var(--paper-blue-500);
-            }
-
-            #uploader[part="primary-buttons"]{
-                background: var(--paper-blue-500);
-            }
-*/
-
 
             #toast {
                 --paper-toast-background-color: var(--paper-blue-700);
@@ -293,11 +270,11 @@ a web component implementing eXistdb packagemanager
             }
 
             existdb-packages{
-                margin-top:2px;
+                margin-top:8px;
             }
 
             .wrapService{
-                padding-top:64px;
+                padding-top:66px;
             }
 
             [hidden]{
@@ -552,6 +529,7 @@ a web component implementing eXistdb packagemanager
 
             disconnectedCallback() {
                 super.disconnectedCallback();
+
 //                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
 //                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
 //                this.unlisten(document, 'package-installed', '_handlePackageInstalled');
@@ -607,6 +585,7 @@ a web component implementing eXistdb packagemanager
                     //local page
                     this.focus();
                     this.$.localService.loadPackages();
+                    this.updateStyles();
                 } else {
                     //repo page
                     this.$.repoPage.focus();
