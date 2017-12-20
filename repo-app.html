@@ -73,11 +73,6 @@ element for displaying package metadata
                 top:10px;
                 right:40px;
             }
-/*
-            :host.update #install ::slotted(iron-icon){
-                stroke:var(--paper-orange-100);
-            }
-*/
 
             existdb-package-remove-action{
                 position: absolute;
@@ -114,32 +109,6 @@ element for displaying package metadata
                 color:var(--paper-green-700);
             }
 
-/*
-            .wrapper ::slotted(repo-version){
-                display:table-row;
-                width:100%;
-                font-size:16px;
-            }
-            .wrapper ::slotted(repo-version)::before{
-                content:"Version ";
-            }
-
-            :host.update .wrapper ::slotted(repo-version){
-                color: var(--paper-orange-700);
-                !*font-weight: 500;*!
-                font-size:18px;
-            }
-            :host.update .wrapper ::slotted(repo-version)::before{
-                content:"New Version ";
-                color: var(--paper-orange-700);
-                !*font-weight: 500;*!
-                font-size:18px;
-                width: 150px;
-                display: table-cell;
-            }
-*/
-
-
             .wrapper ::slotted(repo-title){
                 font-size:24px;
                 font-weight:500;
@@ -168,17 +137,12 @@ element for displaying package metadata
             .wrapper ::slotted(repo-installed):before{
                 content: "Installed Version ";
                 color:var(--paper-orange-700);
-                font-size: 18px;
-                /*font-weight: 500;*/
-                width: 150px;
+                /*width: 150px;*/
                 display: table-cell;
-
+                padding-right:4px;
             }
             .wrapper ::slotted(repo-installed){
                 color:var(--paper-orange-700);
-                font-size: 18px;
-                /*font-weight: 500;*/
-
 
             }
 
@@ -203,7 +167,6 @@ element for displaying package metadata
                 margin-bottom: 6px;
             }
 
-
             .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires{
                 display: table-cell;
             }
@@ -215,16 +178,12 @@ element for displaying package metadata
                 margin:0;
             }
 
-
-
             /* CSS Labels for the meta elements */
             .wrapper[show-all] ::slotted(*)::before{
                 display: table-cell;
                 min-width: 120px;
                 padding:2px;
-                /*font-weight:300;*/
             }
-
 
             .wrapper[show-all] ::slotted(repo-requires)::after{
                 display:table-row;
@@ -260,6 +219,9 @@ element for displaying package metadata
                 content:"License:";
             }
 
+            .wrapper[show-all] ::slotted(repo-version)::before{
+                display:inline-block;
+            }
             .wrapper[show-all] ::slotted(repo-version[version])::before{
                 min-width: auto;
             }
@@ -285,39 +247,20 @@ element for displaying package metadata
                 display: table-cell;
             }
 
-/*
-            .wrapper[show-all] ::slotted(repo-other) repo-version:before{
-                content:'Version ' attr(version);
-                display: table-cell;
-            }
-*/
-/*
-            .wrapper[show-all] ::slotted(repo-other) repo-version repo-requires:before{
-                content:'requires eXistdb ' attr(version);
-                padding-left:6px;
-                display: table-cell;
-            }
-*/
-
             .wrapper[show-all] ::slotted(repo-note):before{
                 content:'Notes';
             }
 
-            :host.update{
-                /*background: var(--paper-orange-300);*/
-            }
-
-            [class="update"]{
-                background: var(--paper-orange-700);
-            }
-            .update:before{
+            :host(.update):before{
                 content: "updated";
                 position:absolute;
                 bottom:14px;
                 left:30px;
                 background: var(--paper-orange-700);
                 color:var(--paper-orange-100);
-                padding:4px 20px;
+                padding:4px 0;
+                width: 120px;
+                text-align: center;
             }
             [hidden]{
                 display: none;
@@ -325,20 +268,9 @@ element for displaying package metadata
 
         </style>
         <paper-progress id="progress" class="slow"></paper-progress>
-
-        <!-- todo: find a working 2.0 solution. -->
-        <!--<content select="repo-icon"></content>-->
         <slot name="icon"></slot>
-
         <div id="wrapper" class="wrapper" url="[[url]]">
-            <!--<div class$="[[type]] type">[[type]]</div>-->
             <slot></slot>
-
-
-            <!--todo: conditional template dependent on installed state. -->
-
-
-            <!--todo: uninstall button for apps that are status=installed -->
             <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
             <existdb-package-install-action
                     id="install"
@@ -523,7 +455,6 @@ element for displaying package metadata
                 console.log('_onInstalled ', e);
                 this.$.progress.indeterminate=false;
                 this.$.progress.value=100;
-//                this.fire("package-installed",{package:e.detail.package});
 //                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
 
             }
@@ -541,17 +472,6 @@ element for displaying package metadata
                 this.$.install.submit(e);
             }
 
-//            _doRemove(e){
-//                console.log("doRemove ",e);
-////                e.preventDefault();
-////                e.stopPropagation();
-////                this.$.remove.submit(e);
-//            }
-/*
-            _attachDom(dom) {
-                this.appendChild(dom);
-            }
-*/
         }
         window.customElements.define(RepoApp.is, RepoApp);
 

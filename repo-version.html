@@ -14,33 +14,23 @@
                 background: whitesmoke;
             }
 
-            /*
-                  :host:after{
-                    content:attr(version);
-                  }
-            */
-
             :host:before{
                 content:"Version " attr(version);
                 display: inline;
             }
 
-/*
-            :host[version]:before{
-                content: attr(version);
+            button{
+                font-size:14px;
+                border:thin solid var(--paper-grey-700);
             }
-*/
 
-            repo-requires{
-
-            }
         </style>
 
 
         <slot></slot>
 
         <template is="dom-if" if="{{_hasOtherParent()}}">
-            <button id="install" on-click="_triggerInstall">Install</button>
+            <paper-button id="install" on-click="_triggerInstall" raised>Install</paper-button>
         </template>
 
 
@@ -105,8 +95,6 @@
 
 
         }
-
         window.customElements.define(RepoVersion.is, RepoVersion);
-
     </script>
 </dom-module>
