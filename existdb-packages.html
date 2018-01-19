@@ -21,7 +21,7 @@ element for displaying package metadata
 
 <dom-module id="existdb-packages">
     <template>
-        <style>
+        <style include="existdb-styles">
             body{
                 margin:0;
                 padding:0;
@@ -50,7 +50,7 @@ element for displaying package metadata
                 display: block;
                 width: 100%;
             }
-            #progress{
+            paper-progress.paper-progress{
                 width: 100%;
                 display: block;
                 margin-top: -2px;
@@ -231,7 +231,6 @@ element for displaying package metadata
             _handleCount(newValue, oldValue){
                 console.log("_handleCount ", newValue, oldValue)
             }
-
 
         }
 

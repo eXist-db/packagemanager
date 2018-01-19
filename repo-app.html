@@ -26,7 +26,7 @@ element for displaying package metadata
                 }
             </style>
         </custom-style>
-        <style>
+        <style include="existdb-styles">
             :host {
                 display: flex;
                 flex-direction: row;
@@ -137,7 +137,6 @@ element for displaying package metadata
             .wrapper ::slotted(repo-installed):before{
                 content: "Installed Version ";
                 color:var(--paper-orange-700);
-                /*width: 150px;*/
                 display: table-cell;
                 padding-right:4px;
             }
@@ -157,9 +156,7 @@ element for displaying package metadata
             .wrapper[show-all] ::slotted(repo-changelog),
             .wrapper[show-all] ::slotted(repo-change),
             .wrapper[show-all] ::slotted(repo-other),
-            /*.wrapper[show-all] ::slotted(repo-other) *,*/
             .wrapper[show-all] ::slotted(repo-note)
-            /*.wrapper[show-all] ::slotted(repo-authors) repo-author*/
             {
 
                 display:table-row;
@@ -471,6 +468,7 @@ element for displaying package metadata
                 this.$.install.version = e.detail.version;
                 this.$.install.submit(e);
             }
+
 
         }
         window.customElements.define(RepoApp.is, RepoApp);

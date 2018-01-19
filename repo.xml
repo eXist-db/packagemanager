@@ -12,6 +12,13 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.0.2">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>completed ported to Polymer 2 class-style components</li>
+                <li>keyboard shortcuts</li>
+                <li>updated vaadin-upload component</li>
+            </ul>
+        </change>
         <change version="3.11.4">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>fixed version number in package.json</li>

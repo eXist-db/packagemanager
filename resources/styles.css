@@ -13,7 +13,3 @@ vertical-section-container.centered{
 .iron-component-page.paper-toolbar-0{
     display: none !important;
 }
-
-#uploader [part="button"], button{
-    background:yellow;
-}

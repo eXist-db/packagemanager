@@ -33,6 +33,7 @@
 <link rel="import" href="repo-app.html">
 <link rel="import" href="repo-icon.html">
 <link rel="import" href="repo-version.html">
+<link rel="import" href="existdb-styles.html">
 
 -->
 <!--
@@ -45,7 +46,7 @@ a web component implementing eXistdb packagemanager
 
 <dom-module id="existdb-packagemanager">
     <template>
-        <style>
+        <style include="existdb-styles">
             :host {
                 display: block;
 
@@ -282,9 +283,11 @@ a web component implementing eXistdb packagemanager
             }
 
         </style>
+<!--
         <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
                         on-keys-pressed="_showHideShortcuts"></iron-a11y-keys>
 
+-->
         <iron-a11y-keys id="a11y2" target="[[target]]" keys="esc"
                         on-keys-pressed="_handleESC"></iron-a11y-keys>
 
@@ -297,8 +300,10 @@ a web component implementing eXistdb packagemanager
         <iron-a11y-keys id="a11y5" target="[[target]]" keys="ctrl+f"
                         on-keys-pressed="_handleFilterShortcut"></iron-a11y-keys>
 
+<!-- todo: for unclear reasons the shortcut does not work in FF - disabling for now
         <iron-a11y-keys id="a11y6" target="[[target]]" keys="ctrl+l"
                         on-keys-pressed="_showLibraries"></iron-a11y-keys>
+-->
 
         <iron-a11y-keys id="a11y7" target="[[target]]" keys="ctrl+u"
                         on-keys-pressed="_showUpload"></iron-a11y-keys>
@@ -308,10 +313,12 @@ a web component implementing eXistdb packagemanager
             <div class="card-content">
                 <div class="card-actions">
                     <table>
+<!--
                         <tr>
                             <td>Ctrl+h</td>
                             <td>show shortcuts</td>
                         </tr>
+-->
                         <tr>
                             <td>ESC</td>
                             <td>reset filter</td>
@@ -320,10 +327,12 @@ a web component implementing eXistdb packagemanager
                             <td>Crtl + f</td>
                             <td>filter packages</td>
                         </tr>
+<!--
                         <tr>
                             <td>Crtl + l</td>
                             <td>show/hide local libraries</td>
                         </tr>
+-->
                         <tr>
                             <td>Crtl + u</td>
                             <td>upload</td>
