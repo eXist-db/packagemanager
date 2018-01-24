@@ -181,7 +181,7 @@ element for displaying package metadata
                 this.packages = this.shadowRoot.querySelectorAll('repo-app')
                 this.count = this.packages.length;
 
-                this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {}}));
+                this.dispatchEvent(new CustomEvent('packages-loaded', {bubbles: true, composed: true, detail: {type:this.id}}));
             }
 
             _handleLocalError(e) {

@@ -58,29 +58,34 @@ element for displaying package metadata
             }
 
             paper-icon-button {
-                min-height: 24px;
-                min-width: 24px;
+                min-height: 36px;
+                min-width: 36px;
             }
 
             #info{
-                position: absolute;
-                top:10px;
-                right:10px;
+                display:inline-block;
                 z-index:100;
             }
-            #install{
-                position: absolute;
+            #install:not([hidden]){
+                /*position: absolute;*/
+                display: inline-block;
                 top:10px;
                 right:40px;
             }
 
             existdb-package-remove-action{
-                position: absolute;
+                /*position: absolute;*/
                 top:10px;
                 right:40px;
+                display: inline-block;
             }
 
-
+            .actions{
+                position: absolute;
+                right:0;
+                top:0;
+                padding:10px;
+            }
             /* styles for metadata elements */
             :host ::slotted(repo-icon){
                 width:120px;
@@ -268,16 +273,19 @@ element for displaying package metadata
         <slot name="icon"></slot>
         <div id="wrapper" class="wrapper" url="[[url]]">
             <slot></slot>
-            <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
-            <existdb-package-install-action
-                    id="install"
-                    url="{{url}}"
-                    abbrev="{{abbrev}}"
-                    type="{{type}}"
-                    version="{{version}}"
-                    hidden></existdb-package-install-action>
+            <div class="actions">
+                <existdb-package-install-action
+                        id="install"
+                        url="{{url}}"
+                        abbrev="{{abbrev}}"
+                        type="{{type}}"
+                        version="{{version}}"
+                        hidden></existdb-package-install-action>
 
-            <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
+                <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
+
+                <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
+            </div>
         </div>
     </template>
 
@@ -339,7 +347,7 @@ element for displaying package metadata
             }
 
             constructor() {
-                console.log('constructor RepoApp')
+//                console.log('constructor RepoApp')
                 super();
             }
 
@@ -433,7 +441,6 @@ element for displaying package metadata
                 }
             }
 
-
             _showInfo(e){
                 console.log('_showInfo ', e);
                 e.stopPropagation();
@@ -464,11 +471,10 @@ element for displaying package metadata
             }
 
             _installOtherVersion (e) {
-                console.log("###################### install other version", e.detail.version);
+//                console.log("###################### install other version", e.detail.version);
                 this.$.install.version = e.detail.version;
                 this.$.install.submit(e);
             }
-
 
         }
         window.customElements.define(RepoApp.is, RepoApp);

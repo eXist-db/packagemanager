@@ -32,7 +32,7 @@ implements an interaction with the package repository
                    on-error="_handleError"></iron-ajax>
 
 
-        <paper-icon-button id="install" icon="file-download" title="download and install this package" on-click="submit"></paper-icon-button>
+        <paper-icon-button id="install" class="install" icon="file-download" title="download and install latest version" on-click="submit"></paper-icon-button>
         <form id="installform" is="iron-form" method="post" action="">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="abbrev" value="{{abbrev}}"/>
@@ -104,8 +104,11 @@ implements an interaction with the package repository
             }
 
             install(){
+/*
                 console.log('install action install');
                 console.log('install action install url ', this.url);
+                console.log('install action install version ', this.version);
+*/
                 this.$.installPackage.params = {
                     "package-url":this.url,
                     "action":"install",
@@ -118,10 +121,7 @@ implements an interaction with the package repository
             _handleResponse (data) {
                 console.log("response: ", data);
                 console.log("install response: ", this.url);
-
-//                this.fire("package-installed",{package:this.url});
                 this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
-
             }
 
             _handleError (e) {

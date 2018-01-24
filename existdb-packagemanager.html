@@ -196,6 +196,22 @@ a web component implementing eXistdb packagemanager
                 --paper-toast-color: white;
             }
 
+            #updates{
+                --paper-toast-background-color: var(--paper-orange-700);
+                display: table;
+                font-size:18px;
+            }
+            #updates paper-button{
+                background: var(--paper-orange-300);
+                color:var(--paper-deep-orange-700);
+                text-align: center;
+                margin-left:20px;
+            }
+            #updates #label{
+                display: inline-block;
+                padding-right:20px;
+            }
+
             [type='search'] {
                 width: 140px;
 
@@ -203,8 +219,8 @@ a web component implementing eXistdb packagemanager
 
             paper-fab {
                 position: fixed;
-                right: 96px;
-                bottom: 40px;
+                right: 20px;
+                bottom: 20px;
                 z-index: 100;
                 --paper-fab-background: var(--paper-pink-500);
                 --iron-icon-fill-color: var(--paper-grey-50);
@@ -395,6 +411,8 @@ a web component implementing eXistdb packagemanager
 
                     <existdb-packages id="localService"
                                       service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
+                    <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
+
                 </app-header-layout>
             </div>
 
@@ -420,11 +438,14 @@ a web component implementing eXistdb packagemanager
 
         </iron-pages>
 
-        <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
 
         <paper-toast id="toast" text="" duration="5000"></paper-toast>
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
+        </paper-toast>
+        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="-1">
+            <paper-button on-click="_goToAvailable">install...</paper-button>
+            <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
         </paper-toast>
     </template>
 
@@ -469,13 +490,18 @@ a web component implementing eXistdb packagemanager
                     local:{
                         type:Array,
                         value:[]
+                    },
+                    remote:{
+                        type:Array,
+                        value:[]
                     }
                 };
             }
 
             constructor() {
                 super();
-                console.log('ExistdbPackagemanager constructor')
+                console.log('ExistdbPackagemanager constructor');
+                this.remote=[];
             }
 
             connectedCallback() {
@@ -490,15 +516,6 @@ a web component implementing eXistdb packagemanager
                 this.tabindex=0;
                 this.timeout = 0;
                 this.selected = 0;
-//                this.listen(document, 'package-removed', '_handlePackageRemoved');
-//                this.listen(document, 'package-remove-error', '_handlePackageRemoveError');
-//                this.listen(document, 'package-installed', '_handlePackageInstalled');
-//                this.listen(document, 'package-install-error', '_handlePackageInstallError');
-//                this.listen(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
-//                this.listen(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
-//                this.listen(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
-
-
                 window.addEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
 
                 this.targetUrl = "/exist/apps/packagemanager/modules/install.xql";
@@ -533,20 +550,12 @@ a web component implementing eXistdb packagemanager
                 });
 
                 this._switchToInstalled();
+                this.$.remoteService.loadPackages();
                 this.$.filterLocal.focus();
             }
 
             disconnectedCallback() {
                 super.disconnectedCallback();
-
-//                this.unlisten(document, 'package-removed', '_handlePackageRemoved');
-//                this.unlisten(document, 'package-remove-error', '_handlePackageRemoveError');
-//                this.unlisten(document, 'package-installed', '_handlePackageInstalled');
-//                this.unlisten(document, 'package-install-error', '_handlePackageInstallError');
-//                this.unlisten(document, 'packagemanager-remove-attempt', '_handleRemoveAttempt');
-//                this.unlisten(this.$.localService, 'packages-loaded', '_handlePackagesLoaded');
-//                this.unlisten(this.$.remoteService, 'packages-loaded', '_handlePackagesLoaded');
-
                 window.removeEventListener('packages-loaded', e => this._handlePackagesLoaded(e));
 
             }
@@ -568,23 +577,21 @@ a web component implementing eXistdb packagemanager
             _handlePackagesLoaded (e) {
                 console.log('################# _handlePackagesLoaded', e);
 
-//                this.local = this.$.localPage.querySelectorAll('repo-app');
-//                this.local = this.$.localService.querySelectorAll('repo-app');
                 this.local = this.$.localService.getPackages();
-                console.log("zzzzzzzzzzz local ", this.local);
-//                this.remote = this.$.repoPage.querySelectorAll('repo-app');
                 this.remote = this.$.remoteService.getPackages();
+
+//                if(e.detail.type == 'remoteService'){
+//                }
 
                 if(this.selected == 0){
                     this.$.filterLocal.focus();
-//                    this.count = this.local.length;
-//
                     this.count = this.$.localService.count;
+                    this._checkForUpdates();
                 }else{
                     this.$.filterRepo.focus();
-//                    this.count = this.remote.length;
                     this.count = this.$.remoteService.count;
                 }
+
             }
 
             _handlePageChange (newValue, oldValue) {
@@ -597,6 +604,7 @@ a web component implementing eXistdb packagemanager
                     this.updateStyles();
                 } else {
                     //repo page
+                    this.$.updates.close();
                     this.$.repoPage.focus();
                     this.$.remoteService.loadPackages();
                 }
@@ -657,26 +665,6 @@ a web component implementing eXistdb packagemanager
                 this.$.pages.selected = 1;
             }
 
-/*
-            _handlePackageRemoved (e) {
-                this.$.localService.loadPackages();
-                this._toast('Package has been removed: ' + e.detail.package)
-            }
-*/
-
-/*
-            _handlePackageRemoveError (e) {
-                this._toastError(e.detail.error.error.message)
-            }
-*/
-
-/*
-            _handlePackageInstalled (e) {
-                this._toast('Package has been installed: ' + e.detail.package)
-                this.$.remoteService.loadPackages();
-            }
-*/
-
             _handlePackageInstallError (e) {
                 this._toastError(e.detail.error.error.message)
             }
@@ -693,6 +681,10 @@ a web component implementing eXistdb packagemanager
 
             _hideToast (e) {
                 this.$.toastError.hide();
+            }
+
+            _hideUpdatesToast(e){
+                this.$.updates.hide();
             }
 
             _handleRemoveAttempt (e) {
@@ -728,6 +720,26 @@ a web component implementing eXistdb packagemanager
                 this.focus();
             }
 
+            _checkForUpdates(){
+                console.log('check for updates.....');
+
+                var self = this;
+                if(!this.remote) return;
+
+                this.remote.forEach(function(item){
+                    if(item.classList.contains('update')) {
+                        console.log("found update for", item.abbrev);
+                        console.log("found update for version", item.version);
+                        if (self.selected == 0) {
+                            self.$.updates.open();
+                        }
+                    }
+                });
+            }
+            _goToAvailable(e){
+                this.$.updates.close();
+                this._switchToAvailable(e);
+            }
 
         }
         window.customElements.define(ExistdbPackagemanager.is, ExistdbPackagemanager);
