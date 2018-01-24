@@ -76,14 +76,6 @@ implements an interaction with the package repository
                 this.addEventListener('iron-form-response',this.handleResponse);
                 this.addEventListener('iron-form-error', this.handleError);
 
-/*
-                var that = this;
-                window.addEventListener('WebComponentsReady', function() {
-                    that.addEventListener('click', e => this.doSubmit(e));
-
-                });
-*/
-
             }
 
             ready(){
@@ -92,44 +84,34 @@ implements an interaction with the package repository
 
             }
 
-//            _doSubmit(e){
-////                console.log("remove action click ",e);
-//                this.dispatchEvent(new CustomEvent('package-removed', {detail: {package: this.packageTitle}}));
-//
-//            }
-
-
             submit (e) {
 //                console.log('remove action submit: ', e);
                 e.stopPropagation();
                 e.preventDefault();
 
-//                console.log("the form: ", this.$.removeform.body);
-
                 if (this.url.endsWith("/packagemanager")) {
-//                    this.fire("packagemanager-remove-attempt")
                     this.dispatchEvent(new CustomEvent('packagemanager-remove-attempt', {detail: {}}));
                     return
                 }
-                //do it
-//                console.log("submitting remove form: ", e);
 
                 var r = confirm('Really remove package "' + this.packageTitle + '"?');
                 if (r == true) {
-                    this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
-                    this.$.removePackage.generateRequest();
+                    this.dispatchEvent(new CustomEvent('package-remove-started', {bubbles: true, composed: true, detail: {}}));
                 }
+            }
+
+            removeIt(){
+                this.$.removePackage.params = {"package-url":this.url, "action":"remove"};
+                this.$.removePackage.generateRequest();
             }
 
             _handleResponse (data) {
 //                console.log("response: ", data);
-//                this.fire("package-removed", {package: this.packageTitle});
                 this.dispatchEvent(new CustomEvent('package-removed', {bubbles: true, composed: true, detail: {package: this.packageTitle}}));
             }
 
             _handleError (e) {
                 console.log("error: ", e);
-//                this.fire("package-remove-error", {"error": e.detail});
                 this.dispatchEvent(new CustomEvent('package-remove-error', {bubbles: true, composed: true, detail: {error: e.detail}}));
             }
 

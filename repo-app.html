@@ -381,6 +381,7 @@ element for displaying package metadata
 
                 this.$.install.addEventListener('package-install-started',e => this._onInstallStarted(e));
                 this.$.install.addEventListener('package-installed',e => this._onInstalled(e));
+                this.$.remove.addEventListener('package-remove-started',e => this._onRemove(e));
                 this.addEventListener('click',e => this._handleTap(e));
 
                 var that = this;
@@ -468,6 +469,13 @@ element for displaying package metadata
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
                 this.$.install.install();
+            }
+
+            _onRemove (e){
+                console.log('_onRemoveStarted ', e);
+                this.$.progress.hidden=false;
+                this.$.progress.indeterminate=true;
+                this.$.remove.removeIt();
             }
 
             _installOtherVersion (e) {
