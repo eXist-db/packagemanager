@@ -3,5 +3,5 @@
          abbrev="packagemanager" version="4.0.3" spec="1.0">
     <title>eXistdb Packagemanager</title>
     <!-- todo: this should mention a minimum version -->
-    <dependency package="http://exist-db.org/apps/existdb-packageservice"/>
+    <dependency package="http://exist-db.org/apps/existdb-packageservice" semver-min="1.0.0"/>
 </package>
