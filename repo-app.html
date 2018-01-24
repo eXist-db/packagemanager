@@ -395,7 +395,7 @@ element for displaying package metadata
             }
 
             _handleTap (e) {
-                console.log('_handleTap ',e);
+//                console.log('_handleTap ',e);
                 var t = e.target.nodeName.toLowerCase();
 
                 if(t == 'existdb-package-remove') return;
@@ -407,15 +407,15 @@ element for displaying package metadata
             }
 
             _handleEnter(e) {
-                console.log("_handleEnter key ", e);
-                console.log("_handleEnter key original", e.composedPath()[0]);
+//                console.log("_handleEnter key ", e);
+//                console.log("_handleEnter key original", e.composedPath()[0]);
                 var originalTarget = e.composedPath()[0];
 
-                console.log("node ", originalTarget.nodeName);
+//                console.log("node ", originalTarget.nodeName);
 
                 if(originalTarget.nodeName == 'PAPER-ICON-BUTTON') return;
                 if (e.target.nodeName.toLowerCase() == "repo-app" && e.keyCode == 13) {
-                    console.log('_handleEnter key enter fired');
+//                    console.log('_handleEnter key enter fired');
                     this._openApp()
                 }
             }
@@ -443,7 +443,7 @@ element for displaying package metadata
             }
 
             _showInfo(e){
-                console.log('_showInfo ', e);
+//                console.log('_showInfo ', e);
                 e.stopPropagation();
                 e.preventDefault();
                 var showsAll = this.$.wrapper.getAttribute('show-all');
@@ -457,7 +457,7 @@ element for displaying package metadata
             }
 
             _onInstalled (e) {
-                console.log('_onInstalled ', e);
+//                console.log('_onInstalled ', e);
                 this.$.progress.indeterminate=false;
                 this.$.progress.value=100;
 //                this.dispatchEvent(new CustomEvent('package-installed', {detail: {packageUrl:e.detail.package}}));
@@ -465,14 +465,14 @@ element for displaying package metadata
             }
 
             _onInstallStarted (e) {
-                console.log('_onInstallStarted ', e);
+//                console.log('_onInstallStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
                 this.$.install.install();
             }
 
             _onRemove (e){
-                console.log('_onRemoveStarted ', e);
+//                console.log('_onRemoveStarted ', e);
                 this.$.progress.hidden=false;
                 this.$.progress.indeterminate=true;
                 this.$.remove.removeIt();

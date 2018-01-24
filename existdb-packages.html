@@ -127,27 +127,27 @@ element for displaying package metadata
             }
 
             constructor() {
-                console.log('ExistdbPackages constructor')
+//                console.log('ExistdbPackages constructor')
                 super();
             }
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log("existdb-packages connected");
+//                console.log("existdb-packages connected");
 
             }
 
 
             ready () {
                 super.ready();
-                console.log("existdb-packages ready ", this.service);
+//                console.log("existdb-packages ready ", this.service);
 
                 if(this.autoLoad){
                     this.loadPackages();
                 }
 
                 window.addEventListener('package-removed', function(e){
-                    console.log("package was removed", e);
+//                    console.log("package was removed", e);
                     this._toast('successfully removed "' + e.detail.package + '"');
                     this.loadPackages();
                 }.bind(this));
@@ -157,7 +157,7 @@ element for displaying package metadata
                 }.bind(this));
 
                 window.addEventListener('package-installed', function (e) {
-                    console.log('package-installed ', e);
+//                    console.log('package-installed ', e);
                     this._toast('Package has been installed: ' + e.detail.abbrev)
                     this.loadPackages();
                 }.bind(this));
@@ -172,7 +172,7 @@ element for displaying package metadata
 
 
             _handlePackages (data) {
-                console.log('existdb-packages._handlePackages');
+//                console.log('existdb-packages._handlePackages');
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
 
                 this._resetProgress();
@@ -185,7 +185,7 @@ element for displaying package metadata
             }
 
             _handleLocalError(e) {
-                console.log("loading of available packages failed", e.detail.error)
+//                console.log("loading of available packages failed", e.detail.error)
                 this._resetAndHideProgress()
                 this._toastError('loading of available packages failed')
             }
@@ -223,13 +223,13 @@ element for displaying package metadata
             }
 
             _serviceChanged(e){
-                console.log("the service has changed!");
+//                console.log("the service has changed!");
                 // DO NOT!!!!
 //                this.$.loadPackages.generateRequest();
 
             }
             _handleCount(newValue, oldValue){
-                console.log("_handleCount ", newValue, oldValue)
+//                console.log("_handleCount ", newValue, oldValue)
             }
 
         }

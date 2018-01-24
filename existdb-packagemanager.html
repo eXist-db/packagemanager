@@ -500,13 +500,13 @@ a web component implementing eXistdb packagemanager
 
             constructor() {
                 super();
-                console.log('ExistdbPackagemanager constructor');
+//                console.log('ExistdbPackagemanager constructor');
                 this.remote=[];
             }
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log("existdb-packages connected");
+//                console.log("existdb-packages connected");
                 this.focus();
             }
 
@@ -523,19 +523,19 @@ a web component implementing eXistdb packagemanager
                 this.$.uploader.formDataName = "uploadedfiles[]";
 
                 this.$.uploader.addEventListener('upload-before', function (event) {
-                    console.log('upload xhr before open: ', event.detail.xhr);
+//                    console.log('upload xhr before open: ', event.detail.xhr);
                     var file = event.detail.file;
                     file.uploadTarget = '/exist/apps/existdb-packageservice/packages/action?name=' + file.name;
                 }.bind(this));
 
                 this.$.uploader.addEventListener('upload-progress', function (event) {
-                    console.log('upload progress: ', event.detail.file);
+//                    console.log('upload progress: ', event.detail.file);
                     var file = event.detail.file;
                 });
 
                 var that = this;
                 this.$.uploader.addEventListener('upload-success', function (e) {
-                    console.log("onuploadsuccess", e)
+//                    console.log("onuploadsuccess", e)
                     var file = e.detail.file
                     var self = this
                     that.$.localService.loadPackages();
@@ -545,7 +545,7 @@ a web component implementing eXistdb packagemanager
                     }, 1000)
                 });
                 this.$.uploader.addEventListener('upload-error', function (e) {
-                    console.log("Upload error: ", e.detail)
+//                    console.log("Upload error: ", e.detail)
                     that._toastError("Upload failed for: " + e.detail.file.name + ' Reason: ' + e.detail.file.error);
                 });
 
@@ -575,7 +575,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _handlePackagesLoaded (e) {
-                console.log('################# _handlePackagesLoaded', e);
+//                console.log('################# _handlePackagesLoaded', e);
 
                 this.local = this.$.localService.getPackages();
                 this.remote = this.$.remoteService.getPackages();
@@ -595,7 +595,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _handlePageChange (newValue, oldValue) {
-                console.log('_handlePageChange ', newValue, oldValue);
+//                console.log('_handlePageChange ', newValue, oldValue);
                 this._resetFilters();
                 if (newValue == 0) {
                     //local page
@@ -613,7 +613,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _handleFilterShortcut () {
-                console.log('_handleFilterShortcut');
+//                console.log('_handleFilterShortcut');
                 if(this.selected == 0){
                     this.focus();
                     this.$.filterLocal.focus();
@@ -623,7 +623,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _handleFilter (e) {
-                console.log('_handleFilter', e);
+//                console.log('_handleFilter', e);
 
 
                 var apps, filterString;
@@ -692,7 +692,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _showLibraries (e) {
-                console.log('_showLibraries ',e);
+//                console.log('_showLibraries ',e);
 
                 this._resetFilters();
 
@@ -710,7 +710,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _showHideShortcuts (e) {
-                console.log('_showHideShortcuts')
+//                console.log('_showHideShortcuts')
 
                 if(this.$.shortcuts.hidden){
                     this.$.shortcuts.hidden=false;
@@ -721,15 +721,15 @@ a web component implementing eXistdb packagemanager
             }
 
             _checkForUpdates(){
-                console.log('check for updates.....');
+//                console.log('check for updates.....');
 
                 var self = this;
                 if(!this.remote) return;
 
                 this.remote.forEach(function(item){
                     if(item.classList.contains('update')) {
-                        console.log("found update for", item.abbrev);
-                        console.log("found update for version", item.version);
+//                        console.log("found update for", item.abbrev);
+//                        console.log("found update for version", item.version);
                         if (self.selected == 0) {
                             self.$.updates.open();
                         }
