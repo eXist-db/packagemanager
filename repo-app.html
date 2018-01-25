@@ -396,6 +396,8 @@ element for displaying package metadata
 
             _handleTap (e) {
 //                console.log('_handleTap ',e);
+                e.stopPropagation();
+
                 var t = e.target.nodeName.toLowerCase();
 
                 if(t == 'existdb-package-remove') return;

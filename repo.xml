@@ -12,6 +12,19 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.0.4">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>showing toast message on local page when updates are available</li>
+                <li>progressbar for remove action</li>
+                <li>defined dependency on existdb-packageservice 1.0.0</li>
+                <li>fixed bug: apps opening 2 times for a single click on icon or title</li>
+            </ul>
+        </change>
+        <change version="4.0.3">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>styling of updated packages</li>
+            </ul>
+        </change>
         <change version="4.0.2">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>completed ported to Polymer 2 class-style components</li>

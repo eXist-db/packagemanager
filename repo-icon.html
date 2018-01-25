@@ -46,6 +46,7 @@ element for displaying package metadata
 
 
             _openApp (e) {
+                e.stopPropagation();
                 this.parentNode._openApp(e);
             }
 
