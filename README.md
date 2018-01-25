@@ -6,12 +6,15 @@ This application allows to browse local and remote packages, install, upload or 
 
  What will be needed up-front:
  
- * an installation of eXistdb (3.0 or above recommended) 
- * a nodejs installation (see below for instructions) 
- * an installation of the Polymer CLI for optimized builds 
- * Apache Ant configured 
+ 1. an installation of eXistdb (3.0 or above recommended) 
+ 1. a nodejs installation (see below for instructions) 
+ 1. an installation of the Polymer CLI for optimized builds 
+ 1. Apache Ant configured 
  
- 
+IMPORTANT NOTE: JavaScript dependencies are managed by bower which dynamically loads those into a 'bower_components' folder.
+However to ease the building process, the bower components have been added to the repo. This way it is not necessary
+to have a NodeJS installation to build PackageManager. If you want to just  want to build an un-optimized version you can skip
+the steps under 'Preparation' and just all 'ant dev-xar'.
 
 
 ## Preparation
