@@ -42,14 +42,14 @@
     "vaadin-demo-helpers": "vaadin/vaadin-demo-helpers",
     "iron-icons": "^2.0.1"
   },
-  "version": "3.0.1",
-  "_release": "3.0.1",
+  "version": "3.0.2",
+  "_release": "3.0.2",
   "_resolution": {
     "type": "version",
-    "tag": "v3.0.1",
-    "commit": "7e1d42e15b55581b32f04301a5be34c3bd5543a4"
+    "tag": "v3.0.2",
+    "commit": "bbaa07e3c348dddbe94f7a1bda9bc9abd9e6ff76"
   },
   "_source": "https://github.com/vaadin/vaadin-upload.git",
-  "_target": "^3.0.1",
+  "_target": "^3.0.2",
   "_originalSource": "vaadin-upload"
 }
