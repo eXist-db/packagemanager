@@ -21,7 +21,8 @@
     "iron-a11y-keys": "PolymerElements/iron-a11y-keys#^2.0.0",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
     "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
-    "vaadin-upload": "^3.0.0"
+    "vaadin-upload": "^3.0.1",
+    "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

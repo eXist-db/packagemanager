@@ -3,7 +3,6 @@
 
 # packages
 node_modules/
-bower_components/
 
 # artifacts
 build/
