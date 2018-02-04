@@ -1,4 +1,4 @@
-# existdb Packagemanager
+# eXist-db Packagemanager
 
 This application allows to browse local and remote packages, install, upload or remove packages.
 
@@ -6,7 +6,7 @@ This application allows to browse local and remote packages, install, upload or 
 
  What will be needed up-front:
  
- 1. an installation of eXistdb (3.0 or above recommended) 
+ 1. an installation of eXist-db (3.0 or above recommended) 
  1. a nodejs installation (see below for instructions) 
  1. an installation of the Polymer CLI for optimized builds 
  1. Apache Ant configured 
@@ -24,7 +24,7 @@ the steps under 'Preparation' and just all 'ant dev-xar'.
 
 
 
-## Building eXistdb app
+## Building eXist-db app
 
 ### for production 
 
@@ -53,17 +53,17 @@ There's additional development support through gulp. Most prominently with
 
 `gulp deploy`
 
-pushes the local workspace into the app collection in eXistdb on localhost.
+pushes the local workspace into the app collection in eXist-db on localhost.
 
 
 `
 gulp watch
 `
 
-synchronizes the local workspace with the app deployed in eXistdb. Changed files will be
+synchronizes the local workspace with the app deployed in eXist-db. Changed files will be
 automatically deployed when stored.
 
-***Please note that the app must be installed in eXistdb first before these task work.***
+***Please note that the app must be installed in eXist-db first before these task work.***
 
 
 
