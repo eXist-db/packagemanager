@@ -1,7 +1,7 @@
 {
   "name": "packagemanager",
   "version": "3.11.4",
-  "description": "eXistdb Packagemanager application",
+  "description": "eXist-db Packagemanager application",
   "main": "index.j",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
