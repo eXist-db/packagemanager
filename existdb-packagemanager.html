@@ -297,6 +297,10 @@ a web component implementing eXistdb packagemanager
                 display: none;
             }
 
+            paper-item a{
+                text-decoration: none;
+                color:inherit;
+            }
         </style>
 <!--
         <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
@@ -393,7 +397,7 @@ a web component implementing eXistdb packagemanager
                                 <paper-listbox slot="dropdown-content">
                                     <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
                                     <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
-                                    <paper-item>logout</paper-item>
+                                    <paper-item><a href="index.html?logout=true">logout</a></paper-item>
                                 </paper-listbox>
                             </paper-menu-button>
 
@@ -534,7 +538,15 @@ a web component implementing eXistdb packagemanager
 
                 var that = this;
                 this.$.uploader.addEventListener('upload-success', function (e) {
-//                    console.log("onuploadsuccess", e)
+
+                    //catching errors with an 200 response
+                    var res = JSON.parse(e.detail.xhr.response);
+                    if(res[0].error != undefined){
+//                        console.log("got it ", res[0].error);
+                        that._toastError(res[0].error);
+                    }
+
+
                     var file = e.detail.file
                     var self = this
                     that.$.localService.loadPackages();

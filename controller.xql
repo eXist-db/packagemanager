@@ -29,7 +29,7 @@ return (
     then (
           <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
               <forward url="login.html"/>
-              <cache-control cache="yes"/>
+              <cache-control cache="no"/>
           </dispatch>
     )
     else if (not(local:user-allowed($user)))
