@@ -102,7 +102,7 @@ gulp.task('deploy', ['deploy:other', 'deploy:components', 'deploy:styles'])
 gulp.task('watch', function () {
     gulp.watch('resources/css/!*', ['deploy:styles'])
     gulp.watch(otherPaths, ['deploy:other'])
-    gulp.watch('*.html', ['deploy:components'])
+    gulp.watch('**/*.html', ['deploy:components'])
 })
 
 gulp.task('default', ['watch'])
