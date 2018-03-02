@@ -25,18 +25,19 @@ implements an interaction with the package repository
                 }
 
             }
+
         </style>
 
         <iron-ajax id="removePackage"
                    verbose with-credentials
                    method="post" handle-as="text"
                    on-response="_handleResponse"
-                   url="/exist/apps/existdb-packageservice/packages/action"
+                   url="../packageservice/packages/action"
                    on-error="_handleError"></iron-ajax>
 
 
         <paper-icon-button id="removeBtn" icon="delete" title="remove this package" on-click="submit"></paper-icon-button>
-        <form id="removeform" is="iron-form" method="post" action="/exist/apps/existdb-packageservice/packages/action">
+        <form id="removeform" is="iron-form" method="post" action="../packageservice/packages/action">
             <input type="hidden" name="package-url" value="{{url}}"/>
             <input type="hidden" name="action" value="remove"/>
         </form>
@@ -58,6 +59,10 @@ implements an interaction with the package repository
                     packageTitle:{
                         type: String,
                         reflectToAttribute:true
+                    },
+                    noRemove: {
+                        type: String,
+                        reflectToAttribute: true
                     }
                 };
             }
@@ -72,6 +77,10 @@ implements an interaction with the package repository
 //                console.log('ExistdbPackageRemoveAction connectedCallback');
 
                 this.tabindex=0;
+                if(this.noRemove == 'true'){
+                    this.$.removeBtn.disabled = true;
+                    this.$.removeBtn.title = "This app cannot be removed"
+                }
 
                 this.addEventListener('iron-form-response',this.handleResponse);
                 this.addEventListener('iron-form-error', this.handleError);
@@ -88,6 +97,10 @@ implements an interaction with the package repository
 //                console.log('remove action submit: ', e);
                 e.stopPropagation();
                 e.preventDefault();
+
+                if(this.noRemove == 'true'){
+                    return;
+                }
 
                 if (this.url.endsWith("/packagemanager")) {
                     this.dispatchEvent(new CustomEvent('packagemanager-remove-attempt', {detail: {}}));

@@ -282,7 +282,7 @@ element for displaying package metadata
                         version="{{version}}"
                         hidden></existdb-package-install-action>
 
-                <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}"></existdb-package-remove-action>
+                <existdb-package-remove-action id="remove" url="{{url}}" package-title="{{packageTitle}}" no-remove="{{readonly}}"></existdb-package-remove-action>
 
                 <paper-icon-button id="info" icon="info" on-click="_showInfo"></paper-icon-button>
             </div>
@@ -342,6 +342,10 @@ element for displaying package metadata
                     path: {
                         type: String,
                         reflectToAttribute: true
+                    },
+                    readonly:{
+                        type: String,
+                        reflectToAttribute:true
                     }
                 };
             }
@@ -371,6 +375,7 @@ element for displaying package metadata
 
 //                this.$.remove.addEventListener('click',e => this._doRemove(e));
 //                this.addEventListener('click',this._doRemove);
+                console.log("repo-app readonly: ", this.readonly);
             }
 
             ready () {
@@ -395,15 +400,17 @@ element for displaying package metadata
             }
 
             _handleTap (e) {
-//                console.log('_handleTap ',e);
                 e.stopPropagation();
 
                 var t = e.target.nodeName.toLowerCase();
+//                console.log('_handleTap ',e);
+//                console.log('_handleTap ',e.b[0].id);
+//                console.log('_handleTap ',t);
 
+                if(e.b[0].id == 'remove') return;
                 if(t == 'existdb-package-remove') return;
                 if(t == "paper-icon-button") return;
                 if(t == "iron-icon") return;
-//                if(t == "button") this._installOtherVersion(e);
 
                 this._openApp();
             }

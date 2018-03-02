@@ -413,7 +413,7 @@ a web component implementing eXistdb packagemanager
 
 
                     <existdb-packages id="localService"
-                                      service="/exist/apps/existdb-packageservice/packages/apps"></existdb-packages>
+                                      service="../packageservice/packages/apps"></existdb-packages>
                     <paper-fab id="showRepo" icon="add" on-click="_switchToAvailable"></paper-fab>
 
                 </app-header-layout>
@@ -435,7 +435,7 @@ a web component implementing eXistdb packagemanager
                 </app-toolbar>
                 <div class="wrapService">
                 <existdb-packages id="remoteService"
-                                  service="/exist/apps/existdb-packageservice/packages/remote"></existdb-packages>
+                                  service="../packageservice/packages/remote"></existdb-packages>
                 </div>
             </div>
 
@@ -528,7 +528,7 @@ a web component implementing eXistdb packagemanager
                 this.$.uploader.addEventListener('upload-before', function (event) {
 //                    console.log('upload xhr before open: ', event.detail.xhr);
                     var file = event.detail.file;
-                    file.uploadTarget = '/exist/apps/existdb-packageservice/packages/action?name=' + file.name;
+                    file.uploadTarget = '../packageservice/packages/action?name=' + file.name;
                 }.bind(this));
 
                 this.$.uploader.addEventListener('upload-progress', function (event) {
@@ -677,7 +677,7 @@ a web component implementing eXistdb packagemanager
             }
 
             _handlePackageInstallError (e) {
-                this._toastError(e.detail.error.error.message)
+                this._toastError(e.detail)
             }
 
             _toast (msg) {
@@ -708,11 +708,11 @@ a web component implementing eXistdb packagemanager
                 this._resetFilters();
 
                 if (this.$.libSwitch.innerText.trim() == 'show libraries') {
-                    this.$.localService.service = "/exist/apps/existdb-packageservice/packages/local";
+                    this.$.localService.service = "../packageservice/packages/local";
                     this.$.localService.loadPackages();
                     this.$.libSwitch.innerText = "hide libraries";
                 } else {
-                    this.$.localService.service = "/exist/apps/existdb-packageservice/packages/apps";
+                    this.$.localService.service = "../packageservice/packages/apps";
                     this.$.localService.loadPackages();
                     this.$.libSwitch.innerText = "show libraries";
                     var firstApp = this.$.localService.querySelectorAll('repo-app[type="application"]')[0];
