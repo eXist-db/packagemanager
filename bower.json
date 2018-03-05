@@ -1,6 +1,6 @@
 {
-  "name": "foo-bar",
-  "main": "foo-bar.html",
+  "name": "existdb-packagemanager",
+  "main": "existdb-packagemanager.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
@@ -31,5 +31,22 @@
   },
   "resolutions": {
     "polymer": "^2.0.0"
-  }
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "build",
+    "demo",
+    "node_modules",
+    "resources",
+    "test",
+    "build.xml",
+    "expath-pkg.xml",
+    "dependencies-local.html",
+    "gulpfile.js",
+    "package.json",
+    "polymer.json",
+    "repo.xml"
+  ],
+  "private":true
 }
