@@ -393,9 +393,15 @@ element for displaying package metadata
                 var t = e.target.nodeName.toLowerCase();
 //                console.log('_handleTap ',e);
 //                console.log('_handleTap ',e.b[0].id);
-//                console.log('_handleTap ',t);
+//                console.log('_handleTap ',e.path);
 
-                if(e.b[0].id == 'remove') return;
+                // ugly special case handling for Chrome and FF but don't know how to solve better yet.
+                if(e.path != undefined){
+                    console.log('########',e.path[0].nodeName);
+                    if(e.path[0].nodeName == 'EXISTDB-PACKAGE-REMOVE-ACTION') return;
+                }
+                if(e.b != undefined && e.b[0].id == 'remove') return;
+
                 if(t == 'existdb-package-remove') return;
                 if(t == "paper-icon-button") return;
                 if(t == "iron-icon") return;

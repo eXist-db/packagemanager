@@ -52,10 +52,15 @@ a web component implementing eXistdb packagemanager
 
             }
 
+            app-header-layout{
+                background: var(--paper-blue-300);
+            }
+
 
             app-header {
                 background: var(--paper-blue-500);
                 color:var(--paper-blue-900);
+                height: 128px;
             }
 
             #pages{
@@ -78,6 +83,10 @@ a web component implementing eXistdb packagemanager
                     width: 64px;
                     height:52px;
                 }
+            }
+            [icon="apps"]{
+                width:36px;
+                height: 36px;
             }
 
             .filter{
@@ -112,10 +121,7 @@ a web component implementing eXistdb packagemanager
 
             iron-icon {
                 margin-right: 10px;
-                /*--iron-icon-stroke-color: var(--paper-blue-500);*/
-                --iron-icon-stroke-color: white;
-                --iron-icon-fill-color:white;
-
+                --iron-icon-stroke-color: var(--paper-blue-500);
             }
 
             app-toolbar {
@@ -356,9 +362,9 @@ a web component implementing eXistdb packagemanager
                     <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
 
                         <app-toolbar id="maintool" style="height:64px;" sticky>
-                            <!--<iron-icon icon="apps"></iron-icon>-->
-                            <!--<div main-title>PackageManager</div>-->
-                            <span class="counter" main-title>[[count]] packages installed</span>
+                            <iron-icon icon="apps"></iron-icon>
+                            <div main-title>PackageManager</div>
+                            <span class="heading">Installed packages <span class="count">[[count]]</span></span>
 
                             <paper-input-container>
                                 <iron-input slot="input">
@@ -372,6 +378,7 @@ a web component implementing eXistdb packagemanager
                                 <paper-listbox slot="dropdown-content">
                                     <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
                                     <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
+                                    <paper-item><a href="index.html?logout=true">logout</a></paper-item>
                                 </paper-listbox>
                             </paper-menu-button>
 
@@ -380,7 +387,7 @@ a web component implementing eXistdb packagemanager
 
                         <vaadin-upload id="uploader" accept=".xar" method="post" target="{{targetUrl}}" tabindex="-1">
                             <iron-icon class="drop-icon" slot="drop-label-icon" icon="image:adjust" size="48" width="48"></iron-icon>
-                            <div slot="drop-label" title="you can drop your files here">DROPZONE</div>
+                            <div slot="drop-label">DROPZONE - put your package(s) here.</div>
                             <paper-button id="uploadBtn" slot="add-button">upload</paper-button>
                         </vaadin-upload>
 
@@ -485,7 +492,7 @@ a web component implementing eXistdb packagemanager
 
             connectedCallback() {
                 super.connectedCallback();
-//                console.log("existdb-packages connected");
+                console.log('packagemanager rootPath: ', this.rootPath);
                 this.focus();
             }
 
