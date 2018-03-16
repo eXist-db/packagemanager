@@ -12,6 +12,12 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.3.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>migrated to use repo-elements</li>
+                <li>layout refinements for readability</li>
+            </ul>
+        </change>
         <change version="4.2.1">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>fixed tagging</li>
