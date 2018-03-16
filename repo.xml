@@ -15,7 +15,7 @@
         <change version="4.3.0">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>migrated to use repo-elements</li>
-                <li>layout refinements for readability</li>
+                <li>layout refinements for readability and responsiveness</li>
             </ul>
         </change>
         <change version="4.2.1">
