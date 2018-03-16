@@ -38,6 +38,13 @@ element for displaying package metadata
                 justify-content:center;
             }
 
+            @media only screen and (max-width: 768px) {
+                #localItemList{
+                    display: block;
+                }
+            }
+
+
             ::slotted(repo-packages){
                 display: block;
                 width: 100%;

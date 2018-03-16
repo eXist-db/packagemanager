@@ -212,6 +212,18 @@ a web component implementing eXistdb packagemanager
                     color: var(--paper-blue-100);
                 }
             }
+            @media only screen and (max-width: 768px) {
+                .filter{
+                    width:120px;
+                    font-size:18px;
+                }
+                [main-title]{
+                    font-size:18px;
+                }
+                [icon="apps"]{
+                    display: none;
+                }
+            }
 
             .repo-toolbar {
                 position: fixed;
@@ -433,7 +445,7 @@ a web component implementing eXistdb packagemanager
         <paper-toast id="toastError" text="" duration="-1">
             <paper-icon-button icon="clear" on-click="_hideToast"></paper-icon-button>
         </paper-toast>
-        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="10000">
+        <paper-toast id="updates" text="Updates available" auto-fit-on-attach duration="15000">
             <paper-button on-click="_goToAvailable">install...</paper-button>
             <paper-icon-button icon="clear" on-click="_hideUpdatesToast"></paper-icon-button>
         </paper-toast>

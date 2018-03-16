@@ -90,7 +90,7 @@ element for displaying package metadata
                 display: flex;
                 flex-direction: column ;
                 padding-left:100px;
-                min-width:380px;
+                /*min-width:380px;*/
             }
 
             .wrapper ::slotted(repo-type){
@@ -248,6 +248,9 @@ element for displaying package metadata
                 content:'Notes';
             }
 
+
+
+/*
             :host(.update):before{
                 content: "updated";
                 position:absolute;
@@ -259,9 +262,13 @@ element for displaying package metadata
                 width: 120px;
                 text-align: center;
             }
+*/
+
             [hidden]{
                 display: none;
             }
+
+
         </style>
         <paper-progress id="progress" class="slow"></paper-progress>
 
@@ -356,6 +363,8 @@ element for displaying package metadata
             connectedCallback() {
                 super.connectedCallback();
                 this.setAttribute('tabindex','0');
+
+//                console.log('my parent ',this.parentNode);
             }
 
             ready () {
