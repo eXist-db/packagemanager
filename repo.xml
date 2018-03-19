@@ -12,6 +12,12 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.4.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>cleaned up iron-meta</li>
+                <li>responsiveness improvements</li>
+            </ul>
+        </change>
         <change version="4.3.0">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>migrated to use repo-elements</li>

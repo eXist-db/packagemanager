@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://expath.org/ns/pkg" name="http://exist-db.org/apps/packagemanager"
-         abbrev="packagemanager" version="4.3.0" spec="1.0">
+         abbrev="packagemanager" version="4.4.0" spec="1.0">
     <title>eXistdb Packagemanager</title>
     <!-- todo: this should mention a minimum version -->
     <dependency package="http://exist-db.org/apps/existdb-packageservice" semver-min="1.2.1"/>

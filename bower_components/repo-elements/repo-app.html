@@ -7,6 +7,10 @@ need to display an app item in a different way with different functionality.
 This meta-element uses condidtional templates to create the appropriate element that is used in the different contexts.
 The attributes coming with an 'repo-app' element are passed down to the respective view element.
 
+Important note: repo-app looks upward in the tree to the parent of the parent. The immediate parent will always be
+'repo-packages' element. If the parent of 'repo-packages' has type='launcher' or type='packagemanager' it will
+instanciate the appropriate template.#
+
 @demo demo/doc.html
 -->
 
@@ -16,28 +20,17 @@ The attributes coming with an 'repo-app' element are passed down to the respecti
             :host {
                 display: block;
                 /*border:thin solid blue;*/
-                position: relative;
             }
             :focus{
                 border:none;
                 outline:0;
 
-                box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14),
-                0  6px 30px 5px rgba(0, 0, 0, 0.12),
-                0  8px 10px -5px rgba(0, 0, 0, 0.4);
-                margin:12px 0;
+                box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12),
+                0 5px 5px -3px rgba(0, 0, 0, 0.4);
+                background:white;
             }
-            :host(.update):before{
-                content: "updated";
-                position:absolute;
-                bottom:32px;
-                left:30px;
-                background: var(--paper-orange-700);
-                color:var(--paper-orange-100);
-                padding:4px 8px;
-                text-align: center;
-                z-index: 10;
-            }
+
         </style>
 
         <!-- select a different sub-component depending on context (packagemanager or launcher) -->
@@ -49,7 +42,7 @@ The attributes coming with an 'repo-app' element are passed down to the respecti
         </template>
 
         <template is="dom-if" if="{{_isPackageManager()}}">
-            <packagemanager-app id="app" type="{{type}}"
+            <packagemanager-app type="{{type}}"
                                 abbrev="{{abbrev}}"
                                 version="{{version}}"
                                 action="{{action}}"
@@ -134,20 +127,25 @@ The attributes coming with an 'repo-app' element are passed down to the respecti
 
             connectedCallback() {
                 super.connectedCallback();
-                console.log('RepoApp connected');
-                console.log('RepoApp connected classes ', this.getAttribute('class'));
-                if(this.getAttribute('class') == 'updated'){
-                    this.$.app.setAttribute('class','updated');
-                }
-
+//                console.log('RepoApp connected');
             }
 
             _isLauncher() {
-                return 'launcher' == document.getElementById('meta').byKey('env')
+//                console.log('RepoApp connected parent ', this.parentNode.parentNode);
+                if(this.parentNode.parentNode.getAttribute('type') == 'launcher') {
+                    return true;
+                }else{
+                    return false;
+                }
             }
 
             _isPackageManager() {
-                return 'packagemanager' == document.getElementById('meta').byKey('env')
+//                console.log('RepoApp connected parent ', this.parentNode.parentNode);
+                if(this.parentNode.parentNode.getAttribute('type') == 'packagemanager') {
+                    return true;
+                }else{
+                    return false;
+                }
             }
 
         }
