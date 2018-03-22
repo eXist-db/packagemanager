@@ -16,6 +16,8 @@
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>using central toast now for messaging</li>
                 <li>error handling for install errors</li>
+                <li>new layout using tabs</li>
+                <li>responsiveness improvements</li>
             </ul>
         </change>
         <change version="4.4.1">
