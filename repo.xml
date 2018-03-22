@@ -12,6 +12,12 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.5.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>using central toast now for messaging</li>
+                <li>error handling for install errors</li>
+            </ul>
+        </change>
         <change version="4.4.1">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>re-added iron-meta (used by other components)</li>
