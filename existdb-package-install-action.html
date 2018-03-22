@@ -108,7 +108,7 @@ implements an interaction with the package repository
 //                console.log("install response: ", JSON.parse(this.$.installPackage.lastResponse).err);
 
                 var error = JSON.parse(this.$.installPackage.lastResponse).error;
-                console.log("_handleResponse ", error);
+//                console.log("_handleResponse ", error);
 
                 if(error != undefined){
                     this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:error}}));
