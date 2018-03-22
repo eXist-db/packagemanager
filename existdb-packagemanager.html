@@ -456,7 +456,10 @@ a web component implementing eXistdb packagemanager
                         <paper-listbox slot="dropdown-content">
                             <paper-item id="libSwitch" on-click="_showLibraries">show libraries</paper-item>
                             <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
-                            <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+
+                            <template is="dom-if" if="{{_showLogout()}}">
+                                <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+                            </template>
                         </paper-listbox>
                     </paper-menu-button>
 
@@ -566,6 +569,11 @@ a web component implementing eXistdb packagemanager
                     remote:{
                         type:Array,
                         value:[]
+                    },
+                    logout:{
+                        type: Boolean,
+                        value:false,
+                        reflectToAttribute:true
                     }
                 };
             }
@@ -870,6 +878,11 @@ a web component implementing eXistdb packagemanager
             _goToAvailable(e){
                 this.$.updates.close();
                 this._switchToAvailable(e);
+            }
+
+            _showLogout(){
+                console.log('showLogout ', this.logout);
+                return this.getAttribute('logout') == 'true';
             }
 
         }

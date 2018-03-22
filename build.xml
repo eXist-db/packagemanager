@@ -29,7 +29,7 @@
                 <include name="*.xql" />
 
                 <include name="login.html" />
-                <include name="icon.png" />
+                <include name="icon.svg" />
             </fileset>
         </copy>
         <zip basedir="${bundle.dir}" destfile="${build.dir}/${project.app}-${project.version}.xar" />
