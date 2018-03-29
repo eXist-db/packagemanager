@@ -12,6 +12,13 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.5.1">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>layout fixes</li>
+                <li>removed paper-badge elements</li>
+                <li>controller fixes and refinements</li>
+            </ul>
+        </change>
         <change version="4.5.0">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>using central toast now for messaging</li>

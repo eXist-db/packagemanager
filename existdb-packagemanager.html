@@ -14,7 +14,7 @@ a web component implementing eXistdb packagemanager
             :host {
                 display: block;
 
-                --paper-tabs-selection-bar-color: var(--paper-blue-700);
+                /*--paper-tabs-selection-bar-color: var(--paper-blue-700);*/
                 @apply(--paper-font-common-base);
                 position: relative;
                 /*background: var(--paper-blue-100);*/
@@ -24,11 +24,7 @@ a web component implementing eXistdb packagemanager
                 width: 100%;
                 height:100%;
                 overflow:auto;
-/*
-                --vaadin-upload-button-add: {
-                    background: var(--paper-blue-700);
-                };
-*/
+                position: relative;
 
                 --paper-toggle-button-checked-button-color: var(--paper-blue-700);
 
@@ -39,33 +35,32 @@ a web component implementing eXistdb packagemanager
                 --paper-input-container:{
                     font-size:18px;
                     margin-top:-18px;
-                    /*background: var(--paper-blue-900);*/
                     padding:0;
                 };
 
                 --paper-input-container-underline:{
                     border:none;
                 };
+            }
+
+
 /*
-                --paper-input-container-underline-focus:{
-                    background: var(--paper-blue-900);
-                    border:var(--paper-blue-900);
-                    color:var(--paper-blue-100);
-                };
-*/
-                /*--iron-icon-stroke-color:white;*/
-                position: relative;
-
-                --paper-tabs-selection-bar:{
-                    border:3px;
-                };
-
-            }
-
             app-header-layout{
-                /*background: var(--paper-blue-300);*/
+                background: var(--paper-blue-300);
             }
+*/
 
+            app-header-layout {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                left: 0px;
+                /*height: calc(100% - 200px);*/
+                background-color: #eee;
+                overflow: hidden;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
 
             app-header {
                 background: var(--paper-blue-500);
@@ -79,12 +74,18 @@ a web component implementing eXistdb packagemanager
                     border:3px solid var(--paper-blue-700);
                 };
 
+                height:50px;
+
+                --paper-tab-content:{
+                    color:white;
+                    font-size:16px;
+                };
+
             }
             paper-tab{
                 position: relative;
                 --paper-tab-ink:var(--paper-blue-100);
             }
-
 
 
             #pages{
@@ -133,8 +134,8 @@ a web component implementing eXistdb packagemanager
                 color:var(--paper-blue-900);
                 padding:10px;
 
-                --paper-input-container-underline:{
-                    border:none;
+                --paper-input-container-underline-focus:{
+                    border:transparent;
                 };
             }
             .filter::placeholder{
@@ -334,7 +335,7 @@ a web component implementing eXistdb packagemanager
                 display: none;
             }
 
-            paper-item a{
+            #moreMenu a{
                 text-decoration: none;
                 color:inherit;
             }
@@ -347,22 +348,16 @@ a web component implementing eXistdb packagemanager
                 margin-top:9px;
             }
 
-            paper-badge{
-                /*--paper-badge-margin-left:-20px;*/
-                position: absolute;
-                top:12px !important;
-                right:0 !important;
-                left:auto !important;
-                z-index: 10;
-                --paper-badge-background:var(--paper-blue-500);
-                --paper-badge-width:26px;
-                --paper-badge-height:26px;
+            paper-input-container{
+                margin-right:22px;
 
-                --paper-badge:{
-                    font-size: 14px;
+                --paper-input-container-underline:{
+                    border:none;
+                    outline: none;
+
                 };
-
             }
+
         </style>
 <!--
         <iron-a11y-keys id="a11y1" target="[[target]]" keys="ctrl+h"
@@ -436,12 +431,13 @@ a web component implementing eXistdb packagemanager
 
 
 
-        <app-header-layout fullbleed has-scrolling-region>
+        <app-header-layout id="layout" fullbleed has-scrolling-region>
             <app-header slot="header" class="app-header" reveals condenses effects="waterfall" fixed>
 
                 <app-toolbar id="maintool" style="height:64px;" sticky>
                     <!--<iron-icon icon="apps"></iron-icon>-->
-                    <img class="x" src="icon.svg" style="width:36px;height:36px;margin-right:10px;" title="[[version]]">
+                    <img class="x" src="{{importPath}}icon.svg" style="width:36px;height:36px;margin-right:10px;" title="[[version]]">
+                    <slot name="toggleIcon"></slot>
                     <div main-title>PackageManager</div>
 
                     <paper-input-container>
@@ -458,7 +454,7 @@ a web component implementing eXistdb packagemanager
                             <paper-item on-click="_showHideShortcuts">show shortcuts</paper-item>
 
                             <template is="dom-if" if="{{_showLogout()}}">
-                                <paper-item><a href="index.html?logout=true">logout</a></paper-item>
+                                <a href="login.html?logout=true" tabindex="-1"><paper-item>logout</paper-item></a>
                             </template>
                         </paper-listbox>
                     </paper-menu-button>
@@ -474,12 +470,10 @@ a web component implementing eXistdb packagemanager
 
                 <paper-tabs selected="{{selected}}">
                     <paper-tab class="installedTab" id="installedTab">
-                        Installed
-                        <paper-badge label="[[localCount]]" for="installedTab"></paper-badge>
+                        Installed ([[localCount]])
                     </paper-tab>
                     <paper-tab class="availableTab" id="availableTab">
-                        Available
-                        <paper-badge label="[[remoteCount]]" for="availableTab"></paper-badge>
+                        Available ([[remoteCount]])
                     </paper-tab>
                 </paper-tabs>
             </app-header>
@@ -587,6 +581,7 @@ a web component implementing eXistdb packagemanager
             connectedCallback() {
                 super.connectedCallback();
 //                console.log('packagemanager rootPath: ', this.rootPath);
+                this.$.layout.resetLayout();
                 this.focus();
             }
 
@@ -705,7 +700,7 @@ a web component implementing eXistdb packagemanager
                     this._checkForUpdates();
                 }
                 this.$.filterLocal.focus();
-
+                this.$.layout.resetLayout();
             }
 
             _handlePageChange (newValue, oldValue) {
