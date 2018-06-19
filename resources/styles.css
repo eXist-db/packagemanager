@@ -1,3 +1,4 @@
+/* global scope styles */
 html, body{
     margin:0;
     padding:0;
@@ -16,3 +17,9 @@ vertical-section-container.centered{
 .item{
     background:red;
 }
+
+/* this rule is necessary for FF due to shadowDOM polyfill limitations - should go away once FF supports shadowDOM natively. */
+.update packagemanager-app repo-version{
+    display: none;
+}
+

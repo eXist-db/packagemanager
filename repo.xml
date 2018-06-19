@@ -12,6 +12,13 @@
     <finish/>
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
+        <change version="4.6.0">
+            <ul xmls="http://www.w3.org/1999/xhtml">
+                <li>fixes issue #7 - info button does not work on webkit browsers</li>
+                <li>added components for meta-information elements (repo-elements)</li>
+                <li>reinstated update badge</li>
+            </ul>
+        </change>
         <change version="4.5.1">
             <ul xmls="http://www.w3.org/1999/xhtml">
                 <li>layout fixes</li>
