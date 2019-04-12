@@ -182,6 +182,13 @@ element for displaying package metadata
 
             _handlePackages (data) {
 //                console.log('existdb-packages._handlePackages');
+
+                var error = JSON.parse(this.$.installPackage.lastResponse).error;
+                if (error != undefined) {
+                    this.dispatchEvent(new CustomEvent('packages-load-error', {bubbles: true, composed: true, detail: {error:'loading of available packages failed: ' + error}}));
+                }
+
+
                 this.$.localItemList.innerHTML = this.$.loadPackages.lastResponse
 
 //                console.log('repo-packages ', this.shadowRoot.querySelector('repo-packages'));

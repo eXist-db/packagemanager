@@ -17,21 +17,22 @@ implements an interaction with the package repository
             }
         </style>
 
-        <iron-ajax id="installPackage"
-                   verbose with-credentials
-                   method="post" handle-as="text"
-                   on-response="_handleResponse"
+        <iron-ajax handle-as="text"
+                   id="installPackage" method="post"
+                   on-error="_handleError" on-response="_handleResponse"
                    url="../packageservice/packages/action"
-                   on-error="_handleError"></iron-ajax>
+                   verbose
+                   with-credentials></iron-ajax>
 
 
-        <paper-icon-button id="install" class="install" icon="file-download" title="download and install latest version" on-click="submit"></paper-icon-button>
-        <form id="installform" is="iron-form" method="post" action="">
-            <input type="hidden" name="package-url" value="{{url}}"/>
-            <input type="hidden" name="abbrev" value="{{abbrev}}"/>
-            <input type="hidden" name="version" value="{{version}}"/>
-            <input type="hidden" name="action" value="install"/>
-            <input type="hidden" name="type" value="{{type}}"/>
+        <paper-icon-button class="install" icon="file-download" id="install" on-click="submit"
+                           title="download and install latest version"></paper-icon-button>
+        <form action="" id="installform" is="iron-form" method="post">
+            <input name="package-url" type="hidden" value="{{url}}"/>
+            <input name="abbrev" type="hidden" value="{{abbrev}}"/>
+            <input name="version" type="hidden" value="{{version}}"/>
+            <input name="action" type="hidden" value="install"/>
+            <input name="type" type="hidden" value="{{type}}"/>
         </form>
     </template>
 
@@ -42,27 +43,27 @@ implements an interaction with the package repository
                 return 'existdb-package-install-action';
             }
 
-            static get properties(){
+            static get properties() {
                 return {
                     url: {
                         type: String,
-                        reflectToAttribute:true
+                        reflectToAttribute: true
                     },
                     abbrev: {
                         type: String,
-                        reflectToAttribute:true
+                        reflectToAttribute: true
                     },
                     action: {
                         type: String,
-                        reflectToAttribute:true
+                        reflectToAttribute: true
                     },
-                    version:{
+                    version: {
                         type: String,
-                        reflectToAttribute:true
+                        reflectToAttribute: true
                     },
                     type: {
                         type: String,
-                        reflectToAttribute:true
+                        reflectToAttribute: true
                     }
                 };
             }
@@ -81,51 +82,66 @@ implements an interaction with the package repository
 
             }
 
-            submit (e) {
+            submit(e) {
 //                console.log("install action submit ",e);
                 e.stopPropagation();
                 e.preventDefault();
-                this.dispatchEvent(new CustomEvent('package-install-started', {bubbles: true, composed: true, detail: {}}));
+                this.dispatchEvent(new CustomEvent('package-install-started', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {}
+                }));
             }
 
-            install(){
-/*
-                console.log('install action install');
-                console.log('install action install url ', this.url);
-                console.log('install action install version ', this.version);
-*/
+            install() {
+                /*
+                                console.log('install action install');
+                                console.log('install action install url ', this.url);
+                                console.log('install action install version ', this.version);
+                */
                 this.$.installPackage.params = {
-                    "package-url":this.url,
-                    "action":"install",
-                    "abbrev":this.abbrev,
-                    "version":this.version,
+                    "package-url": this.url,
+                    "action": "install",
+                    "abbrev": this.abbrev,
+                    "version": this.version,
                 };
                 this.$.installPackage.generateRequest();
             }
 
-            _handleResponse (data) {
+            _handleResponse(data) {
 //                console.log("response: ", data);
 //                console.log("install response: ", JSON.parse(this.$.installPackage.lastResponse).err);
 
                 var error = JSON.parse(this.$.installPackage.lastResponse).error;
-//                console.log("_handleResponse ", error);
-
-                if(error != undefined){
-                    this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:error}}));
-                }else{
-                this.dispatchEvent(new CustomEvent('package-installed', {bubbles: true, composed: true, detail: {abbrev:this.abbrev}}));
+                if (error != undefined) {
+                    this.dispatchEvent(new CustomEvent('package-install-error', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {error: error}
+                    }));
+                } else {
+                    this.dispatchEvent(new CustomEvent('package-installed', {
+                        bubbles: true,
+                        composed: true,
+                        detail: {abbrev: this.abbrev}
+                    }));
+                }
             }
-            }
 
-            _handleError (e) {
+            // this is likely never fired as server responds with a 200 status code always
+            _handleError(e) {
 //                console.log("error: ", e)
-                //todo: this seems to be never triggered since we get 200 even in case of errors
-                this.dispatchEvent(new CustomEvent('package-install-error', {bubbles: true, composed: true, detail: {error:e.detail}}));
+                this.dispatchEvent(new CustomEvent('package-install-error', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {error: e.detail}
+                }));
 
             }
 
 
         }
+
         window.customElements.define(ExistdbPackageInstallAction.is, ExistdbPackageInstallAction);
 
     </script>
