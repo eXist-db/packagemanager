@@ -13,21 +13,21 @@
     <permissions user="admin" group="dba" mode="rwxrwxr-x"/>
     <changelog>
         <change version="4.6.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>fixes issue #7 - info button does not work on webkit browsers</li>
                 <li>added components for meta-information elements (repo-elements)</li>
                 <li>reinstated update badge</li>
             </ul>
         </change>
         <change version="4.5.1">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>layout fixes</li>
                 <li>removed paper-badge elements</li>
                 <li>controller fixes and refinements</li>
             </ul>
         </change>
         <change version="4.5.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>using central toast now for messaging</li>
                 <li>error handling for install errors</li>
                 <li>new layout using tabs</li>
@@ -37,40 +37,40 @@
             </ul>
         </change>
         <change version="4.4.1">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>re-added iron-meta (used by other components)</li>
             </ul>
         </change>
         <change version="4.4.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>cleaned up iron-meta</li>
                 <li>responsiveness improvements</li>
             </ul>
         </change>
         <change version="4.3.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>migrated to use repo-elements</li>
                 <li>layout refinements for readability and responsiveness</li>
             </ul>
         </change>
         <change version="4.2.1">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>fixed tagging</li>
             </ul>
         </change>
         <change version="4.2.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>preventing PackageManager and PackageService from being de-installed.</li>
             </ul>
         </change>
         <change version="4.0.5">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>added error handling for 200 responses</li>
                 <li>minor refinements to login</li>
             </ul>
         </change>
         <change version="4.0.4">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>showing toast message on local page when updates are available</li>
                 <li>progressbar for remove action</li>
                 <li>defined dependency on existdb-packageservice 1.0.0</li>
@@ -78,35 +78,35 @@
             </ul>
         </change>
         <change version="4.0.3">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>styling of updated packages</li>
             </ul>
         </change>
         <change version="4.0.2">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>completed ported to Polymer 2 class-style components</li>
                 <li>keyboard shortcuts</li>
                 <li>updated vaadin-upload component</li>
             </ul>
         </change>
         <change version="3.11.4">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>fixed version number in package.json</li>
             </ul>
         </change>
         <change version="3.11.3">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>fixed svg icon styling</li>
                 <li>added missing version number to bower.json</li>
             </ul>
         </change>
         <change version="3.11.2">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>added changelog</li>
             </ul>
         </change>
         <change version="3.11.1">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>removed unstable key binding for up and down arrow</li>
                 <li>replaced neon-animated-pages with iron-pages for stability</li>
                 <li>detail layout enhancements</li>
@@ -114,7 +114,7 @@
             </ul>
         </change>
         <change version="3.9.0">
-            <ul xmls="http://www.w3.org/1999/xhtml">
+            <ul xmlns="http://www.w3.org/1999/xhtml">
                 <li>ported to Polymer 2 hybrid mode</li>
                 <li>removed tab navigation. Replaced by '+' button</li>
                 <li>keyboard shortcut support</li>
